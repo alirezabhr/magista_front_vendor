@@ -70,7 +70,7 @@ export default {
     },
     customVariables: ['~/assets/styles/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
