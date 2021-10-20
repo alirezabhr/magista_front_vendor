@@ -62,7 +62,13 @@ export default {
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     rtl: true,
-    customVariables: ['~/assets/variables.scss'],
+    treeShake: true,
+    defaultAssets: {
+      font: {
+        family: 'MyWebFont'
+      }
+    },
+    customVariables: ['~/assets/styles/variables.scss'],
     theme: {
       dark: true,
       themes: {
