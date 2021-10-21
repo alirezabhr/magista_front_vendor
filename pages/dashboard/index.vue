@@ -1,10 +1,10 @@
 <template>
-  <div>Chats page</div>
+  <div>bye</div>
 </template>
 
 <script>
 export default {
-  name: 'ChatsPage',
+  name: 'DashboardPage',
   layout: 'panel'
 }
 </script>

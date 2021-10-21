@@ -4,6 +4,7 @@
 
 <script>
 export default {
-  name: 'Stats'
+  name: 'StatsPage',
+  layout: 'panel'
 }
 </script>

@@ -4,6 +4,7 @@
 
 <script>
 export default {
-  name: 'Settings'
+  name: 'SettingsPage',
+  layout: 'panel'
 }
 </script>

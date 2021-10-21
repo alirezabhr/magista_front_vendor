@@ -4,6 +4,7 @@
 
 <script>
 export default {
-  name: 'Orders'
+  name: 'OrdersPage',
+  layout: 'panel'
 }
 </script>
