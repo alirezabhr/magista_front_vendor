@@ -28,7 +28,7 @@ export default {
         {
           title: 'پیشخوان',
           icon: 'mdi-view-dashboard-outline',
-          navigation: '/'
+          navigation: '/dashboard'
         },
         { title: 'سفارشات', icon: 'mdi-cart-variant', navigation: '/orders' },
         { title: 'آمار', icon: 'mdi-chart-bar', navigation: '/stats' },
