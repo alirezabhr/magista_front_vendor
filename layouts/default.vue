@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-main class="background">
-      <v-container>
-        <v-row class="pt-5">
+      <v-container py-0 py-md-5>
+        <v-row class="pt-3 pt-md-5">
           <v-card class="hidden-sm-and-down" width="256">
             <v-navigation-drawer class="surface accent-4" permanent>
               <v-list-item class="primary" dark>
@@ -40,8 +40,23 @@
             </v-navigation-drawer>
           </v-card>
 
-          <v-col offset="2" md="6" class="surface rounded-lg mx-3">
-            <Nuxt />
+          <v-col sm="9" md="6" class="surface rounded-lg my-0 pa-0 mx-auto mx-md-10">
+            <v-container>
+              <Nuxt />
+            </v-container>
+            <v-bottom-navigation
+              color="primary"
+              grow
+              fixed
+              class="hidden-md-and-up"
+              height="50px"
+            >
+              <v-btn v-for="item in items" :key="item" :to="item.navigation" height="50px">
+                <span>{{ item.title }}</span>
+
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-btn>
+            </v-bottom-navigation>
           </v-col>
         </v-row>
       </v-container>
@@ -53,6 +68,7 @@
 export default {
   data () {
     return {
+      value: 1,
       items: [
         {
           title: 'پیشخوان',
@@ -64,7 +80,7 @@ export default {
         {
           title: 'پیام‌ها',
           icon: 'mdi-message-outline',
-          navigation: '/messages'
+          navigation: '/chats'
         },
         {
           title: 'تنظیمات',
