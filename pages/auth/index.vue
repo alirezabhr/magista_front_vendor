@@ -2,48 +2,50 @@
   <v-container>
     <v-row class="py-6" justify="center">
       <v-col col="10" sm="6" md="4">
-        <v-card class="pb-4">
-          <v-card-title>
-            <v-col>
-              <div class="text-h6 font-weight-bold">ثبت‌نام / ورود</div>
-              <div class="text-subtitle-2 font-weight-light pt-2">شماره موبایل خود را وارد کنید.</div>
-            </v-col>
-          </v-card-title>
-
-          <v-col class="py-0 px-8">
-            <div class="text-subtitle-2 grey--text">
-              مثال:
-              <span class="ltr">0912 ××× ×× ××</span>
-            </div>
-            <v-text-field
-              label="شماره موبایل"
-              outlined
-              dense
-              class="py-2"
-            />
-          </v-col>
-
-          <v-card-actions class="px-8">
-            <v-btn block class="primary font-weight-bold py-5" rounded>
-              تایید
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+        <PhoneForm v-if="auth_step === 'phone'" @submitForm="sendPhone" />
+        <OtpForm v-else-if="auth_step === 'otp'" @submitForm="sendOtp" @changePhone="auth_step = 'phone'" />
+        <SignupPasswordForm v-else-if="auth_step === 'signup password'" @submitForm="signup" />
+        <LoginPasswordForm v-else-if="auth_step === 'login password'" @submitForm="login" @changePhone="auth_step = 'phone'" @forgetPassword="forgetPassword" />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import PhoneForm from '@/components/auth/PhoneForm.vue'
+import OtpForm from '@/components/auth/OtpForm.vue'
+import SignupPasswordForm from '@/components/auth/SignupPasswordForm.vue'
+import LoginPasswordForm from '@/components/auth/LoginPasswordForm.vue'
+
 export default {
-  name: 'AuthPage'
+  name: 'AuthPage',
+  components: {
+    PhoneForm,
+    OtpForm,
+    SignupPasswordForm,
+    LoginPasswordForm
+  },
+  data () {
+    return {
+      auth_step: 'phone'
+    }
+  },
+  methods: {
+    sendPhone () {
+      console.log('send phone func')
+    },
+    sendOtp () {
+      console.log('send otp func')
+    },
+    signup () {
+      console.log('signup func')
+    },
+    login () {
+      console.log('login func')
+    },
+    forgetPassword () {
+      console.log('forget password func')
+    }
+  }
 }
 </script>
-
-<style scoped>
-.ltr {
-    direction: ltr;
-    text-align: left;
-    display: inline-block;
-}
-</style>
