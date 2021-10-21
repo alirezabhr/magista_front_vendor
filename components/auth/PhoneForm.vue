@@ -33,3 +33,11 @@ export default {
   name: 'PhoneForm'
 }
 </script>
+
+<style scoped>
+.ltr {
+    direction: ltr;
+    text-align: left;
+    display: inline-block;
+}
+</style>
