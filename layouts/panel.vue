@@ -30,6 +30,6 @@ export default {
     NavigationDrawer,
     BottomNavigation
   },
-  data () {}
+  middleware: ['auth']
 }
 </script>
