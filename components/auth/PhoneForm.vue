@@ -13,6 +13,7 @@
         <span class="ltr">0912 ××× ×× ××</span>
       </div>
       <v-text-field
+        v-model="phoneNo"
         label="شماره موبایل"
         outlined
         dense
@@ -21,7 +22,7 @@
     </v-col>
 
     <v-card-actions class="px-8">
-      <v-btn block class="primary font-weight-bold py-5" rounded @click.prevent="$emit('submitForm')">
+      <v-btn block class="primary font-weight-bold py-5" rounded @click.prevent="$emit('submitForm', phoneNo)">
         تایید
       </v-btn>
     </v-card-actions>
@@ -30,7 +31,12 @@
 
 <script>
 export default {
-  name: 'PhoneForm'
+  name: 'PhoneForm',
+  data () {
+    return {
+      phoneNo: ''
+    }
+  }
 }
 </script>
 
