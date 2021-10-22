@@ -69,7 +69,7 @@ export default {
         if (response.data.user === 'found') {
           this.auth_step = 'login password'
         } else if (response.data.user === 'not found') {
-          this.sendOtp(phoneNo)
+          this.requestOtp(phoneNo)
         } else {
           console.log('ERROR in checking user exitence')
         }
@@ -79,6 +79,30 @@ export default {
         // console.log(response.data.toString())
         if (response.status === 400) {
           this.snackbarMessage = response.data.phone[0]
+        } else {
+          this.snackbarMessage = response.data
+        }
+        this.showSnackbar = true
+      })
+    },
+    requestOtp (phoneNo) {
+      this.requestOtpCode({
+        phone: phoneNo
+      }).then(() => {
+        this.auth_step = 'otp'
+      }).catch((response) => {
+        console.log('send otp catch')
+        console.log(response.data)
+      })
+    },
+    checkOtp (otpCode) {
+      this.checkOtpCode({
+        otp_code: Number.parseInt(otpCode)
+      }).then(() => {
+        this.auth_step = 'signup password'
+      }).catch((response) => {
+        if (response.data.otp_code) {
+          this.snackbarMessage = response.data.otp_code[0]
         } else {
           this.snackbarMessage = response.data
         }
