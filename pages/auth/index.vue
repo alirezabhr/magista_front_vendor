@@ -76,7 +76,6 @@ export default {
       }).catch((response) => {
         this.showSnackbar = false
         console.log(response)
-        // console.log(response.data.toString())
         if (response.status === 400) {
           this.snackbarMessage = response.data.phone[0]
         } else {
@@ -107,6 +106,18 @@ export default {
           this.snackbarMessage = response.data
         }
         this.showSnackbar = true
+      })
+    },
+    login (password) {
+      this.userLogin({
+        password
+      }).then(() => {
+        console.log('in login then')
+      }).catch((response) => {
+        console.log('in login catch')
+        for (const key in response.data) {
+          console.log(`${key}: ${response.data[key]}`)
+        }
       })
     },
     forgetPassword () {
