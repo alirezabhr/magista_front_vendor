@@ -12,6 +12,7 @@
         حداقل 8 کاراکتر
       </div>
       <v-text-field
+        v-model="password"
         label="رمز عبور جدید"
         outlined
         dense
@@ -20,7 +21,12 @@
     </v-col>
 
     <v-card-actions class="px-8">
-      <v-btn block class="primary font-weight-bold py-5" rounded @click.prevent="$emit('submitForm')">
+      <v-btn
+        block
+        rounded
+        class="primary font-weight-bold py-5"
+        @click.prevent="$emit('submitForm', password)"
+      >
         ثبت رمز عبور و ورود
       </v-btn>
     </v-card-actions>
@@ -29,6 +35,11 @@
 
 <script>
 export default {
-  name: 'SignupPasswordForm'
+  name: 'SignupPasswordForm',
+  data () {
+    return {
+      password: ''
+    }
+  }
 }
 </script>

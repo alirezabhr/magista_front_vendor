@@ -12,6 +12,7 @@
         حداقل 8 کاراکتر
       </div>
       <v-text-field
+        v-model="password"
         label="رمز عبور"
         outlined
         dense
@@ -22,19 +23,34 @@
     <v-card-actions>
       <v-col>
         <v-row class="px-8">
-          <v-btn block class="primary font-weight-bold py-5" rounded @click.prevent="$emit('submitForm')">
+          <v-btn
+            block
+            rounded
+            class="primary font-weight-bold py-5"
+            @click.prevent="$emit('submitForm', password)"
+          >
             ورود
           </v-btn>
         </v-row>
         <v-row justify="center">
-          <v-btn text color="primary" class="text-subtitle-2 my-4 px-2" @click.prevent="$emit('changePhone')">
+          <v-btn
+            text
+            color="primary"
+            class="text-subtitle-2 my-4 px-2"
+            @click.prevent="$emit('changePhone')"
+          >
             <v-icon left>
               mdi-pencil
             </v-icon>
             تغییر شماره موبایل
           </v-btn>
           <v-spacer />
-          <v-btn text color="primary" class="text-subtitle-2 my-4 px-2" @click.prevent="$emit('forgetPassword')">
+          <v-btn
+            text
+            color="primary"
+            class="text-subtitle-2 my-4 px-2"
+            @click.prevent="$emit('forgetPassword')"
+          >
             رمز عبورم را فراموش کرده‌ام
           </v-btn>
         </v-row>
@@ -45,6 +61,11 @@
 
 <script>
 export default {
-  name: 'LoginPasswordForm'
+  name: 'LoginPasswordForm',
+  data () {
+    return {
+      password: ''
+    }
+  }
 }
 </script>

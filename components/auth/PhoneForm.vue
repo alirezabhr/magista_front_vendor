@@ -18,11 +18,18 @@
         outlined
         dense
         class="py-2"
+        type="number"
       />
     </v-col>
 
     <v-card-actions class="px-8">
-      <v-btn block class="primary font-weight-bold py-5" rounded @click.prevent="$emit('submitForm', phoneNo)">
+      <v-btn
+        block
+        rounded
+        class="primary font-weight-bold py-5"
+        :loading="isSubmittingPhone"
+        @click.prevent="$emit('submitForm', phoneNo)"
+      >
         تایید
       </v-btn>
     </v-card-actions>
@@ -32,6 +39,12 @@
 <script>
 export default {
   name: 'PhoneForm',
+  props: {
+    isSubmittingPhone: {
+      type: Boolean,
+      required: true
+    }
+  },
   data () {
     return {
       phoneNo: ''
