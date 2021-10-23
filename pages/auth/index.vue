@@ -108,15 +108,27 @@ export default {
         this.showSnackbar = true
       })
     },
+    signup (password) {
+      this.userSignup({
+        password
+      }).then(() => {
+        console.log('in signup then')
+      }).catch((response) => {
+        for (const key in response.data) {
+          this.snackbarMessage = response.data[key][0]
+          this.showSnackbar = true
+        }
+      })
+    },
     login (password) {
       this.userLogin({
         password
       }).then(() => {
         console.log('in login then')
       }).catch((response) => {
-        console.log('in login catch')
         for (const key in response.data) {
-          console.log(`${key}: ${response.data[key]}`)
+          this.snackbarMessage = response.data[key][0]
+          this.showSnackbar = true
         }
       })
     },
