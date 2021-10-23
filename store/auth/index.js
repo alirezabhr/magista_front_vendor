@@ -11,18 +11,18 @@ const mutations = {
     state.userPhone = phone
   },
   setUserToken (state, token) {
-    if (token == null) {
-      localStorage.removeItem('MagistaToken')
-      axios.defaults.headers.common.Authorization = ''
-    } else {
-      localStorage.setItem('MagistaToken', 'JWT ' + token)
-      axios.defaults.headers.common.Authorization = 'JWT ' + token
-    }
+    localStorage.setItem('MagistaToken', 'JWT ' + token)
+    axios.defaults.headers.common.Authorization = 'JWT ' + token
     state.userToken = token
   },
   setUserId (state, id) {
     state.userId = id
     localStorage.setItem('MagistaId', id)
+  },
+  removeUserToken (state) {
+    localStorage.removeItem('MagistaToken')
+    axios.defaults.headers.common.Authorization = ''
+    state.userToken = null
   }
 }
 
@@ -117,8 +117,7 @@ const actions = {
     })
   },
   userLogout (vuexContext) {
-    vuexContext.commit('setUserToken', null)
-    vuexContext.commit('profile/setUserData', {}, { root: true })
+    vuexContext.commit('removeUserToken')
   }
 }
 
