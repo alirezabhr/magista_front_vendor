@@ -85,8 +85,6 @@ export default {
           this.authStep = 'login password'
         } else if (response.data.user === 'not found') {
           this.requestOtp()
-        } else {
-          console.log('ERROR in checking user exitence')
         }
       }).catch((response) => {
         for (const key in response.data) {
@@ -129,7 +127,7 @@ export default {
         phone: this.phoneNumber,
         password: inputPassword
       }).then(() => {
-        console.log('in signup then')
+        this.redirect()
       }).catch((response) => {
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
@@ -142,7 +140,7 @@ export default {
         phone: this.phoneNumber,
         password: inputPassword
       }).then(() => {
-        console.log('in login then')
+        this.redirect()
       }).catch((response) => {
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
@@ -159,13 +157,21 @@ export default {
         phone: this.phoneNumber,
         password: inputPassowrd
       }).then(() => {
-        console.log('in change password then')
+        this.redirect()
       }).catch((response) => {
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true
         }
       })
+    },
+    redirect () {
+      const routeFrom = this.$router.app.context.from
+      if (routeFrom.path === '/auth') {
+        this.$router.push('/')
+      } else {
+        this.$router.push(routeFrom.path)
+      }
     }
   }
 }
