@@ -54,7 +54,6 @@ const actions = {
   },
   checkOtpCode (vuexContext, payload) {
     const url = 'http://127.0.0.1:8000/' + 'check-otp/'
-    payload.phone = vuexContext.getters.getUserPhone
 
     return axios.post(
       url,
@@ -65,7 +64,6 @@ const actions = {
   },
   userSignup (vuexContext, payload) {
     const url = 'http://127.0.0.1:8000/' + 'signup/'
-    payload.phone = vuexContext.getters.getUserPhone
 
     return axios.post(
       url,
@@ -84,9 +82,6 @@ const actions = {
   },
   userLogin (vuexContext, payload) {
     const url = 'http://127.0.0.1:8000/' + 'login/'
-    payload.phone = vuexContext.getters.getUserPhone
-    console.log('payload in login: ')
-    console.log(payload)
 
     return axios.post(
       url,
@@ -95,7 +90,7 @@ const actions = {
       const data = response.data
 
       const token = data.token
-      const id = response.data.id
+      const id = data.id
 
       vuexContext.commit('setUserToken', token)
       vuexContext.commit('setUserId', id)
@@ -103,9 +98,27 @@ const actions = {
       throw e.response
     })
   },
-  userLogout (context) {
-    context.commit('setUserToken', null)
-    context.commit('profile/setUserData', {}, { root: true })
+  changeUserPassword (vuexContext, payload) {
+    const url = 'http://127.0.0.1:8000/' + 'user/'
+
+    return axios.put(
+      url,
+      payload
+    ).then((response) => {
+      const data = response.data
+
+      const token = data.token
+      const id = data.id
+
+      vuexContext.commit('setUserToken', token)
+      vuexContext.commit('setUserId', id)
+    }).catch((e) => {
+      throw e.response
+    })
+  },
+  userLogout (vuexContext) {
+    vuexContext.commit('setUserToken', null)
+    vuexContext.commit('profile/setUserData', {}, { root: true })
   }
 }
 
