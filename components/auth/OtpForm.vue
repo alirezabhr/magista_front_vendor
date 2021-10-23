@@ -7,8 +7,8 @@
     >
       <v-card-title>
         <v-col>
-          <div class="text-h6 font-weight-bold">ثبت‌نام در مگیستا</div>
-          <div class="text-subtitle-2 font-weight-light pt-2">کد فعالسازی ارسال شده به 0917133 را وارد نمایید.</div>
+          <div class="text-h6 font-weight-bold">احراز هویت</div>
+          <div class="text-subtitle-2 font-weight-light pt-2">کد فعالسازی ارسال شده به {{ phoneNumber }} را وارد نمایید.</div>
         </v-col>
       </v-card-title>
 
@@ -63,6 +63,10 @@ export default {
   props: {
     isSubmittingOtp: {
       type: Boolean,
+      required: true
+    },
+    phoneNumber: {
+      type: String,
       required: true
     }
   },
