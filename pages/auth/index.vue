@@ -9,26 +9,31 @@
     <v-row class="py-6" justify="center">
       <v-col col="10" sm="6" md="4">
         <PhoneForm
-          v-if="auth_step === 'phone'"
-          :is-submitting-phone="is_loading"
+          v-if="authStep === 'phone'"
+          :is-submitting-phone="isLoading"
           @submitForm="sendPhone"
         />
         <OtpForm
-          v-else-if="auth_step === 'otp'"
-          :is-submitting-otp="is_loading"
+          v-else-if="authStep === 'otp'"
+          :is-submitting-otp="isLoading"
           @submitForm="checkOtp"
-          @changePhone="auth_step = 'phone'"
+          @changePhone="authStep = 'phone'"
         />
         <SignupPasswordForm
-          v-else-if="auth_step === 'signup password'"
-          :is-submitting-password="is_loading"
+          v-else-if="authStep === 'signup password'"
+          :is-submitting-password="isLoading"
           @submitForm="signup"
         />
+        <ForgetPasswordForm
+          v-else-if="authStep === 'forget password'"
+          :is-submitting-password="isLoading"
+          @submitForm="changePassword"
+        />
         <LoginPasswordForm
-          v-else-if="auth_step === 'login password'"
-          :is-submitting-password="is_loading"
+          v-else-if="authStep === 'login password'"
+          :is-submitting-password="isLoading"
           @submitForm="login"
-          @changePhone="auth_step = 'phone'"
+          @changePhone="authStep = 'phone'"
           @forgetPassword="forgetPassword"
         />
       </v-col>
@@ -43,6 +48,7 @@ import PhoneForm from '@/components/auth/PhoneForm.vue'
 import OtpForm from '@/components/auth/OtpForm.vue'
 import SignupPasswordForm from '@/components/auth/SignupPasswordForm.vue'
 import LoginPasswordForm from '@/components/auth/LoginPasswordForm.vue'
+import ForgetPasswordForm from '@/components/auth/ForgetPasswordForm.vue'
 
 export default {
   name: 'AuthPage',
@@ -50,26 +56,34 @@ export default {
     PhoneForm,
     OtpForm,
     SignupPasswordForm,
-    LoginPasswordForm
+    LoginPasswordForm,
+    ForgetPasswordForm
   },
   data () {
     return {
-      auth_step: 'phone',
-      is_loading: false,
+      authStep: 'phone',
+      phoneNumber: '',
+      isLoading: false,
+      hadForgottenPassword: false,
       showSnackbar: false,
       snackbarMessage: ''
     }
   },
   methods: {
-    ...mapActions('auth', ['checkUserExistence', 'requestOtpCode', 'checkOtpCode', 'userSignup', 'userLogin']),
+    ...mapActions('auth', ['checkUserExistence', 'requestOtpCode',
+      'checkOtpCode', 'userSignup', 'userLogin', 'changeUserPassword']),
+
     sendPhone (phoneNo) {
+      this.hadForgottenPassword = false
+      this.phoneNumber = phoneNo
+
       this.checkUserExistence({
-        phone: phoneNo
+        phone: this.phoneNumber
       }).then((response) => {
         if (response.data.user === 'found') {
-          this.auth_step = 'login password'
+          this.authStep = 'login password'
         } else if (response.data.user === 'not found') {
-          this.requestOtp(phoneNo)
+          this.requestOtp()
         } else {
           console.log('ERROR in checking user exitence')
         }
@@ -80,11 +94,11 @@ export default {
         }
       })
     },
-    requestOtp (phoneNo) {
+    requestOtp () {
       this.requestOtpCode({
-        phone: phoneNo
+        phone: this.phoneNumber
       }).then(() => {
-        this.auth_step = 'otp'
+        this.authStep = 'otp'
       }).catch((response) => {
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
@@ -94,9 +108,14 @@ export default {
     },
     checkOtp (otpCode) {
       this.checkOtpCode({
+        phone: this.phoneNumber,
         otp_code: Number.parseInt(otpCode)
       }).then(() => {
-        this.auth_step = 'signup password'
+        if (this.hadForgottenPassword) {
+          this.authStep = 'forget password'
+        } else {
+          this.authStep = 'signup password'
+        }
       }).catch((response) => {
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
@@ -104,9 +123,10 @@ export default {
         }
       })
     },
-    signup (password) {
+    signup (inputPassword) {
       this.userSignup({
-        password
+        phone: this.phoneNumber,
+        password: inputPassword
       }).then(() => {
         console.log('in signup then')
       }).catch((response) => {
@@ -116,9 +136,10 @@ export default {
         }
       })
     },
-    login (password) {
+    login (inputPassword) {
       this.userLogin({
-        password
+        phone: this.phoneNumber,
+        password: inputPassword
       }).then(() => {
         console.log('in login then')
       }).catch((response) => {
@@ -129,7 +150,21 @@ export default {
       })
     },
     forgetPassword () {
-      console.log('forget password func')
+      this.hadForgottenPassword = true
+      this.requestOtp()
+    },
+    changePassword (inputPassowrd) {
+      this.changeUserPassword({
+        phone: this.phoneNumber,
+        password: inputPassowrd
+      }).then(() => {
+        console.log('in change password then')
+      }).catch((response) => {
+        for (const key in response.data) {
+          this.snackbarMessage = response.data[key][0]
+          this.showSnackbar = true
+        }
+      })
     }
   }
 }
