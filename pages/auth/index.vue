@@ -16,6 +16,7 @@
         <OtpForm
           v-else-if="authStep === 'otp'"
           :is-submitting-otp="isLoading"
+          :phone-number="phoneNumber"
           @submitForm="checkOtp"
           @changePhone="authStep = 'phone'"
         />
