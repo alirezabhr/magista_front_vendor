@@ -74,14 +74,10 @@ export default {
           console.log('ERROR in checking user exitence')
         }
       }).catch((response) => {
-        this.showSnackbar = false
-        console.log(response)
-        if (response.status === 400) {
-          this.snackbarMessage = response.data.phone[0]
-        } else {
-          this.snackbarMessage = response.data
+        for (const key in response.data) {
+          this.snackbarMessage = response.data[key][0]
+          this.showSnackbar = true
         }
-        this.showSnackbar = true
       })
     },
     requestOtp (phoneNo) {
@@ -90,8 +86,10 @@ export default {
       }).then(() => {
         this.auth_step = 'otp'
       }).catch((response) => {
-        console.log('send otp catch')
-        console.log(response.data)
+        for (const key in response.data) {
+          this.snackbarMessage = response.data[key][0]
+          this.showSnackbar = true
+        }
       })
     },
     checkOtp (otpCode) {
@@ -100,12 +98,10 @@ export default {
       }).then(() => {
         this.auth_step = 'signup password'
       }).catch((response) => {
-        if (response.data.otp_code) {
-          this.snackbarMessage = response.data.otp_code[0]
-        } else {
-          this.snackbarMessage = response.data
+        for (const key in response.data) {
+          this.snackbarMessage = response.data[key][0]
+          this.showSnackbar = true
         }
-        this.showSnackbar = true
       })
     },
     signup (password) {
