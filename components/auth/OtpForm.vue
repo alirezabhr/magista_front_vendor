@@ -21,6 +21,7 @@
           dense
           class="py-2"
           type="number"
+          style="direction: ltr"
         />
       </v-col>
 
@@ -69,15 +70,15 @@ export default {
     return {
       otpCode: '',
       otpRules: [
-        value => !!value || '',
-        v => v.length >= 5 || '',
-        value => Number.isInteger(value) || ''
+        value => !!value || '.کد فعالسازی را وارد کنید',
+        value => !Number.isInteger(value) || '.کد نامعتبر است',
+        value => !value.includes('.') || '.کد نامعتبر است'
       ]
     }
   },
   methods: {
     validateAndSubmitForm () {
-      if (this.$ref.form.validate()) {
+      if (this.$refs.form.validate()) {
         this.$emit('submitForm', this.otpCode)
       }
     }
