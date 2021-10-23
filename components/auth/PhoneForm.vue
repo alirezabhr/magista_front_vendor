@@ -3,6 +3,7 @@
     <v-form
       ref="form"
       lazy-validation
+      @submit.prevent="validateAndSubmitForm"
     >
       <v-card-title>
         <v-col>
@@ -19,7 +20,7 @@
         <v-text-field
           v-model="phoneNo"
           label="شماره موبایل"
-          :rules="rules"
+          :rules="phoneRules"
           outlined
           dense
           class="py-2"
@@ -34,7 +35,7 @@
           rounded
           class="primary font-weight-bold py-5"
           :loading="isSubmittingPhone"
-          @click.prevent="validateAndSubmitForm"
+          type="submit"
         >
           تایید
         </v-btn>
@@ -55,10 +56,11 @@ export default {
   data () {
     return {
       phoneNo: '',
-      rules: [
+      phoneRules: [
         value => !!value || '.شماره موبایل الزامی می‌باشد',
-        v => v.length === 11 || '.شماره موبایل دارای 11 رقم می‌باشد',
-        value => value.startsWith('09') || '.شماره موبایل باید با 09 شروع شود'
+        value => value.length === 11 || '.شماره موبایل دارای 11 رقم می‌باشد',
+        value => value.startsWith('09') || '.شماره موبایل باید با 09 شروع شود',
+        value => !value.includes('.') || '.شماره موبایل نامعتبر است'
       ]
     }
   },

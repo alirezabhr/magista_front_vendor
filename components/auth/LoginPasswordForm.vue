@@ -3,6 +3,7 @@
     <v-form
       ref="form"
       lazy-validation
+      @submit.prevent="validateAndSubmitForm"
     >
       <v-card-title>
         <v-col>
@@ -15,7 +16,7 @@
         <v-text-field
           v-model="password"
           :prepend-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-          :rules="rules"
+          :rules="passwordRules"
           :type="showPassword ? 'text' : 'password'"
           label="رمز عبور"
           hint="حداقل 8 کاراکتر"
@@ -34,7 +35,7 @@
               block
               rounded
               class="primary font-weight-bold py-5"
-              @click.prevent="validateAndSubmitForm"
+              type="submit"
             >
               ورود
             </v-btn>
@@ -74,7 +75,7 @@ export default {
     return {
       password: '',
       showPassword: false,
-      rules: [
+      passwordRules: [
         value => !!value || '.رمز عبور الزامی می‌باشد',
         v => v.length >= 8 || '.رمز عبور باید حداقل 8 کاراکتر باشد'
       ]
