@@ -5,8 +5,8 @@
 <script>
 export default {
   name: 'HomePage',
-  middleware ({ redirect }) {
-    return redirect('/dashboard')
+  mounted () {
+    this.$router.push('dashboard')
   }
 }
 </script>
