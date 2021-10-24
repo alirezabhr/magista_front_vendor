@@ -23,6 +23,15 @@ const actions = {
     }).catch((e) => {
       throw e.response
     })
+  },
+  getInstagramMedia (vuexContext, payload) {
+    const url = 'http://127.0.0.1:8000/' + 'user-media/'
+
+    return axios.get(url, { params: payload }).then((response) => {
+      return response.data
+    }).catch((e) => {
+      throw e.response
+    })
   }
 }
 
