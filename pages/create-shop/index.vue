@@ -1,17 +1,21 @@
 <template>
-  <v-container>
+  <v-container class="pa-0">
     <v-snackbar
       v-model="showSnackbar"
       color="grey darken-3"
     >
       {{ snackbarMessage }}
     </v-snackbar>
-    <v-row class="py-6" justify="center">
+    <v-row justify="center">
       <v-col col="10" sm="6" md="4">
         <InstagramIdForm
           v-if="creationStep === 'instagram username'"
           :is-submitting-ig-id="isLoading"
           @submitForm="retrieveInstagramMedia"
+        />
+        <ShopPreview
+          v-else-if="creationStep === 'shop preview'"
+          :posts-list="postsPreviewList"
         />
       </v-col>
     </v-row>
@@ -22,18 +26,22 @@
 import { mapActions } from 'vuex'
 
 import InstagramIdForm from '@/components/create_shop/InstagramIdForm.vue'
+import ShopPreview from '@/components/create_shop/ShopPreview.vue'
 
 export default {
   name: 'CreateShopPage',
   components: {
-    InstagramIdForm
+    InstagramIdForm,
+    ShopPreview
   },
   data () {
     return {
       showSnackbar: false,
       snackbarMessage: '',
       creationStep: 'instagram username',
-      isLoading: false
+      // creationStep: 'shop preview',
+      isLoading: false,
+      postsPreviewList: []
     }
   },
   methods: {
@@ -48,7 +56,9 @@ export default {
       }).then((response) => {
         this.isLoading = false
         console.log('then in retrirveInstagramMedia')
-        console.log(response)
+        this.postsPreviewList = response
+        console.log(this.postsPreviewList)
+        this.creationStep = 'shop preview'
       }).catch((response) => {
         console.log('catch in retrirveInstagramMedia')
         this.isLoading = false
