@@ -128,6 +128,9 @@ const getters = {
   getUserId: (state) => {
     return state.userId
   },
+  getUserToken: (state) => {
+    return state.userToken
+  },
   isAuthenticated: (state) => {
     return !!state.userToken
   }
