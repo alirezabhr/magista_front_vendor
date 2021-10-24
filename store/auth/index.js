@@ -13,7 +13,7 @@ const mutations = {
   setUserToken (state, token) {
     localStorage.setItem('MagistaToken', 'JWT ' + token)
     axios.defaults.headers.common.Authorization = 'JWT ' + token
-    state.userToken = token
+    state.userToken = 'JWT ' + token
   },
   setUserId (state, id) {
     state.userId = id
