@@ -26,6 +26,7 @@ const actions = {
   },
   getInstagramMedia (vuexContext, payload) {
     const url = 'http://127.0.0.1:8000/' + 'user-media/'
+    axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     return axios.get(url, { params: payload }).then((response) => {
       return response.data
