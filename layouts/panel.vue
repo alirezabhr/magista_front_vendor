@@ -3,7 +3,7 @@
     <v-main class="background">
       <v-container py-0 py-md-5>
         <v-row class="pt-3 pt-md-5">
-          <NavigationDrawer />
+          <NavigationDrawer @logout="logout" />
           <v-col
             sm="9"
             md="6"
@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import NavigationDrawer from '@/components/NavigationDrawer.vue'
 import BottomNavigation from '@/components/BottomNavigation.vue'
 
@@ -30,6 +32,13 @@ export default {
     NavigationDrawer,
     BottomNavigation
   },
-  middleware: ['auth']
+  middleware: ['auth'],
+  methods: {
+    ...mapActions('auth', ['userLogout']),
+
+    logout () {
+      this.userLogout()
+    }
+  }
 }
 </script>
