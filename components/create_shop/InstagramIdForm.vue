@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pb-4">
+  <v-card class="pb-4 ma-6">
     <v-form
       ref="form"
       lazy-validation
