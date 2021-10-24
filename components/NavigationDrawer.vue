@@ -29,7 +29,13 @@
       <v-divider class="mx-2" />
 
       <div class="pa-2">
-        <v-btn block class="primaryVariant2"> خروج از حساب </v-btn>
+        <v-btn
+          block
+          class="primaryVariant2"
+          @click.prevent="$emit('logout')"
+        >
+          خروج از حساب
+        </v-btn>
       </div>
     </v-navigation-drawer>
   </v-card>
