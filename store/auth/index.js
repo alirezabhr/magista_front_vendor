@@ -118,6 +118,7 @@ const actions = {
   },
   userLogout (vuexContext) {
     vuexContext.commit('removeUserToken')
+    this.$router.push('/auth')
   }
 }
 
