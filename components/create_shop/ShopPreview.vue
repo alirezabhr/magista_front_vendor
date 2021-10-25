@@ -21,7 +21,7 @@
       <v-spacer />
       <v-btn
         text
-        @click.prevent="$emit('submit')"
+        @click.prevent="submit"
       >
         ثبت محصولات و ادامه
         <v-icon>mdi-arrow-left</v-icon>
@@ -99,6 +99,9 @@ export default {
     undo () {
       const removedPost = this.removedPostList.pop()
       this.$emit('addItem', removedPost)
+    },
+    submit () {
+      this.$emit('submit', this.removedPostList)
     }
   }
 }
