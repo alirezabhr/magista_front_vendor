@@ -16,6 +16,9 @@
         <ShopPreview
           v-else-if="creationStep === 'shop preview'"
           :posts-list="postsPreviewList"
+          @removeItem="removePost"
+          @addItem="addPosts"
+          @submit="submitPreviewPosts"
         />
       </v-col>
     </v-row>
@@ -38,8 +41,8 @@ export default {
     return {
       showSnackbar: false,
       snackbarMessage: '',
-      creationStep: 'instagram username',
-      // creationStep: 'shop preview',
+      // creationStep: 'instagram username',
+      creationStep: 'shop preview',
       isLoading: false,
       postsPreviewList: []
     }
@@ -57,18 +60,27 @@ export default {
         this.isLoading = false
         console.log('then in retrirveInstagramMedia')
         this.postsPreviewList = response
-        console.log(this.postsPreviewList)
         this.creationStep = 'shop preview'
       }).catch((response) => {
         console.log('catch in retrirveInstagramMedia')
         this.isLoading = false
         if (response.status === 404) {
           this.snackbarMessage = response.data.error[0]
-          this.showSnackbar = true
         } else {
+          this.snackbarMessage = 'خطا در دریافت اطلاعات اینستاگرام'
           console.log(response)
         }
+        this.showSnackbar = true
       })
+    },
+    removePost (post) {
+      this.postsPreviewList = this.postsPreviewList.filter(item => item !== post)
+    },
+    addPosts (post) {
+      this.postsPreviewList.splice(post.index, 0, post)
+      this.postsPreviewList.sort(
+        function (first, second) { return first.index - second.index }
+      )
     }
   }
 }

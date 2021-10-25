@@ -95,6 +95,10 @@ export default {
     removeItem (post) {
       this.removedPostList.push(post)
       this.$emit('removeItem', post)
+    },
+    undo () {
+      const removedPost = this.removedPostList.pop()
+      this.$emit('addItem', removedPost)
     }
   }
 }
