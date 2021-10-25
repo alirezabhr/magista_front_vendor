@@ -9,15 +9,15 @@
         محصولاتی که مایل به نمایش آنها <strong>نیستید</strong> را حذف کنید.
       </v-alert>
     </v-card-title>
-    <v-divider class="mx-5 pb-10" />
-    <v-row no-gutters>
+    <v-divider class="mx-5 pb-5" />
+
+    <v-row no-gutters dir="ltr">
       <v-col
         v-for="post in postsList"
         :key="post.id"
         cols="4"
-        class=""
       >
-        <v-row justify="center" class="ma-0">
+        <v-card>
           <v-img
             contain
             aspect-ratio="1"
@@ -37,7 +37,22 @@
               </v-row>
             </template>
           </v-img>
-        </v-row>
+          <v-card-title class="pa-0">
+            <v-btn
+              dark
+              small
+              fab
+              top
+              right
+              absolute
+              color="red"
+              style="right: 4px; top: 4px;"
+              @click.prevent="removeItem(post)"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+        </v-card>
       </v-col>
     </v-row>
   </v-card>
@@ -51,7 +66,11 @@ export default {
       type: Array,
       required: true
     }
+  },
+  data () {
+    return {
+      removedPostList: []
+    }
   }
-
 }
 </script>
