@@ -9,6 +9,26 @@
         محصولاتی که مایل به نمایش آنها <strong>نیستید</strong> را حذف کنید.
       </v-alert>
     </v-card-title>
+
+    <v-row class="px-5 mb-5">
+      <v-btn
+        icon
+        color="grey darken-4"
+        :disabled="removedPostList.length == 0"
+        @click.prevent="undo"
+      >
+        <v-icon>mdi-undo mdi-flip-h</v-icon>
+      </v-btn>
+      <v-spacer />
+      <v-btn
+        text
+        @click.prevent="$emit('submit')"
+      >
+        ثبت محصولات و ادامه
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+    </v-row>
+
     <v-divider class="mx-5 pb-5" />
 
     <v-row no-gutters dir="ltr">
