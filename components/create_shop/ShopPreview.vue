@@ -9,7 +9,6 @@
         محصولاتی که مایل به نمایش آنها <strong>نیستید</strong> را حذف کنید.
       </v-alert>
     </v-card-title>
-
     <v-row class="px-5 mb-5">
       <v-btn
         icon
@@ -90,6 +89,12 @@ export default {
   data () {
     return {
       removedPostList: []
+    }
+  },
+  methods: {
+    removeItem (post) {
+      this.removedPostList.push(post)
+      this.$emit('removeItem', post)
     }
   }
 }
