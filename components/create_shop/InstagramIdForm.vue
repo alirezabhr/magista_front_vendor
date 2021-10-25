@@ -14,7 +14,7 @@
 
       <v-col class="py-0 px-8">
         <div class="text-subtitle-2 grey--text">
-          مثال: alireza_bhr
+          مثال: linkish.ir
         </div>
         <v-text-field
           v-model="instagramId"
