@@ -40,7 +40,7 @@ const actions = {
       instagram_username: instagramUsername
     }
 
-    return axios.post(url, { params: queryParams }).then((response) => {
+    return axios.post(url, null, { params: queryParams }).then((response) => {
       vuexContext.commit('setInstagramUsername', instagramUsername)
       vuexContext.commit('setUserProfileInfo', response.data)
     }).catch((e) => {
@@ -95,6 +95,9 @@ const actions = {
     }).catch((e) => {
       throw e.response
     })
+  },
+  createAllProducts () {
+    console.log('in create products')
   }
 }
 
