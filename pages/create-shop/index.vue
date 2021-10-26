@@ -7,7 +7,7 @@
       {{ snackbarMessage }}
     </v-snackbar>
     <v-row justify="center">
-      <v-col col="10" sm="6" md="4">
+      <v-col col="10" sm="6" md="5" lg="4">
         <InstagramIdForm
           v-if="creationStep === 'instagram username'"
           :is-submitting-ig-id="isSubmitting"
@@ -15,14 +15,16 @@
         />
         <ShopDataForm
           v-else-if="creationStep === 'shop form'"
+          :is-submitting-form="isSubmitting"
           @submit="submitShopForm"
         />
         <ShopPreview
           v-else-if="creationStep === 'shop preview'"
           :posts-list="postsPreviewList"
+          :is-submitting="isSubmitting"
           @removeItem="removePost"
           @addItem="addPosts"
-          @submit="submitPreviewPosts"
+          @submit="removeExtraPostsAndCreateProducts"
         />
       </v-col>
     </v-row>
@@ -47,8 +49,7 @@ export default {
     return {
       showSnackbar: false,
       snackbarMessage: '',
-      // creationStep: 'instagram username',
-      creationStep: 'shop preview',
+      creationStep: 'instagram username',
       isSubmitting: false,
       isGettingQueryMedia: false,
       postsPreviewList: []
@@ -56,7 +57,7 @@ export default {
   },
   methods: {
     ...mapActions('shop', ['saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile',
-      'createShop', 'removeExtraMediaQuery']),
+      'createShop', 'removeExtraMediaQuery', 'createAllProducts']),
 
     removePost (post) {
       this.postsPreviewList = this.postsPreviewList.filter(item => item !== post)
@@ -106,7 +107,7 @@ export default {
       })
     },
 
-    submitShopData (shopData) {
+    submitShopForm (shopData) {
       this.isSubmitting = true
 
       if (this.postsPreviewList.length === 0) {
@@ -130,8 +131,30 @@ export default {
       })
     },
 
-    submitPreviewPosts (removedPostList) {
-      console.log('')
+    removeExtraPostsAndCreateProducts (removedPostList) {
+      this.isSubmitting = true
+      let didRemoveExtraPosts = false
+      console.log('in removeExtraPostsAndCreateProducts')
+
+      this.removeExtraMediaQuery({
+        extra_posts: removedPostList
+      }).then(() => {
+        didRemoveExtraPosts = true
+      }).catch((response) => {
+        console.log('catch in removeExtraMediaQuery')
+        this.isSubmitting = false
+        didRemoveExtraPosts = false
+        for (const key in response.data) {
+          this.snackbarMessage = response.data[key][0]
+          this.showSnackbar = true
+        }
+      })
+
+      if (!didRemoveExtraPosts) {
+        return
+      }
+
+      this.createAllProducts()
     }
   }
 }
