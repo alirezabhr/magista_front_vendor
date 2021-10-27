@@ -89,6 +89,10 @@ export default {
     postsList: {
       type: Array,
       required: true
+    },
+    postsCount: {
+      type: Number,
+      required: true
     }
   },
   data () {
