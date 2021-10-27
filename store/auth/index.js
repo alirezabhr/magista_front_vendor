@@ -28,7 +28,7 @@ const mutations = {
 
 const actions = {
   checkUserExistence (vuexContext, payload) {
-    const url = 'http://127.0.0.1:8000/' + 'user/'
+    const url = process.env.baseURL + 'user/'
 
     return axios.post(
       url,
@@ -41,7 +41,7 @@ const actions = {
     })
   },
   requestOtpCode (vuexContext, payload) {
-    const url = 'http://127.0.0.1:8000/' + 'send-otp/'
+    const url = process.env.baseURL + 'send-otp/'
 
     return axios.post(
       url,
@@ -53,7 +53,7 @@ const actions = {
     })
   },
   checkOtpCode (vuexContext, payload) {
-    const url = 'http://127.0.0.1:8000/' + 'check-otp/'
+    const url = process.env.baseURL + 'check-otp/'
 
     return axios.post(
       url,
@@ -63,7 +63,7 @@ const actions = {
     })
   },
   userSignup (vuexContext, payload) {
-    const url = 'http://127.0.0.1:8000/' + 'signup/'
+    const url = process.env.baseURL + 'signup/'
 
     return axios.post(
       url,
@@ -81,7 +81,7 @@ const actions = {
     })
   },
   userLogin (vuexContext, payload) {
-    const url = 'http://127.0.0.1:8000/' + 'login/'
+    const url = process.env.baseURL + 'login/'
 
     return axios.post(
       url,
@@ -99,7 +99,7 @@ const actions = {
     })
   },
   changeUserPassword (vuexContext, payload) {
-    const url = 'http://127.0.0.1:8000/' + 'user/'
+    const url = process.env.baseURL + 'user/'
 
     return axios.put(
       url,

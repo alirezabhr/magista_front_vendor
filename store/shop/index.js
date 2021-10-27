@@ -43,7 +43,7 @@ const actions = {
     const userPk = vuexContext.rootGetters['auth/getUserId']
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
-    const url = 'http://127.0.0.1:8000/' + `shop/${userPk}/`
+    const url = process.env.baseURL + `shop/${userPk}/`
 
     return axios.get(url).then((response) => {
       vuexContext.commit('setShops', response.data)
@@ -53,7 +53,7 @@ const actions = {
     })
   },
   saveInstagramMediaQueryFile (vuexContext, instagramUsername) {
-    const url = 'http://127.0.0.1:8000/' + 'user-media/'
+    const url = process.env.baseURL + 'user-media/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     const queryParams = {
@@ -68,7 +68,7 @@ const actions = {
     })
   },
   async getInstagramMediaQueryFile (vuexContext) {
-    const url = 'http://127.0.0.1:8000/' + 'user-media/'
+    const url = process.env.baseURL + 'user-media/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     let hasNext = true
@@ -90,7 +90,7 @@ const actions = {
   },
   removeExtraMediaQuery (vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
-    const url = 'http://127.0.0.1:8000/' + 'user-media/'
+    const url = process.env.baseURL + 'user-media/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     const queryParams = {
@@ -107,7 +107,7 @@ const actions = {
     const userPk = vuexContext.rootGetters['auth/getUserId']
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
-    const url = 'http://127.0.0.1:8000/' + `shop/${userPk}/`
+    const url = process.env.baseURL + `shop/${userPk}/`
 
     payload.vendor = userPk
     payload.instagram_username = vuexContext.getters.getInstagramUsername
@@ -121,7 +121,7 @@ const actions = {
     })
   },
   createAllProducts (vuexContext) {
-    const url = 'http://127.0.0.1:8000/' + 'p/products/'
+    const url = process.env.baseURL + 'p/products/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     const payload = {
