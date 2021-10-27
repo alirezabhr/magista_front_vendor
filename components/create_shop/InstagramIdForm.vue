@@ -30,6 +30,9 @@
 
       <v-card-actions class="px-8">
         <v-col>
+          <v-row v-if="isSubmittingIgId" justify="center" class="mb-1 primary--text text-caption">
+            در حال بررسی صفحه اینستاگرام...
+          </v-row>
           <v-btn
             block
             class="primary font-weight-bold py-5"
