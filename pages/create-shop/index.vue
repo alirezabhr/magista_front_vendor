@@ -104,14 +104,6 @@ export default {
     submitShopForm (shopData) {
       this.isSubmitting = true
 
-      if (this.getPostsPreviewList.length === 0) {
-        this.retrieveInstagramMedia()
-        this.isSubmitting = false
-        this.snackbarMessage = 'در حال دریافت محتوای ایسنتاگرام. لطفا کمی بعد تلاش کنید.'
-        this.showSnackbar = true
-        return
-      }
-
       this.createShop(shopData).then(() => {
         console.log('then in submit shop data')
         this.isSubmitting = false
@@ -125,12 +117,18 @@ export default {
       })
     },
 
-    removeExtraPostsAndCreateProducts (removedPostList) {
+    async removeExtraPostsAndCreateProducts (removedPostList) {
       this.isSubmitting = true
       let didRemoveExtraPosts = false
-      console.log('in removeExtraPostsAndCreateProducts')
 
-      this.removeExtraMediaQuery({
+      if (this.isGettingQueryMedia) {
+        this.isSubmitting = false
+        this.snackbarMessage = 'در حال دریافت محتوای ایسنتاگرام. لطفا کمی صبر کنید.'
+        this.showSnackbar = true
+        return
+      }
+
+      await this.removeExtraMediaQuery({
         extra_posts: removedPostList
       }).then(() => {
         didRemoveExtraPosts = true
