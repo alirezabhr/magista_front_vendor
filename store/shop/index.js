@@ -121,12 +121,12 @@ const actions = {
     })
   },
   createAllProducts (vuexContext) {
-    const url = 'http://127.0.0.1:8000/' + 'products'
+    const url = 'http://127.0.0.1:8000/' + 'p/products/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     const payload = {
       instagram_username: vuexContext.getters.getInstagramUsername,
-      shop: vuexContext.getters.getCurrentShop
+      shop: vuexContext.getters.getCurrentShop.id
     }
 
     return axios.post(url, payload).catch((e) => {
