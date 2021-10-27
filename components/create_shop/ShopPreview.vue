@@ -40,7 +40,7 @@
         <v-card>
           <v-img
             contain
-            aspect-ratio="1"
+            :aspect-ratio="1"
             :src="imageSource(post.thumbnail_src)"
             style="border-style: solid; border-width: 0.5px; border-color: grey;"
           >
@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     imageSource (src) {
-      return `http://127.0.0.1:8000/${src}`
+      return `${process.env.baseURL}${src}`
     },
     removeItem (post) {
       this.removedPostList.push(post)
