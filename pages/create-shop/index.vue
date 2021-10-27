@@ -92,6 +92,7 @@ export default {
     },
 
     retrieveInstagramMedia () {
+      console.log('in retrieveInstagramMedia')
       this.isGettingQueryMedia = true
 
       this.getInstagramMediaQueryFile().then((response) => {
@@ -154,7 +155,15 @@ export default {
         return
       }
 
-      this.createAllProducts()
+      this.createAllProducts().then(() => {
+        this.isSubmitting = false
+        this.$router.push('dashboard')
+      }).catch(() => {
+        console.log('catch in createAllProducts')
+        this.isSubmitting = false
+        this.snackbarMessage = 'خطا در ذخیره اطلاعات. لطفا کمی بعد تلاش کنید.'
+        this.showSnackbar = true
+      })
     }
   }
 }
