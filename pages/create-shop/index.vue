@@ -20,8 +20,9 @@
         />
         <ShopPreview
           v-else-if="creationStep === 'shop preview'"
-          :posts-list="postsPreviewList"
+          :posts-list="getPostsPreviewList"
           :is-submitting="isSubmitting"
+          :posts-count="getPostsCount"
           @removeItem="removePost"
           @addItem="addPosts"
           @submit="removeExtraPostsAndCreateProducts"
@@ -32,7 +33,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import InstagramIdForm from '@/components/create_shop/InstagramIdForm.vue'
 import ShopDataForm from '@/components/create_shop/ShopDataForm.vue'
@@ -51,23 +52,16 @@ export default {
       snackbarMessage: '',
       creationStep: 'instagram username',
       isSubmitting: false,
-      isGettingQueryMedia: false,
-      postsPreviewList: []
+      isGettingQueryMedia: false
     }
+  },
+  computed: {
+    ...mapGetters('shop', ['getPostsPreviewList', 'getPostsCount'])
   },
   methods: {
     ...mapActions('shop', ['saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile',
       'createShop', 'removeExtraMediaQuery', 'createAllProducts']),
-
-    removePost (post) {
-      this.postsPreviewList = this.postsPreviewList.filter(item => item !== post)
-    },
-    addPosts (post) {
-      this.postsPreviewList.splice(post.index, 0, post)
-      this.postsPreviewList.sort(
-        function (first, second) { return first.index - second.index }
-      )
-    },
+    ...mapMutations('shop', ['removePost', 'addPosts']),
 
     saveMediaQuery (igUsername) {
       console.log('in saveMediaQuery')
@@ -95,10 +89,9 @@ export default {
       console.log('in retrieveInstagramMedia')
       this.isGettingQueryMedia = true
 
-      this.getInstagramMediaQueryFile().then((response) => {
+      this.getInstagramMediaQueryFile().then(() => {
         console.log('then in retrirveInstagramMedia')
         this.isGettingQueryMedia = false
-        this.postsPreviewList = response
       }).catch((response) => {
         console.log('catch in retrirveInstagramMedia')
         console.log(response.data)
@@ -111,7 +104,7 @@ export default {
     submitShopForm (shopData) {
       this.isSubmitting = true
 
-      if (this.postsPreviewList.length === 0) {
+      if (this.getPostsPreviewList.length === 0) {
         this.retrieveInstagramMedia()
         this.isSubmitting = false
         this.snackbarMessage = 'در حال دریافت محتوای ایسنتاگرام. لطفا کمی بعد تلاش کنید.'
