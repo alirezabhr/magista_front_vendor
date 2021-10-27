@@ -64,11 +64,9 @@ export default {
     ...mapMutations('shop', ['removePost', 'addPosts']),
 
     saveMediaQuery (igUsername) {
-      console.log('in saveMediaQuery')
       this.isSubmitting = true
 
       this.saveInstagramMediaQueryFile(igUsername).then(() => {
-        console.log('then in saveInstagramMediaQuery')
         this.isSubmitting = false
         this.creationStep = 'shop form'
         this.retrieveInstagramMedia()
@@ -86,11 +84,9 @@ export default {
     },
 
     retrieveInstagramMedia () {
-      console.log('in retrieveInstagramMedia')
       this.isGettingQueryMedia = true
 
       this.getInstagramMediaQueryFile().then(() => {
-        console.log('then in retrirveInstagramMedia')
         this.isGettingQueryMedia = false
       }).catch((response) => {
         console.log('catch in retrirveInstagramMedia')
@@ -105,7 +101,6 @@ export default {
       this.isSubmitting = true
 
       this.createShop(shopData).then(() => {
-        console.log('then in submit shop data')
         this.isSubmitting = false
         this.creationStep = 'shop preview'
       }).catch((response) => {
