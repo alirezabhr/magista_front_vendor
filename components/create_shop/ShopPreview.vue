@@ -21,6 +21,7 @@
       <v-spacer />
       <v-btn
         text
+        :loading="isSubmitting"
         @click.prevent="submit"
       >
         ثبت محصولات و ادامه
@@ -40,7 +41,7 @@
           <v-img
             contain
             aspect-ratio="1"
-            :src="post.thumbnail_src"
+            :src="imageSource(post.thumbnail_src)"
             style="border-style: solid; border-width: 0.5px; border-color: grey;"
           >
             <template #placeholder>
@@ -81,6 +82,10 @@
 export default {
   name: 'ShopPreview',
   props: {
+    isSubmitting: {
+      type: Boolean,
+      required: true
+    },
     postsList: {
       type: Array,
       required: true
@@ -92,6 +97,9 @@ export default {
     }
   },
   methods: {
+    imageSource (src) {
+      return `http://127.0.0.1:8000/${src}`
+    },
     removeItem (post) {
       this.removedPostList.push(post)
       this.$emit('removeItem', post)
