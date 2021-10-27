@@ -4,7 +4,8 @@ const state = () => ({
   shops: [],
   currentShop: null,
   instagramUsername: null,
-  userProfileInfo: null
+  userProfileInfo: null,
+  postsPreviewList: []
 })
 
 const mutations = {
@@ -22,6 +23,18 @@ const mutations = {
   },
   setUserProfileInfo (state, profileInfo) {
     state.userProfileInfo = profileInfo
+  },
+  concatToPostPreviewList (state, postsList) {
+    state.postsPreviewList = state.postsPreviewList.concat(postsList)
+  },
+  removePost (state, post) {
+    state.postsPreviewList = state.postsPreviewList.filter(item => item !== post)
+  },
+  addPosts (state, post) {
+    state.postsPreviewList.splice(post.index, 0, post)
+    state.postsPreviewList.sort(
+      function (first, second) { return first.index - second.index }
+    )
   }
 }
 
@@ -33,7 +46,7 @@ const actions = {
     const url = 'http://127.0.0.1:8000/' + `shop/${userPk}/`
 
     return axios.get(url).then((response) => {
-      vuexContext.commit('setShopsName', response.data)
+      vuexContext.commit('setShops', response.data)
       return response.data
     }).catch((e) => {
       throw e.response
@@ -54,19 +67,26 @@ const actions = {
       throw e.response
     })
   },
-  getInstagramMediaQueryFile (vuexContext) {
+  async getInstagramMediaQueryFile (vuexContext) {
     const url = 'http://127.0.0.1:8000/' + 'user-media/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
-    const queryParams = {
-      instagram_username: vuexContext.getters.getInstagramUsername
-    }
+    let hasNext = true
+    let pageNo = 1
+    while (hasNext) {
+      const queryParams = {
+        instagram_username: vuexContext.getters.getInstagramUsername,
+        page: pageNo
+      }
+      pageNo = pageNo + 1
 
-    return axios.get(url, { params: queryParams }).then((response) => {
-      return response.data
-    }).catch((e) => {
-      throw e.response
-    })
+      await axios.get(url, { params: queryParams }).then((response) => {
+        vuexContext.commit('concatToPostPreviewList', response.data.posts_data)
+        hasNext = response.data.has_next
+      }).catch((e) => {
+        throw e.response
+      })
+    }
   },
   removeExtraMediaQuery (vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
@@ -97,7 +117,6 @@ const actions = {
       vuexContext.commit('appendShop', response.data)
       vuexContext.commit('setCurrentShop', response.data)
     }).catch((e) => {
-      console.log(e.response)
       throw e.response
     })
   },
@@ -125,6 +144,12 @@ const getters = {
   },
   getCurrentShop: (state) => {
     return state.currentShop
+  },
+  getPostsPreviewList: (state) => {
+    return state.postsPreviewList
+  },
+  getPostsCount: (state) => {
+    return state.userProfileInfo.posts_count
   }
 }
 
