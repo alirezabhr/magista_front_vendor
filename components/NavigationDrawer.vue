@@ -3,7 +3,7 @@
     <v-navigation-drawer class="surface accent-4" permanent>
       <v-list-item class="primary" dark>
         <v-list-item-content>
-          <v-list-item-title class="text-h5 my-3"> مغازه </v-list-item-title>
+          <v-list-item-title class="text-h5 my-3"> مگیستا </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
