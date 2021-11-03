@@ -41,7 +41,7 @@ const actions = {
     })
   },
   requestOtpCode (vuexContext, payload) {
-    const url = process.env.baseURL + 'send-otp/'
+    const url = process.env.baseURL + 'user/send-otp/'
 
     return axios.post(
       url,
@@ -53,7 +53,7 @@ const actions = {
     })
   },
   checkOtpCode (vuexContext, payload) {
-    const url = process.env.baseURL + 'check-otp/'
+    const url = process.env.baseURL + 'user/check-otp/'
 
     return axios.post(
       url,
@@ -63,7 +63,7 @@ const actions = {
     })
   },
   userSignup (vuexContext, payload) {
-    const url = process.env.baseURL + 'signup/'
+    const url = process.env.baseURL + 'user/signup/'
 
     return axios.post(
       url,
@@ -81,7 +81,7 @@ const actions = {
     })
   },
   userLogin (vuexContext, payload) {
-    const url = process.env.baseURL + 'login/'
+    const url = process.env.baseURL + 'user/login/'
 
     return axios.post(
       url,

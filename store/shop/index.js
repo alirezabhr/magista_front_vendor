@@ -53,7 +53,7 @@ const actions = {
     })
   },
   saveInstagramMediaQueryFile (vuexContext, instagramUsername) {
-    const url = process.env.baseURL + 'user-media/'
+    const url = process.env.baseURL + 'shop/media-query/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     const queryParams = {
@@ -68,7 +68,7 @@ const actions = {
     })
   },
   async getInstagramMediaQueryFile (vuexContext) {
-    const url = process.env.baseURL + 'user-media/'
+    const url = process.env.baseURL + 'shop/media-query/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     let hasNext = true
@@ -90,7 +90,7 @@ const actions = {
   },
   removeExtraMediaQuery (vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
-    const url = process.env.baseURL + 'user-media/'
+    const url = process.env.baseURL + 'shop/media-query/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     const queryParams = {
@@ -121,12 +121,12 @@ const actions = {
     })
   },
   createAllProducts (vuexContext) {
-    const url = process.env.baseURL + 'p/products/'
+    const shopPk = vuexContext.getters.getCurrentShop.id
+    const url = process.env.baseURL + `shop/${shopPk}/products/`
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
     const payload = {
-      instagram_username: vuexContext.getters.getInstagramUsername,
-      shop: vuexContext.getters.getCurrentShop.id
+      instagram_username: vuexContext.getters.getInstagramUsername
     }
 
     return axios.post(url, payload).catch((e) => {
