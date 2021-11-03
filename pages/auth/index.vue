@@ -75,18 +75,21 @@ export default {
       'checkOtpCode', 'userSignup', 'userLogin', 'changeUserPassword']),
 
     sendPhone (phoneNo) {
+      this.isLoading = true
       this.hadForgottenPassword = false
       this.phoneNumber = phoneNo
 
       this.checkUserExistence({
         phone: this.phoneNumber
       }).then((response) => {
+        this.isLoading = false
         if (response.data.user === 'found') {
           this.authStep = 'login password'
         } else if (response.data.user === 'not found') {
           this.requestOtp()
         }
       }).catch((response) => {
+        this.isLoading = false
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true
@@ -94,11 +97,15 @@ export default {
       })
     },
     requestOtp () {
+      this.isLoading = true
+
       this.requestOtpCode({
         phone: this.phoneNumber
       }).then(() => {
+        this.isLoading = false
         this.authStep = 'otp'
       }).catch((response) => {
+        this.isLoading = false
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true
@@ -106,16 +113,20 @@ export default {
       })
     },
     checkOtp (otpCode) {
+      this.isLoading = true
+
       this.checkOtpCode({
         phone: this.phoneNumber,
         otp_code: Number.parseInt(otpCode)
       }).then(() => {
+        this.isLoading = false
         if (this.hadForgottenPassword) {
           this.authStep = 'forget password'
         } else {
           this.authStep = 'signup password'
         }
       }).catch((response) => {
+        this.isLoading = false
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true
@@ -123,12 +134,15 @@ export default {
       })
     },
     signup (inputPassword) {
+      this.isLoading = true
       this.userSignup({
         phone: this.phoneNumber,
         password: inputPassword
       }).then(() => {
+        this.isLoading = false
         this.redirect()
       }).catch((response) => {
+        this.isLoading = false
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true
@@ -136,12 +150,15 @@ export default {
       })
     },
     login (inputPassword) {
+      this.isLoading = true
       this.userLogin({
         phone: this.phoneNumber,
         password: inputPassword
       }).then(() => {
+        this.isLoading = false
         this.redirect()
       }).catch((response) => {
+        this.isLoading = false
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true
@@ -153,12 +170,15 @@ export default {
       this.requestOtp()
     },
     changePassword (inputPassowrd) {
+      this.isLoading = true
       this.changeUserPassword({
         phone: this.phoneNumber,
         password: inputPassowrd
       }).then(() => {
+        this.isLoading = false
         this.redirect()
       }).catch((response) => {
+        this.isLoading = false
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true

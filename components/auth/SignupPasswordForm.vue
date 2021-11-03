@@ -34,6 +34,7 @@
           rounded
           class="primary font-weight-bold py-5"
           type="submit"
+          :loading="isSubmittingPassword"
         >
           ثبت رمز عبور و ورود
         </v-btn>
@@ -45,6 +46,12 @@
 <script>
 export default {
   name: 'SignupPasswordForm',
+  props: {
+    isSubmittingPassword: {
+      type: Boolean,
+      required: true
+    }
+  },
   data () {
     return {
       password: '',
