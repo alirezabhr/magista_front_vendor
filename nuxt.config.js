@@ -37,6 +37,8 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
+    // https://typescript.nuxtjs.org
+    '@nuxt/typescript-build',
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify'
   ],
@@ -94,7 +96,7 @@ export default {
   },
 
   env: {
-    baseURL: 'http://127.0.0.1:8000/'
+    baseURL: 'https://api.magista.ir/'
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
