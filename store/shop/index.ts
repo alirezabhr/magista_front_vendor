@@ -1,36 +1,51 @@
+import { GetterTree, MutationTree, ActionTree } from "vuex"
+import { RootState } from '../index'
+import Shop from '~/models/shop'
+import InstagramProfileInfo from '~/models/instagram_profile_info'
+import PostPreview from "~/models/post_preview"
 import axios from 'axios'
 
-const state = () => ({
+const namespace = 'shop'
+
+interface ShopState {
+  shops: Shop[],
+  currentShop: Shop | null,
+  instagramUsername: string | null,
+  userIgProfileInfo: InstagramProfileInfo | null,
+  postsPreviewList: PostPreview[]
+}
+
+const state = (): ShopState => ({
   shops: [],
   currentShop: null,
   instagramUsername: null,
-  userProfileInfo: null,
+  userIgProfileInfo: null,
   postsPreviewList: []
 })
 
-const mutations = {
-  setShops (state, shops) {
+const mutations = <MutationTree<ShopState>>{
+  setShops(state, shops) {
     state.shops = shops
   },
-  appendShop (state, shop) {
+  appendShop(state, shop) {
     state.shops.push(shop)
   },
-  setCurrentShop (state, shop) {
+  setCurrentShop(state, shop) {
     state.currentShop = shop
   },
-  setInstagramUsername (state, username) {
+  setInstagramUsername(state, username) {
     state.instagramUsername = username
   },
-  setUserProfileInfo (state, profileInfo) {
-    state.userProfileInfo = profileInfo
+  setUserIgProfileInfo(state, profileInfo) {
+    state.userIgProfileInfo = profileInfo
   },
-  concatToPostPreviewList (state, postsList) {
+  concatToPostPreviewList(state, postsList) {
     state.postsPreviewList = state.postsPreviewList.concat(postsList)
   },
-  removePost (state, post) {
+  removePost(state, post) {
     state.postsPreviewList = state.postsPreviewList.filter(item => item !== post)
   },
-  addPosts (state, post) {
+  addPosts(state, post) {
     state.postsPreviewList.splice(post.index, 0, post)
     state.postsPreviewList.sort(
       function (first, second) { return first.index - second.index }
@@ -38,8 +53,8 @@ const mutations = {
   }
 }
 
-const actions = {
-  getVendorShops (vuexContext) {
+const actions = <ActionTree<ShopState, RootState>>{
+  getVendorShops(vuexContext) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
@@ -52,7 +67,7 @@ const actions = {
       throw e.response
     })
   },
-  saveInstagramMediaQueryFile (vuexContext, instagramUsername) {
+  saveInstagramMediaQueryFile(vuexContext, instagramUsername) {
     const url = process.env.baseURL + 'shop/media-query/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
@@ -62,12 +77,12 @@ const actions = {
 
     return axios.post(url, null, { params: queryParams }).then((response) => {
       vuexContext.commit('setInstagramUsername', instagramUsername)
-      vuexContext.commit('setUserProfileInfo', response.data)
+      vuexContext.commit('setUserIgProfileInfo', response.data)
     }).catch((e) => {
       throw e.response
     })
   },
-  async getInstagramMediaQueryFile (vuexContext) {
+  async getInstagramMediaQueryFile(vuexContext) {
     const url = process.env.baseURL + 'shop/media-query/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
@@ -88,7 +103,7 @@ const actions = {
       })
     }
   },
-  removeExtraMediaQuery (vuexContext, payload) {
+  removeExtraMediaQuery(vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
     const url = process.env.baseURL + 'shop/media-query/'
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
@@ -103,7 +118,7 @@ const actions = {
       throw e.response
     })
   },
-  createShop (vuexContext, payload) {
+  createShop(vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
 
@@ -111,7 +126,7 @@ const actions = {
 
     payload.vendor = userPk
     payload.instagram_username = vuexContext.getters.getInstagramUsername
-    payload.instagram_id = vuexContext.getters.getUserProfileInfo.id
+    payload.instagram_id = vuexContext.getters.getUserIgProfileInfo.id
 
     return axios.post(url, payload).then((response) => {
       vuexContext.commit('appendShop', response.data)
@@ -120,7 +135,7 @@ const actions = {
       throw e.response
     })
   },
-  createAllProducts (vuexContext) {
+  createAllProducts(vuexContext) {
     const shopPk = vuexContext.getters.getCurrentShop.id
     const url = process.env.baseURL + `shop/${shopPk}/products/`
     axios.defaults.headers.common.Authorization = vuexContext.rootGetters['auth/getUserToken']
@@ -135,12 +150,12 @@ const actions = {
   }
 }
 
-const getters = {
+const getters = <GetterTree<ShopState, RootState>>{
   getInstagramUsername: (state) => {
     return state.instagramUsername
   },
-  getUserProfileInfo: (state) => {
-    return state.userProfileInfo
+  getUserIgProfileInfo: (state) => {
+    return state.userIgProfileInfo
   },
   getCurrentShop: (state) => {
     return state.currentShop
@@ -149,12 +164,14 @@ const getters = {
     return state.postsPreviewList
   },
   getPostsCount: (state) => {
-    return state.userProfileInfo.posts_count
+    if (state.userIgProfileInfo)
+      return state.userIgProfileInfo.postsCount
+    return 0
   }
 }
 
 export default {
-  namespaced: true,
+  namespace,
   state,
   mutations,
   getters,
