@@ -1,12 +1,37 @@
+import { GetterTree, MutationTree, ActionTree } from "vuex"
+import { RootState } from '../index'
 import axios from 'axios'
 
-const state = () => ({
+
+const namespace = 'auth'
+
+interface AuthState {
+  userPhone: string
+  userToken: string | null
+  userId: number
+}
+
+const state = () : AuthState => ({
   userPhone: '',
-  userToken: localStorage.getItem('MagistaToken') || '',
-  userId: localStorage.getItem('MagistaId') || 0
+  userToken: null,
+  userId: 0
 })
 
-const mutations = {
+const mutations = <MutationTree<AuthState>>{
+  initialAuthStore (state) {
+    if (!process.client) { // localStorage is only available on client side
+      return
+    }
+
+    // initial user token
+    state.userToken = localStorage.getItem('MagistaToken')
+
+    // initial user id
+    const userIdStr = localStorage.getItem('MagistaId')
+    if (userIdStr) {
+      state.userId = JSON.parse(userIdStr)
+    }
+  },
   setUserPhone (state, phone) {
     state.userPhone = phone
   },
@@ -26,7 +51,7 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions = <ActionTree<AuthState, RootState>>{
   checkUserExistence (vuexContext, payload) {
     const url = process.env.baseURL + 'user/'
 
@@ -122,7 +147,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters = <GetterTree<AuthState, RootState>>{
   getUserPhone: (state) => {
     return state.userPhone
   },
@@ -138,7 +163,7 @@ const getters = {
 }
 
 export default {
-  namespaced: true,
+  namespace,
   state,
   mutations,
   getters,
