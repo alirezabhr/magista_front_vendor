@@ -3,20 +3,23 @@ import { RootState } from '../index'
 import Shop from '~/models/shop'
 import InstagramProfileInfo from '~/models/instagram_profile_info'
 import PostPreview from "~/models/post_preview"
+import Product from "~/models/product"
 
 const namespace = 'shop'
 
 interface ShopState {
-  shops: Shop[],
-  currentShop: Shop | null,
-  instagramUsername: string | null,
-  userIgProfileInfo: InstagramProfileInfo | null,
+  shops: Shop[]
+  currentShop: Shop | null
+  currentShopProducts: Product[]
+  instagramUsername: string | null
+  userIgProfileInfo: InstagramProfileInfo | null
   postsPreviewList: PostPreview[]
 }
 
 const state = (): ShopState => ({
   shops: [],
   currentShop: null,
+  currentShopProducts: [],
   instagramUsername: null,
   userIgProfileInfo: null,
   postsPreviewList: []
@@ -31,6 +34,9 @@ const mutations = <MutationTree<ShopState>>{
   },
   setCurrentShop(state, shop) {
     state.currentShop = shop
+  },
+  setCurrentShopProducts(state, products) {
+    state.currentShopProducts = products
   },
   setInstagramUsername(state, username) {
     state.instagramUsername = username
@@ -60,7 +66,9 @@ const actions = <ActionTree<ShopState, RootState>>{
 
     return this.$client.get(url).then((response) => {
       vuexContext.commit('setShops', response.data)
-      return response.data
+      if (response.data.length > 0){
+        vuexContext.commit('setCurrentShop', response.data[0])
+      }
     }).catch((e) => {
       throw e.response
     })
@@ -140,6 +148,16 @@ const actions = <ActionTree<ShopState, RootState>>{
     return this.$client.post(url, payload).catch((e) => {
       throw e.response
     })
+  },
+  currentShopProducts(vuexContext) {
+    const shopPk = vuexContext.getters.getCurrentShop.id
+    const url = process.env.baseURL + `shop/${shopPk}/products/`
+
+    return this.$client.get(url).then((response) => {
+      vuexContext.commit('setCurrentShopProducts', response.data)
+    }).catch((e) => {
+      throw e.response
+    })
   }
 }
 
@@ -150,8 +168,14 @@ const getters = <GetterTree<ShopState, RootState>>{
   getUserIgProfileInfo: (state) => {
     return state.userIgProfileInfo
   },
+  getShops: (state) => {
+    return state.shops
+  },
   getCurrentShop: (state) => {
     return state.currentShop
+  },
+  getCurrentShopProducts: (state) : Product[] => {
+    return state.currentShopProducts
   },
   getPostsPreviewList: (state) => {
     return state.postsPreviewList
