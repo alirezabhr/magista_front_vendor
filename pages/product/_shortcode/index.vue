@@ -2,11 +2,36 @@
   <v-progress-circular indeterminate size="64" v-if="!getProduct" />
   <v-col v-else class="pa-0 mx-auto" cols="12" sm="8" md="7" lg="6">
     <v-card>
+        <v-dialog
+          v-model="showDialog"
+          max-width="600px"
+        >
+          <ProductPriceForm
+            v-if="form === 'priceForm'"
+            :is-submitting-form="isSubmittingForm"
+            @submit="submitProductPriceForm"
+            @close="showDialog = false"
+          />
+          <ProductDiscountForm
+            v-else-if="form === 'discountForm'"
+            :is-submitting-form="isSubmittingForm"
+            @submit="submitProductDiscountForm"
+            @close="showDialog = false"
+          />
+          <ProductEditForm
+            v-else-if="form === 'editForm'"
+            :is-submitting-form="isSubmittingForm"
+            :product-title="getProduct.title"
+            :product-description="getProduct.description"
+            @submit="submitProductEditForm"
+            @close="showDialog = false"
+          />
+        </v-dialog>
         <v-row dir="ltr" no-gutters class="px-2 py-1 white" align="center">
             <v-avatar color="primary" style="border-style: solid;">
                 <img
                     :src="getProfilePhotoUrl"
-                    :alt="`${getCurrentShop.instagramUsername} profile`"
+                    alt="profile"
                 >
             </v-avatar>
             <div class="pl-3">{{ getCurrentShop.instagramUsername }}</div>
@@ -19,10 +44,17 @@
                 </template>
                 <v-list>
                     <v-list-item
-                    v-for="(item, index) in items"
-                    :key="index"
+                        v-for="(option, index) in options"
+                        :key="index"
+                        link
+                        @click.prevent="optionsOnClick(option.form)"
                     >
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        <v-icon class="pl-2" :color="option.icon.color">
+                            {{ option.icon.title }}
+                        </v-icon>
+                        <v-list-item-title :class="`${option.color}--text`">
+                            {{ option.title }}
+                        </v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>
@@ -71,8 +103,17 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
+import ProductPriceForm from '@/components/product/ProductPriceForm'
+import ProductEditForm from '@/components/product/ProductEditForm'
+import ProductDiscountForm from '@/components/product/ProductDiscountForm'
+
 export default {
   name: 'ProductShortcodePage',
+  components: {
+    ProductPriceForm,
+    ProductEditForm,
+    ProductDiscountForm
+  },
   async asyncData ({ params, store, error }) {
     await store.dispatch('product/productDetail', params.shortcode)
       .catch((response) => {
@@ -85,16 +126,33 @@ export default {
   },
   data () {
     return {
-        items: [
-            { title: 'Click Me' },
-            { title: 'Click Me' },
-            { title: 'Click Me' },
-            { title: 'Click Me 2' },
+        options: [
+            { title: 'تغییر قیمت', color: 'black', icon: {title: 'mdi-trending-up mdi-18px', color: 'grey darken-2'}, form: 'priceForm'},
+            { title: 'اعمال تخفیف', color: 'black', icon: {title: 'mdi-percent mdi-18px', color: 'grey darken-2'}, form: 'discountForm'},
+            { title: 'تغییر توضیحات', color: 'black', icon: {title: 'mdi-pencil mdi-18px', color: 'grey darken-2'}, form: 'editForm'},
+            { title: 'حذف محصول', color: 'red', icon: {title: 'mdi-delete-outline mdi-18px', color: 'red'}, form: ''},
         ],
+        form: '',
+        showDialog: false,
+        isSubmittingForm: false
     }
   },
   methods: {
-    ...mapActions('product', ['editProduct'])
+    ...mapActions('product', ['editProduct']),
+
+    optionsOnClick(formName) {
+        this.showDialog = true
+        this.form = formName
+    },
+    submitProductPriceForm(newPrice) {
+        
+    },
+    submitProductDiscountForm(newDiscount) {
+        
+    },
+    submitProductEditForm(newTitle, newDescription) {
+
+    }
   },
   computed: {
     ...mapGetters('shop', ['getCurrentShop']),
