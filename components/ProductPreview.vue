@@ -1,7 +1,17 @@
 <template>
-  <v-card flat class="pa-0 ma-0 blue" rounded="0">
-    <v-img :aspect-ratio="1" :src="this.productImageUrl" class="pa-0 ma-0" />
-  </v-card>
+  <NuxtLink :to="productRoute(product.shortcode)">
+    <v-card flat rounded="0">
+      <v-img :aspect-ratio="1" :src="productImageUrl(product.displayImage)">
+        <v-overlay
+          absolute
+          :value="!product.originalPrice"
+          class="my-overlay"
+        >
+          <v-img :src="noPriceImage" :aspect-ratio="1"/>
+        </v-overlay>
+      </v-img>
+    </v-card>
+  </NuxtLink>
 </template>
 
 <script lang="ts">
@@ -16,10 +26,25 @@ export default {
       required: true
     }
   },
+  methods: {
+    productImageUrl (src: string) {
+      return process.env.baseURL + src
+    },
+    productRoute (shortcode: string) {
+      return `product/${shortcode}`
+    }   
+  },
   computed: {
-    productImageUrl () {
-      return process.env.baseURL + this.product.displayImage
+    noPriceImage() {
+      return require('~/assets/images/empty_state.png')
     }
   }
 }
 </script>
+
+<style scoped>
+  .my-overlay >>> .v-overlay__content {
+    width: 100%;
+    height: 100%;
+  }
+</style>
