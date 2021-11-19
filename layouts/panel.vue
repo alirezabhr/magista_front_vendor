@@ -9,7 +9,7 @@
             md="6"
             class="surface rounded-lg my-0 pa-0 mx-auto mx-md-10"
           >
-            <v-container style="height: 680px;">
+            <v-container style="height: 680px;" class="pa-0">
               <Nuxt />
             </v-container>
             <BottomNavigation />
