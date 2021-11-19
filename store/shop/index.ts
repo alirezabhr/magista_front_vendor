@@ -26,14 +26,29 @@ const state = (): ShopState => ({
 })
 
 const mutations = <MutationTree<ShopState>>{
+  initialShopStore(state) {
+    if (!process.client) { // localStorage is only available on client side
+      return
+    }
+
+    // initial current shop
+    const strCurrentShop = localStorage.getItem('CurrentShop')
+    if (strCurrentShop) {
+      state.currentShop = JSON.parse(strCurrentShop)
+    }
+  },
   setShops(state, shops) {
-    state.shops = shops
+    shops.forEach((shop: any) => {
+      const s = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.profilePic)
+      state.shops.push(s)
+    })
   },
   appendShop(state, shop) {
     state.shops.push(shop)
   },
   setCurrentShop(state, shop) {
-    state.currentShop = shop
+    state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.profilePic)
+    localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
   },
   setCurrentShopProducts(state, products) {
     state.currentShopProducts = products
