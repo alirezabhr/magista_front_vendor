@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card min-height="670">
     <v-card-title>
       <v-alert
         dense
@@ -41,7 +41,7 @@
           <v-img
             contain
             :aspect-ratio="1"
-            :src="imageSource(post.thumbnail_src)"
+            :src="imageSource(post.thumbnailSrc)"
             style="border-style: solid; border-width: 0.5px; border-color: grey;"
           >
             <template #placeholder>
