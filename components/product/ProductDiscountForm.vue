@@ -6,9 +6,11 @@
             @submit.prevent="validateAndSubmitForm"
         >
         <v-card-title>
-            <v-col>
-                <div class="text-h6 font-weight-bold">اعمال تخفیف</div>
-            </v-col>
+            <div class="text-h6 font-weight-bold">اعمال تخفیف</div>
+            <v-spacer />
+            <v-btn icon @click.prevent="$emit('close')">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
         </v-card-title>
 
         <v-col class="py-0 px-8">
@@ -23,7 +25,7 @@
             />
         </v-col>
 
-        <v-card-actions class="px-8">
+        <v-card-actions class="px-8 pb-5">
             <v-col cols="12">
                 <v-row justify="center">
                     <v-btn
@@ -33,15 +35,6 @@
                         type="submit"
                     >
                         ثبت تخفیف
-                    </v-btn>
-                </v-row>
-                <v-row justify="center">
-                    <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="$emit('close')"
-                    >
-                        بستن
                     </v-btn>
                 </v-row>
             </v-col>
@@ -61,6 +54,11 @@ export default {
     productDiscount: {
       type: Number,
       required: false
+    }
+  },
+  mounted() {
+    if (this.productDiscount) {
+      this.discount = this.productDiscount
     }
   },
   data () {

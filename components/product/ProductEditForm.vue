@@ -6,9 +6,11 @@
             @submit.prevent="validateAndSubmitForm"
         >
         <v-card-title>
-            <v-col>
-                <div class="text-h6 font-weight-bold">تغییر مشخصات محصول</div>
-            </v-col>
+            <div class="text-h6 font-weight-bold">تغییر مشخصات محصول</div>
+            <v-spacer />
+            <v-btn icon @click.prevent="$emit('close')">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
         </v-card-title>
 
         <v-col class="py-0 px-8">
@@ -28,7 +30,7 @@
             />
         </v-col>
 
-        <v-card-actions class="px-8">
+        <v-card-actions class="px-8 pb-5">
             <v-col cols="12">
                 <v-row justify="center">
                     <v-btn
@@ -38,15 +40,6 @@
                         type="submit"
                     >
                         ثبت مشخصات
-                    </v-btn>
-                </v-row>
-                <v-row justify="center">
-                    <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="$emit('close')"
-                    >
-                        بستن
                     </v-btn>
                 </v-row>
             </v-col>
@@ -71,6 +64,10 @@ export default {
       type: String,
       required: true
     }
+  },
+  mounted() {
+    this.title = this.productTitle
+    this.description = this.productDescription
   },
   data () {
     return {
