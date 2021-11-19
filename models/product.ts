@@ -2,29 +2,37 @@ import Shop from "./shop"
 
 class Product {
   id: number
-  shop: Shop
-  price: number
+  shop: number
+  originalPrice: number
   shortcode: string
   title: string
   description: string
-  displayImageUrl: string
+  displayImage: string
   rate: number | null
+  isExisting: boolean
+  discountPercent: number | null
+  discountAmount: number | null
+  createdAt: Date
+  updatedAt: Date
 
-  constructor(id: number, shop: Shop, price: number, shortcode: string,
-    title: string, description: string, displayImage: string, rate: number | null) {
+  constructor(id: number, shop: number, originalPrice: number, shortcode: string,
+    title: string, description: string, displayImage: string, rate: number | null,
+    isExisting: boolean, createdAt: Date, updatedAt: Date, discountPercent: number | null,
+    discountAmount: number | null) {
 
     this.id = id
     this.shop = shop
-    this.price = price
+    this.originalPrice = originalPrice
     this.shortcode = shortcode
     this.title = title
     this.description = description
-    this.displayImageUrl = displayImage
+    this.displayImage = displayImage
     this.rate = rate
-  }
-
-  toJSON() {
-    return { ...this }
+    this.isExisting = isExisting
+    this.discountPercent = discountPercent
+    this.discountAmount = discountAmount
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
   }
 }
 
