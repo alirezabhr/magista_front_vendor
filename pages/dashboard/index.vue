@@ -1,7 +1,10 @@
 <template>
   <div v-if="isLoadingPage">
     <v-col cols="12">
-      loading ...
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
     </v-col>
   </div>
   <div v-else>
@@ -14,7 +17,7 @@
           contain
           max-height="250"
           max-width="250"
-          :src="getEmptyStateImageUrl"
+          :src="getEmptyStateImage"
         />
       </v-row>
       <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center">
@@ -74,8 +77,8 @@ export default {
   computed: {
     ...mapGetters('shop', ['getShops', 'getCurrentShopProducts']),
 
-    getEmptyStateImageUrl() {
-      return process.env.baseURL + 'media/source/empty_state.png'
+    getEmptyStateImage() {
+      return require('~/assets/images/empty_state.png')
     }
   }
 }
