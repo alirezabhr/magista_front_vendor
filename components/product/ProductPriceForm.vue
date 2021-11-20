@@ -58,7 +58,7 @@ export default {
   },
   mounted() {
     if (this.productPrice) {
-      this.price = this.productPrice
+      this.price = this.productPrice.toString()
     }
   },
   data () {
