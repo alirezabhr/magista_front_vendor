@@ -7,19 +7,22 @@
           max-width="600px"
         >
           <ProductPriceForm
-            v-if="form === 'priceForm'"
+            v-if="form === 'price'"
             :is-submitting-form="isSubmittingForm"
+            :product-price="getProduct.originalPrice"
             @submit="submitProductPriceForm"
             @close="showDialog = false"
           />
           <ProductDiscountForm
-            v-else-if="form === 'discountForm'"
+            v-else-if="form === 'discount'"
             :is-submitting-form="isSubmittingForm"
+            :product-price="getProduct.originalPrice"
+            :product-discount="getProduct.discountPercent"
             @submit="submitProductDiscountForm"
             @close="showDialog = false"
           />
           <ProductEditForm
-            v-else-if="form === 'editForm'"
+            v-else-if="form === 'edit'"
             :is-submitting-form="isSubmittingForm"
             :product-title="getProduct.title"
             :product-description="getProduct.description"
@@ -127,10 +130,10 @@ export default {
   data () {
     return {
         options: [
-            { title: 'تغییر قیمت', color: 'black', icon: {title: 'mdi-trending-up mdi-18px', color: 'grey darken-2'}, form: 'priceForm'},
-            { title: 'اعمال تخفیف', color: 'black', icon: {title: 'mdi-percent mdi-18px', color: 'grey darken-2'}, form: 'discountForm'},
-            { title: 'تغییر توضیحات', color: 'black', icon: {title: 'mdi-pencil mdi-18px', color: 'grey darken-2'}, form: 'editForm'},
-            { title: 'حذف محصول', color: 'red', icon: {title: 'mdi-delete-outline mdi-18px', color: 'red'}, form: ''},
+            {title: 'تغییر قیمت', color: 'black', icon: {title: 'mdi-trending-up mdi-18px', color: 'grey darken-2'}, form: 'price'},
+            {title: 'اعمال تخفیف', color: 'black', icon: {title: 'mdi-percent mdi-18px', color: 'grey darken-2'}, form: 'discount'},
+            {title: 'تغییر توضیحات', color: 'black', icon: {title: 'mdi-pencil mdi-18px', color: 'grey darken-2'}, form: 'edit'},
+            {title: 'حذف محصول', color: 'red', icon: {title: 'mdi-delete-outline mdi-18px', color: 'red'}, form: 'delete'},
         ],
         form: '',
         showDialog: false,
@@ -138,20 +141,51 @@ export default {
     }
   },
   methods: {
-    ...mapActions('product', ['editProduct']),
+    ...mapActions('product', ['editProduct', 'createProductDiscount']),
 
     optionsOnClick(formName) {
         this.showDialog = true
         this.form = formName
     },
-    submitProductPriceForm(newPrice) {
-        
-    },
-    submitProductDiscountForm(newDiscount) {
-        
-    },
-    submitProductEditForm(newTitle, newDescription) {
+    async submitProductEditForm(newTitle, newDescription) {
+        let prod = {...this.getProduct}
+        prod.title = newTitle
+        prod.description = newDescription
 
+        if (!this.isSubmittingForm) {
+            this.isSubmittingForm = true
+            await this.editProduct(prod).catch((response) => {
+                console.log(response.error)
+            })
+            this.isSubmittingForm = false
+        }
+    },
+    async submitProductPriceForm(newPrice) {
+        let prod = {...this.getProduct}
+        prod.originalPrice = newPrice
+
+        if (!this.isSubmittingForm) {
+            this.isSubmittingForm = true
+            await this.editProduct(prod).catch((response) => {
+                console.log(response.error)
+            })
+            this.isSubmittingForm = false
+        }
+    },
+    async submitProductDiscountForm(discountPercent, discountAmount, discountDescription) {
+        const discountItem ={
+            percent: discountPercent,
+            amount: discountAmount,
+            description: discountDescription
+        }
+        
+        if (!this.isSubmittingForm) {
+            this.isSubmittingForm = true
+            await this.createProductDiscount(discountItem).catch((response) => {
+                console.log(response.data)
+            })
+            this.isSubmittingForm = false
+        }
     }
   },
   computed: {
