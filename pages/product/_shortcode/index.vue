@@ -18,6 +18,7 @@
             :is-submitting-form="isSubmittingForm"
             :product-price="getProduct.originalPrice"
             :product-discount="getProduct.discountPercent"
+            :product-discount-description="getProduct.discountPercent"
             @submit="submitProductDiscountForm"
             @close="showDialog = false"
           />

@@ -83,11 +83,16 @@ export default {
     productDiscount: {
       type: Number,
       required: false
+    },
+    productDiscountDescription: {
+      type: Number,
+      required: false
     }
   },
   mounted() {
     if (this.productDiscount) {
-      this.discountPercent = this.productDiscount
+      this.discountPercent = this.productDiscount.toString()
+      this.discountDescription = this.productDiscountDescription
     }
   },
   data () {
