@@ -80,20 +80,6 @@ export default {
       type: Number | null,
       required: true
     },
-    productDiscount: {
-      type: Number,
-      required: false
-    },
-    productDiscountDescription: {
-      type: Number,
-      required: false
-    }
-  },
-  mounted() {
-    if (this.productDiscount) {
-      this.discountPercent = this.productDiscount.toString()
-      this.discountDescription = this.productDiscountDescription
-    }
   },
   data () {
     return {
@@ -101,7 +87,7 @@ export default {
       discountDescription: '',
       discountPercentRules: [
         value => !!value || 'درصد تخفیف را وارد کنید.',
-        value => value >= 0 || 'تخفیف نامعتبر است.',
+        value => value > 0 || 'تخفیف نامعتبر است.',
         value => value <= 99 || 'تخفیف نامعتبر است.',
         value => !value.includes('.') || 'تخفیف نامعتبر است.'
       ],
@@ -119,15 +105,18 @@ export default {
   },
   computed: {
     dicountAmount() {
-      let fp = this.productPrice * Number.parseInt(this.discountPercent) / 100
-      fp = Number.parseInt(fp / 1000)
-      return fp*1000
+      return this.productPrice - this.finalPrice
     },
     finalPrice () {
-      let final = this.productPrice - this.dicountAmount
-      if (final < 0) {
+      let final = 0
+      if (this.discountPercent >= 100 || this.discountPercent <= 0) {
         final = 0
-      }
+      } else {
+        const dAmount = this.productPrice * Number.parseInt(this.discountPercent) / 100
+        final = this.productPrice - dAmount
+        final = Number.parseInt(final/1000) * 1000
+      } 
+
       return final
     }
   }
