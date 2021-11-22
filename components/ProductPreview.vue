@@ -7,7 +7,7 @@
           :value="!product.finalPrice"
           class="my-overlay"
         >
-          <v-img :src="noPriceImage" :aspect-ratio="1"/>
+          <v-img :src="noPriceImage" :aspect-ratio="1" />
         </v-overlay>
       </v-img>
     </v-card>
@@ -26,17 +26,17 @@ export default {
       required: true
     }
   },
+  computed: {
+    noPriceImage () {
+      return require('~/assets/images/no_price.png')
+    }
+  },
   methods: {
     productImageUrl (src: string) {
       return process.env.baseURL + src
     },
     productRoute (shortcode: string) {
       return `product/${shortcode}`
-    }   
-  },
-  computed: {
-    noPriceImage() {
-      return require('~/assets/images/empty_state.png')
     }
   }
 }
