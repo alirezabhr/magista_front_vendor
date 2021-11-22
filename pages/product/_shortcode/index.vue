@@ -1,7 +1,7 @@
 <template>
   <v-progress-circular indeterminate size="64" v-if="!getProduct" />
   <v-col v-else class="pa-0 mx-auto" cols="12" sm="8" md="7" lg="6">
-    <v-card>
+    <v-card min-height="670">
         <v-dialog
           v-model="showDialog"
           max-width="600px"
@@ -17,8 +17,6 @@
             v-else-if="form === 'discount'"
             :is-submitting-form="isSubmittingForm"
             :product-price="getProduct.originalPrice"
-            :product-discount="getProduct.discountPercent"
-            :product-discount-description="getProduct.discountPercent"
             @submit="submitProductDiscountForm"
             @close="showDialog = false"
           />
