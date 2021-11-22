@@ -14,10 +14,10 @@ const state = (): ProductState => ({
 
 const mutations = <MutationTree<ProductState>>{
   setProduct(state, prod) {
-    state.product = new Product(prod.id, prod.shop, prod.originalPrice, prod.shortcode,
+    state.product = new Product(prod.id, prod.shop, prod.finalPrice, prod.shortcode,
                                 prod.title, prod.description, prod.displayImage, prod.rate,
                                 prod.isExisting, prod.createdAt, prod.updatedAt,
-                                prod.discountPercent, prod.discountAmount, prod.discountDescription)
+                                prod.discountPercent, prod.discountAmount)
   }
 }
 

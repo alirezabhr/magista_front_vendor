@@ -9,14 +9,14 @@
           <ProductPriceForm
             v-if="form === 'price'"
             :is-submitting-form="isSubmittingForm"
-            :product-price="getProduct.originalPrice"
+            :product-price="getProduct.finalPrice"
             @submit="submitProductPriceForm"
             @close="showDialog = false"
           />
           <ProductDiscountForm
             v-else-if="form === 'discount'"
             :is-submitting-form="isSubmittingForm"
-            :product-price="getProduct.originalPrice"
+            :product-price="getProduct.finalPrice"
             @submit="submitProductDiscountForm"
             @close="showDialog = false"
           />
@@ -83,8 +83,8 @@
                 </div>
             </v-row>
             <v-row no-gutters class="pb-2">
-                <div v-if="getProduct.originalPrice">
-                    قیمت: {{ getProduct.originalPrice }}تومان
+                <div v-if="getProduct.finalPrice">
+                    قیمت: {{ getProduct.finalPrice }}تومان
                 </div>
                 <div v-else>
                     بدون قیمت
@@ -161,7 +161,7 @@ export default {
     },
     async submitProductPriceForm(newPrice) {
         let prod = {...this.getProduct}
-        prod.originalPrice = newPrice
+        prod.finalPrice = newPrice
 
         if (!this.isSubmittingForm) {
             this.isSubmittingForm = true

@@ -4,7 +4,7 @@
       <v-img :aspect-ratio="1" :src="productImageUrl(product.displayImage)">
         <v-overlay
           absolute
-          :value="!product.originalPrice"
+          :value="!product.finalPrice"
           class="my-overlay"
         >
           <v-img :src="noPriceImage" :aspect-ratio="1"/>

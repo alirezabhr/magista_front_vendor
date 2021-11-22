@@ -3,7 +3,7 @@ import Shop from "./shop"
 class Product {
   id: number
   shop: number
-  originalPrice: number
+  finalPrice: number
   shortcode: string
   title: string
   description: string
@@ -11,19 +11,18 @@ class Product {
   rate: number | null
   isExisting: boolean
   discountPercent: number | null
-  discountAmount: number | null
   discountDescription: string
   createdAt: Date
   updatedAt: Date
 
-  constructor(id: number, shop: number, originalPrice: number, shortcode: string,
+  constructor(id: number, shop: number, finalPrice: number, shortcode: string,
     title: string, description: string, displayImage: string, rate: number | null,
     isExisting: boolean, createdAt: Date, updatedAt: Date, discountPercent: number | null,
-    discountAmount: number | null, discountDescription: string) {
+    discountDescription: string) {
 
     this.id = id
     this.shop = shop
-    this.originalPrice = originalPrice
+    this.finalPrice = finalPrice
     this.shortcode = shortcode
     this.title = title
     this.description = description
@@ -31,7 +30,6 @@ class Product {
     this.rate = rate
     this.isExisting = isExisting
     this.discountPercent = discountPercent
-    this.discountAmount = discountAmount
     this.discountDescription = discountDescription
     this.createdAt = createdAt
     this.updatedAt = updatedAt
