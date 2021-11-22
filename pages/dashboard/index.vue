@@ -4,7 +4,7 @@
       <v-progress-circular
         indeterminate
         size="64"
-      ></v-progress-circular>
+      />
     </v-col>
   </div>
   <div v-else>
@@ -31,7 +31,7 @@
     </v-col>
     <v-col v-else cols="12" class="ma-0 pa-0">
       <v-row no-gutters class="ma-0 pa-0" dir="ltr">
-        <v-col cols="4" v-for="prod in getCurrentShopProducts" :key="prod.id" class="ma-0 pa-0">
+        <v-col v-for="prod in getCurrentShopProducts" :key="prod.id" cols="4" class="ma-0 pa-0">
           <ProductPreview :product="prod" />
         </v-col>
       </v-row>
@@ -54,6 +54,13 @@ export default {
       isLoadingPage: false
     }
   },
+  computed: {
+    ...mapGetters('shop', ['getShops', 'getCurrentShopProducts']),
+
+    getEmptyStateImage () {
+      return require('~/assets/images/empty_state.png')
+    }
+  },
   async mounted () {
     this.isLoadingPage = true
     await this.getUserShops()
@@ -72,13 +79,6 @@ export default {
           this.showSnackbar = true
         }
       })
-    }
-  },
-  computed: {
-    ...mapGetters('shop', ['getShops', 'getCurrentShopProducts']),
-
-    getEmptyStateImage() {
-      return require('~/assets/images/empty_state.png')
     }
   }
 }

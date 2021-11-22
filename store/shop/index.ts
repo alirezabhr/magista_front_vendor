@@ -1,9 +1,9 @@
-import { GetterTree, MutationTree, ActionTree } from "vuex"
+import { GetterTree, MutationTree, ActionTree } from 'vuex'
 import { RootState } from '../index'
 import Shop from '~/models/shop'
 import InstagramProfileInfo from '~/models/instagram_profile_info'
-import PostPreview from "~/models/post_preview"
-import Product from "~/models/product"
+import PostPreview from '~/models/post_preview'
+import Product from '~/models/product'
 
 const namespace = 'shop'
 
@@ -26,7 +26,7 @@ const state = (): ShopState => ({
 })
 
 const mutations = <MutationTree<ShopState>>{
-  initialShopStore(state) {
+  initialShopStore (state) {
     if (!process.client) { // localStorage is only available on client side
       return
     }
@@ -37,35 +37,35 @@ const mutations = <MutationTree<ShopState>>{
       state.currentShop = JSON.parse(strCurrentShop)
     }
   },
-  setShops(state, shops) {
+  setShops (state, shops) {
     shops.forEach((shop: any) => {
       const s = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.profilePic)
       state.shops.push(s)
     })
   },
-  appendShop(state, shop) {
+  appendShop (state, shop) {
     state.shops.push(shop)
   },
-  setCurrentShop(state, shop) {
+  setCurrentShop (state, shop) {
     state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.profilePic)
     localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
   },
-  setCurrentShopProducts(state, products) {
+  setCurrentShopProducts (state, products) {
     state.currentShopProducts = products
   },
-  setInstagramUsername(state, username) {
+  setInstagramUsername (state, username) {
     state.instagramUsername = username
   },
-  setUserIgProfileInfo(state, profileInfo) {
+  setUserIgProfileInfo (state, profileInfo) {
     state.userIgProfileInfo = profileInfo
   },
-  concatToPostPreviewList(state, postsList) {
+  concatToPostPreviewList (state, postsList) {
     state.postsPreviewList = state.postsPreviewList.concat(postsList)
   },
-  removePost(state, post) {
+  removePost (state, post) {
     state.postsPreviewList = state.postsPreviewList.filter(item => item !== post)
   },
-  addPosts(state, post) {
+  addPosts (state, post) {
     state.postsPreviewList.splice(post.index, 0, post)
     state.postsPreviewList.sort(
       function (first, second) { return first.index - second.index }
@@ -74,35 +74,35 @@ const mutations = <MutationTree<ShopState>>{
 }
 
 const actions = <ActionTree<ShopState, RootState>>{
-  getVendorShops(vuexContext) {
+  getVendorShops (vuexContext) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
 
     const url = process.env.baseURL + `shop/${userPk}/`
 
     return this.$client.get(url).then((response) => {
       vuexContext.commit('setShops', response.data)
-      if (response.data.length > 0){
+      if (response.data.length > 0) {
         vuexContext.commit('setCurrentShop', response.data[0])
       }
     }).catch((e) => {
       throw e.response
     })
   },
-  saveInstagramMediaQueryFile(vuexContext, instagramUsername) {
+  saveInstagramMediaQueryFile (vuexContext, igUsername) {
     const url = process.env.baseURL + 'shop/media-query/'
 
     const queryParams = {
-      instagramUsername: instagramUsername
+      instagramUsername: igUsername
     }
 
     return this.$client.post(url, null, { params: queryParams }).then((response) => {
-      vuexContext.commit('setInstagramUsername', instagramUsername)
+      vuexContext.commit('setInstagramUsername', igUsername)
       vuexContext.commit('setUserIgProfileInfo', response.data)
     }).catch((e) => {
       throw e.response
     })
   },
-  async getInstagramMediaQueryFile(vuexContext) {
+  async getInstagramMediaQueryFile (vuexContext) {
     const url = process.env.baseURL + 'shop/media-query/'
 
     let hasNext = true
@@ -122,7 +122,7 @@ const actions = <ActionTree<ShopState, RootState>>{
       })
     }
   },
-  removeExtraMediaQuery(vuexContext, payload) {
+  removeExtraMediaQuery (vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
     const url = process.env.baseURL + 'shop/media-query/'
 
@@ -136,7 +136,7 @@ const actions = <ActionTree<ShopState, RootState>>{
       throw e.response
     })
   },
-  createShop(vuexContext, payload) {
+  createShop (vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
 
     const url = process.env.baseURL + `shop/${userPk}/`
@@ -152,7 +152,7 @@ const actions = <ActionTree<ShopState, RootState>>{
       throw e.response
     })
   },
-  createAllProducts(vuexContext) {
+  createAllProducts (vuexContext) {
     const shopPk = vuexContext.getters.getCurrentShop.id
     const url = process.env.baseURL + `shop/${shopPk}/products/`
 
@@ -164,7 +164,7 @@ const actions = <ActionTree<ShopState, RootState>>{
       throw e.response
     })
   },
-  currentShopProducts(vuexContext) {
+  currentShopProducts (vuexContext) {
     const shopPk = vuexContext.getters.getCurrentShop.id
     const url = process.env.baseURL + `shop/${shopPk}/products/`
 
@@ -196,8 +196,9 @@ const getters = <GetterTree<ShopState, RootState>>{
     return state.postsPreviewList
   },
   getPostsCount: (state) => {
-    if (state.userIgProfileInfo)
+    if (state.userIgProfileInfo) {
       return state.userIgProfileInfo.postsCount
+    }
     return 0
   }
 }
