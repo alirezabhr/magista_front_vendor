@@ -9,7 +9,7 @@
         <ProductPriceForm
           v-if="form === 'price'"
           :is-submitting-form="isSubmittingForm"
-          :product-price="getProduct.finalPrice"
+          :product-price="getProduct.originalPrice"
           @submit="submitProductPriceForm"
           @close="showDialog = false"
         />
@@ -82,20 +82,30 @@
             </div>
           </div>
         </v-row>
-        <v-row no-gutters class="pb-2">
-          <v-row v-if="getProduct.originalPrice" no-gutters class="pa-2" align="center">
-            قیمت:
-            <div>
+        <v-row no-gutters class="px-1">
+          قیمت:
+          <v-row v-if="getProduct.originalPrice" no-gutters class="pr-2">
+            <div v-show="getProduct.discountPercent" class="pr-2 text-decoration-line-through">
               {{ getProduct.originalPrice }}
             </div>
-            <div v-show="getProduct.discountPercent">
-              <v-icon class="pr-1">mdi-chevron-triple-left</v-icon>
+            <v-icon v-show="getProduct.discountPercent" class="pr-1">mdi-chevron-triple-left</v-icon>
+            <div>
               {{ getProduct.finalPrice }}
             </div>
             تومان
           </v-row>
           <div v-else>
-            بدون قیمت
+            ندارد
+          </div>
+        </v-row>
+        <v-row no-gutters class="px-1 pb-3">
+          تخفیف:
+          <div v-if="getProduct.discountPercent" class="px-2 font-weight-bold">
+            <v-icon color="grey darken-2">mdi-percent mdi-18px</v-icon>
+            {{ getProduct.discountPercent }}
+          </div>
+          <div v-else>
+            ندارد
           </div>
         </v-row>
         <v-divider class="pa-1" />
@@ -138,8 +148,9 @@ export default {
     return {
       options: [
         { title: 'تغییر قیمت', color: 'black', icon: { title: 'mdi-trending-up mdi-18px', color: 'grey darken-2' }, form: 'price' },
-        { title: 'اعمال تخفیف', color: 'black', icon: { title: 'mdi-percent mdi-18px', color: 'grey darken-2' }, form: 'discount' },
         { title: 'تغییر توضیحات', color: 'black', icon: { title: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' },
+        { title: 'اعمال تخفیف', color: 'black', icon: { title: 'mdi-percent mdi-18px', color: 'grey darken-2' }, form: 'discount' },
+        { title: 'حذف تخفیف', color: 'black', icon: { title: 'mdi-tag-remove-outline mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
         { title: 'حذف محصول', color: 'red', icon: { title: 'mdi-delete-outline mdi-18px', color: 'red' }, form: 'delete' }
       ],
       form: '',
@@ -151,7 +162,7 @@ export default {
     ...mapGetters('shop', ['getCurrentShop']),
     ...mapGetters('product', ['getProduct']),
 
-    getProfilePhotoUrl() {
+    getProfilePhotoUrl () {
       return process.env.baseURL + this.getCurrentShop.profileImageUrl
     },
     productImageUrl () {
@@ -172,25 +183,33 @@ export default {
 
       if (!this.isSubmittingForm) {
         this.isSubmittingForm = true
-        await this.editProduct(prod).catch((response) => {
+        await this.editProduct(prod).then(() => {
+          this.showDialog = false
+          this.form = ''
+          this.isSubmittingForm = false
+        }).catch((response) => {
           console.log(response.error)
+          this.isSubmittingForm = false
         })
-        this.isSubmittingForm = false
       }
     },
-    async submitProductPriceForm(newPrice) {
-      let prod = {...this.getProduct}
-      prod.finalPrice = newPrice
+    async submitProductPriceForm (newPrice) {
+      let prod = { ...this.getProduct }
+      prod.originalPrice = newPrice
 
       if (!this.isSubmittingForm) {
         this.isSubmittingForm = true
-        await this.editProduct(prod).catch((response) => {
+        await this.editProduct(prod).then(() => {
+          this.showDialog = false
+          this.form = ''
+          this.isSubmittingForm = false
+        }).catch((response) => {
+          this.isSubmittingForm = false
           console.log(response.error)
         })
-        this.isSubmittingForm = false
       }
     },
-    async submitProductDiscountForm(discountPercent, discountAmount, discountDescription) {
+    async submitProductDiscountForm (discountPercent, discountAmount, discountDescription) {
       const discountItem = {
         percent: discountPercent,
         amount: discountAmount,
@@ -199,10 +218,14 @@ export default {
 
       if (!this.isSubmittingForm) {
         this.isSubmittingForm = true
-        await this.createProductDiscount(discountItem).catch((response) => {
+        await this.createProductDiscount(discountItem).then(() => {
+          this.showDialog = false
+          this.form = ''
+          this.isSubmittingForm = false
+        }).catch((response) => {
+          this.isSubmittingForm = false
           console.log(response.data)
         })
-        this.isSubmittingForm = false
       }
     }
   }
