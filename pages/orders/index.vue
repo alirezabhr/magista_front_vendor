@@ -27,7 +27,7 @@
           <v-card-subtitle>
             {{ invoice.createdAt }}
           </v-card-subtitle>
-          <v-row v-for="(orderItem, index) in invoice.orders" :key="index">
+          <v-row v-for="orderItem in invoice.orders" :key="orderItem">
             <OrderItem :order="orderItem" />
           </v-row>
         </v-card>

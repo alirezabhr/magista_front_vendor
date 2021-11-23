@@ -6,7 +6,7 @@
       @submit.prevent="validateAndSubmitForm"
     >
       <v-card-title>
-        <div class="text-h6 font-weight-bold">اعمال تخفیف</div>
+        <div class="text-h6 font-weight-bold">اعمال تخفیف جدید</div>
         <v-spacer />
         <v-btn icon @click.prevent="$emit('close')">
           <v-icon>mdi-close</v-icon>
