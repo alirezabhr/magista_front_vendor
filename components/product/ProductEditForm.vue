@@ -1,51 +1,51 @@
 <template>
-    <v-card>
-        <v-form
-            ref="form"
-            lazy-validation
-            @submit.prevent="validateAndSubmitForm"
-        >
-        <v-card-title>
-            <div class="text-h6 font-weight-bold">تغییر مشخصات محصول</div>
-            <v-spacer />
-            <v-btn icon @click.prevent="$emit('close')">
-              <v-icon>mdi-close</v-icon>
+  <v-card>
+    <v-form
+      ref="form"
+      lazy-validation
+      @submit.prevent="validateAndSubmitForm"
+    >
+      <v-card-title>
+        <div class="text-h6 font-weight-bold">تغییر مشخصات محصول</div>
+        <v-spacer />
+        <v-btn icon @click.prevent="$emit('close')">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
+
+      <v-col class="py-0 px-8">
+        <v-text-field
+          v-model="title"
+          label="عنوان"
+          :rules="titleRules"
+          outlined
+          dense
+        />
+        <v-textarea
+          v-model="description"
+          label="توضیحات"
+          :rules="descriptionRules"
+          outlined
+          dense
+        />
+      </v-col>
+
+      <v-card-actions class="px-8 pb-5">
+        <v-col cols="12">
+          <v-row justify="center">
+            <v-btn
+              block
+              class="primary font-weight-bold py-5"
+              :loading="isSubmittingForm"
+              type="submit"
+            >
+              ثبت مشخصات
             </v-btn>
-        </v-card-title>
-
-        <v-col class="py-0 px-8">
-            <v-text-field
-                v-model="title"
-                label="عنوان"
-                :rules="titleRules"
-                outlined
-                dense
-            />
-            <v-textarea
-                v-model="description"
-                label="توضیحات"
-                :rules="descriptionRules"
-                outlined
-                dense
-            />
+          </v-row>
         </v-col>
-
-        <v-card-actions class="px-8 pb-5">
-            <v-col cols="12">
-                <v-row justify="center">
-                    <v-btn
-                        block
-                        class="primary font-weight-bold py-5"
-                        :loading="isSubmittingForm"
-                        type="submit"
-                    >
-                        ثبت مشخصات
-                    </v-btn>
-                </v-row>
-            </v-col>
-        </v-card-actions>
-        </v-form>
-    </v-card>
+      </v-card-actions>
+    </v-form>
+  </v-card>
 </template>
 
 <script>
@@ -65,10 +65,6 @@ export default {
       required: true
     }
   },
-  mounted() {
-    this.title = this.productTitle
-    this.description = this.productDescription
-  },
   data () {
     return {
       title: '',
@@ -78,10 +74,13 @@ export default {
         value => value.length <= 60 || 'عنوان طولانی است.'
       ],
       descriptionRules: [
-        value => !!value || 'توضیحات خالی است.',
-        value => value.length <= 400 || 'توضیحات بسیار طولانی است.'
-      ],
+        value => value.length <= 600 || 'توضیحات بسیار طولانی است.'
+      ]
     }
+  },
+  mounted () {
+    this.title = this.productTitle
+    this.description = this.productDescription
   },
   methods: {
     validateAndSubmitForm () {
