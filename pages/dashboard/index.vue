@@ -29,7 +29,7 @@
         </v-btn>
       </v-row>
     </v-col>
-    <v-col v-else cols="12" class="ma-0 pa-0">
+    <v-col v-else cols="12" class="ma-0 px-0 pt-0 pb-10">
       <v-row no-gutters class="ma-0 pa-0" dir="ltr">
         <v-col v-for="prod in getCurrentShopProducts" :key="prod.id" cols="4" class="ma-0 pa-0">
           <ProductPreview :product="prod" />
