@@ -79,6 +79,7 @@ export default {
   },
   computed: {
     ...mapGetters('invoice', ['getInvoiceList']),
+    ...mapGetters('shop', ['getCurrentShop']),
 
     getEmptyStateImage () {
       return require('~/assets/images/empty_state.png')
@@ -86,7 +87,9 @@ export default {
   },
   async mounted () {
     this.isLoadingPage = true
-    await this.shopInvoices()
+    if (this.getCurrentShop) {
+      await this.shopInvoices()
+    }
     this.isLoadingPage = false
   },
   methods: {
