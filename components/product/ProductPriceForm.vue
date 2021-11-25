@@ -53,7 +53,8 @@ export default {
     },
     productPrice: {
       type: Number,
-      required: true
+      required: false,
+      default: 0
     }
   },
   data () {

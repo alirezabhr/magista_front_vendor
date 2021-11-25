@@ -77,8 +77,9 @@ export default {
       required: true
     },
     productPrice: {
-      type: Number | null,
-      required: true
+      type: Number,
+      required: false,
+      default: 0
     }
   },
   data () {
