@@ -16,7 +16,7 @@
         <ProductDiscountForm
           v-else-if="form === 'discount'"
           :is-submitting-form="isSubmittingForm"
-          :product-price="getProduct.finalPrice"
+          :product-price="getProduct.originalPrice"
           @submit="submitProductDiscountForm"
           @close="showDialog = false"
         />
