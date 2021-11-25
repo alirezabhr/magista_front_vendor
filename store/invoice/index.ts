@@ -13,8 +13,12 @@ const state = (): InvoiceState => ({
 })
 
 const mutations = <MutationTree<InvoiceState>>{
-  appendToInvoiceList (state, invoice) {
-    state.invoiceList.push(invoice)
+  appendToInvoiceList (state, invoice: any) {
+    const item = new Invoice(invoice.id, invoice.status, invoice.shop, invoice.customer, invoice.orders, invoice.updatedAt, invoice.createdAt)
+    state.invoiceList.splice(0, 0, item) // insert invoice at index 0
+  },
+  clearInvoiceList (state) {
+    state.invoiceList = []
   }
 }
 
@@ -24,7 +28,8 @@ const actions = <ActionTree<InvoiceState, RootState>>{
     const url = process.env.baseURL + `order/shop/${shopId}/`
 
     return this.$client.get(url).then((response) => {
-      response.data.forEach((element: Invoice) => {
+      vuexContext.commit('clearInvoiceList')
+      response.data.forEach((element: object) => {
         vuexContext.commit('appendToInvoiceList', element)
       })
     }).catch((e) => {
