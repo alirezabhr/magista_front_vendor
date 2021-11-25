@@ -2,9 +2,9 @@ import OrderItem from './order_item'
 import Shop from './shop'
 import Customer from './customer'
 
-const ShopOrderStatus = ['در انتظار پرداخت', 'پرداخت شده', 'ارسال شده', 'دریافت شده', 'لغو شده']
+const InvoiceStatus = ['در انتظار پرداخت', 'پرداخت شده', 'ارسال شده', 'دریافت شده', 'لغو شده']
 
-class ShopOrder {
+class Invoice {
     id: number
     status: number
     statusText: string
@@ -18,7 +18,7 @@ class ShopOrder {
     constructor (id: number, status: number, shop: Shop, customer: Customer, orderItems: OrderItem[], totalPrice: number, updatedAt: Date, createdAt: Date) {
       this.id = id
       this.status = status
-      this.statusText = ShopOrderStatus[status - 1]
+      this.statusText = InvoiceStatus[status - 1]
       this.shop = shop
       this.customer = customer
       this.orderItems = orderItems
@@ -28,4 +28,4 @@ class ShopOrder {
     }
 }
 
-export default ShopOrder
+export default Invoice

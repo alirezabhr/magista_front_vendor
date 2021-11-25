@@ -1,36 +1,36 @@
 import { GetterTree, MutationTree, ActionTree } from 'vuex'
 import { RootState } from '../index'
-import ShopOrder from '~/models/shop_order'
+import Invoice from '~/models/invoice'
 
-const namespace = 'shop order'
+const namespace = 'invoice'
 
-interface ShopOrderState {
-  shopOrderList: ShopOrder[]
+interface InvoiceState {
+  invoiceList: Invoice[]
 }
 
-const state = (): ShopOrderState => ({
-  shopOrderList: []
+const state = (): InvoiceState => ({
+  invoiceList: []
 })
 
-const mutations = <MutationTree<ShopOrderState>>{
-  appendToShopOrderList (state, shopOrder: any) {
-    const item = new ShopOrder(shopOrder.id, shopOrder.status, shopOrder.shop, shopOrder.customer, shopOrder.orderItems, shopOrder.totalPrice, shopOrder.updatedAt, shopOrder.createdAt)
-    state.shopOrderList.splice(0, 0, item) // insert shopOrder at index 0
+const mutations = <MutationTree<InvoiceState>>{
+  appendToInvoiceList (state, invoice: any) {
+    const item = new Invoice(invoice.id, invoice.status, invoice.shop, invoice.customer, invoice.orderItems, invoice.totalPrice, invoice.updatedAt, invoice.createdAt)
+    state.invoiceList.splice(0, 0, item) // insert invoice at index 0
   },
-  clearShopOrderList (state) {
-    state.shopOrderList = []
+  clearInvoiceList (state) {
+    state.invoiceList = []
   }
 }
 
-const actions = <ActionTree<ShopOrderState, RootState>>{
-  shopShopOrders (vuexContext) {
+const actions = <ActionTree<InvoiceState, RootState>>{
+  shopInvoices (vuexContext) {
     const shopId = vuexContext.rootGetters['shop/getCurrentShop'].id
     const url = process.env.baseURL + `order/shop/${shopId}/`
 
     return this.$client.get(url).then((response) => {
-      vuexContext.commit('clearShopOrderList')
+      vuexContext.commit('clearInvoiceList')
       response.data.forEach((element: object) => {
-        vuexContext.commit('appendToShopOrderList', element)
+        vuexContext.commit('appendToInvoiceList', element)
       })
     }).catch((e) => {
       throw e.response
@@ -38,9 +38,9 @@ const actions = <ActionTree<ShopOrderState, RootState>>{
   }
 }
 
-const getters = <GetterTree<ShopOrderState, RootState>>{
-  getShopOrderList: (state) : ShopOrder[] => {
-    return state.shopOrderList
+const getters = <GetterTree<InvoiceState, RootState>>{
+  getInvoiceList: (state) : Invoice[] => {
+    return state.invoiceList
   }
 }
 
