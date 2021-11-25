@@ -45,8 +45,8 @@
               </v-card-subtitle>
               <v-divider class="mt-2 pb-6" />
               <div class="py-2">
-                <v-row v-for="(orderItem, i) in invoice.orders" :key="i" class="px-2" justify="center">
-                  <OrderItem :order="orderItem" />
+                <v-row v-for="(orderItem, i) in invoice.orderItems" :key="i" class="px-2" justify="center">
+                  <OrderItem :order-item="orderItem" />
                 </v-row>
               </div>
               <v-row class=" py-2 px-3 text-subtitle1" no-gutters>
@@ -97,7 +97,7 @@ export default {
 
     calculateTotalPrice (invoice) {
       let total = 0
-      invoice.orders.forEach((order) => {
+      invoice.orderItems.forEach((order) => {
         total += order.price * order.count
       })
       return total

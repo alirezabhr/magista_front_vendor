@@ -6,7 +6,7 @@
           <v-card outlined>
             <v-img
               :aspect-ratio="1"
-              :src="getFullImageUrl(order.product.displayImage)"
+              :src="getFullImageUrl(orderItem.product.displayImage)"
             >
               <template #placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
@@ -18,17 +18,17 @@
         </v-col>
         <v-col cols="1" class="" align-self="center">
           <v-row class="font-weight-bold" justify="center">
-            ×{{ order.count }}
+            ×{{ orderItem.count }}
           </v-row>
         </v-col>
         <v-col cols="7">
           <v-row no-gutters>
             <div class="text-truncate">
-              {{ order.product.title }}
+              {{ orderItem.product.title }}
             </div>
           </v-row>
           <v-row class="font-weight-bold" no-gutters>
-            {{ order.price }} تومان
+            {{ orderItem.price }} تومان
           </v-row>
         </v-col>
       </v-row>
@@ -43,7 +43,7 @@ import OrderItem from '~/models/order_item'
 export default {
   name: 'OrderItem',
   props: {
-    order: {
+    orderItem: {
       type: Object as PropType<OrderItem>,
       required: true
     }
