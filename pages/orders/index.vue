@@ -51,7 +51,7 @@
               </div>
               <v-row class=" py-2 px-3 text-subtitle1" no-gutters>
                 قیمت کل:
-                {{ calculateTotalPrice(order) }}
+                {{ order.totalPrice }}
                 تومان
               </v-row>
             </v-col>
@@ -93,15 +93,7 @@ export default {
     this.isLoadingPage = false
   },
   methods: {
-    ...mapActions('order', ['shopOrders']),
-
-    calculateTotalPrice (order) {
-      let total = 0
-      order.orderItems.forEach((order) => {
-        total += order.price * order.count
-      })
-      return total
-    }
+    ...mapActions('order', ['shopOrders'])
   }
 }
 </script>
