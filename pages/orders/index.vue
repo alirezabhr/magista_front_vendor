@@ -8,7 +8,7 @@
     </v-col>
   </div>
   <div v-else>
-    <v-col v-if="getInvoiceList.length === 0" cols="12">
+    <v-col v-if="getOrderList.length === 0" cols="12">
       <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center">
         هیچ سفارشی ندارید!
       </v-row>
@@ -22,36 +22,36 @@
       </v-row>
     </v-col>
     <v-col v-else cols="12" class="ma-0 px-0 pt-0 pb-10">
-      <v-row v-for="(invoice, index) in getInvoiceList" :key="index" no-gutters class="ma-0 py-4 px-0" justify="center">
+      <v-row v-for="(order, index) in getOrderList" :key="index" no-gutters class="ma-0 py-4 px-0" justify="center">
         <v-col cols="11">
           <v-card elevation="6" color="grey lighten-3">
             <v-col>
               <v-card-title class="pt-0 pb-6">
                 وضعیت:
-                {{ invoice.statusText }}
+                {{ order.statusText }}
               </v-card-title>
               <v-card-subtitle class="py-0">
-                {{ invoice.createdAt }}
+                {{ order.createdAt }}
               </v-card-subtitle>
               <v-card-subtitle class="py-0">
                 گیرنده:
-                {{ invoice.customer.name }}
+                {{ order.customer.name }}
               </v-card-subtitle>
               <v-card-subtitle class="py-0">
                 <v-icon>mdi-map-marker-outline</v-icon>
-                {{ invoice.customer.province }} -
-                {{ invoice.customer.city }} -
-                {{ invoice.customer.address }}
+                {{ order.customer.province }} -
+                {{ order.customer.city }} -
+                {{ order.customer.address }}
               </v-card-subtitle>
               <v-divider class="mt-2 pb-6" />
               <div class="py-2">
-                <v-row v-for="(orderItem, i) in invoice.orderItems" :key="i" class="px-2" justify="center">
+                <v-row v-for="(orderItem, i) in order.orderItems" :key="i" class="px-2" justify="center">
                   <OrderItem :order-item="orderItem" />
                 </v-row>
               </div>
               <v-row class=" py-2 px-3 text-subtitle1" no-gutters>
                 قیمت کل:
-                {{ calculateTotalPrice(invoice) }}
+                {{ calculateTotalPrice(order) }}
                 تومان
               </v-row>
             </v-col>
@@ -78,7 +78,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('invoice', ['getInvoiceList']),
+    ...mapGetters('order', ['getOrderList']),
     ...mapGetters('shop', ['getCurrentShop']),
 
     getEmptyStateImage () {
@@ -88,16 +88,16 @@ export default {
   async mounted () {
     this.isLoadingPage = true
     if (this.getCurrentShop) {
-      await this.shopInvoices()
+      await this.shopOrders()
     }
     this.isLoadingPage = false
   },
   methods: {
-    ...mapActions('invoice', ['shopInvoices']),
+    ...mapActions('order', ['shopOrders']),
 
-    calculateTotalPrice (invoice) {
+    calculateTotalPrice (order) {
       let total = 0
-      invoice.orderItems.forEach((order) => {
+      order.orderItems.forEach((order) => {
         total += order.price * order.count
       })
       return total
