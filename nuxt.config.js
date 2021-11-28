@@ -50,7 +50,9 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    // https://sentry.nuxtjs.org/
+    '@nuxtjs/sentry'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -94,6 +96,16 @@ export default {
           success: colors.green.accent3
         }
       }
+    }
+  },
+
+  sentry: {
+    dsn: 'https://8fb095e7a4cb475b8f378e1635dea8a1@o1079572.ingest.sentry.io/6084520',
+    // Additional Module Options go here
+    // https://sentry.nuxtjs.org/sentry/options
+    config: {
+      // Add native Sentry config here
+      // https://docs.sentry.io/platforms/javascript/guides/vue/configuration/options/
     }
   },
 
