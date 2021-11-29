@@ -78,6 +78,9 @@ export default {
         } else if (response.status === 451) {
           this.snackbarMessage = 'پیج مورد نظر پرایوت است.'
           this.showSnackbar = true
+        } else if (response.status === 400 && response.data.error) {
+          this.snackbarMessage = response.data.error[0]
+          this.showSnackbar = true
         }
       })
     },

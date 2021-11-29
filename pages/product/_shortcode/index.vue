@@ -1,6 +1,13 @@
 <template>
-  <v-progress-circular indeterminate v-if="!getProduct" size="64" />
-  <v-col v-else class="pa-0 mx-auto" cols="12" sm="8" md="7" lg="6">
+  <v-progress-circular v-if="!getProduct" indeterminate size="64" />
+  <v-col
+    v-else
+    class="pa-0 mx-auto"
+    cols="12"
+    sm="8"
+    md="7"
+    lg="6"
+  >
     <v-card min-height="670">
       <v-dialog
         v-model="showDialog"
@@ -39,8 +46,8 @@
         <div class="pl-3">{{ getCurrentShop.instagramUsername }}</div>
         <v-spacer />
         <v-menu offset-y>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon @click.prevent="" v-bind="attrs" v-on="on">
+          <template #activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" @click.prevent="" v-on="on">
               <v-icon color="grey darken-2">mdi-menu</v-icon>
             </v-btn>
           </template>
@@ -138,9 +145,9 @@ export default {
     await store.dispatch('product/productDetail', params.shortcode)
       .catch((response) => {
         if (response.status === 404) {
-          error({ statusCode: 404, message: 'product not found' })
+          error({ statusCode: 404, message: 'محصول یافت نشد.' })
         } else {
-          error({ statusCode: 500, message: 'Oops! An error occured.' })
+          error({ statusCode: 500, message: 'خطایی رخ داده است!' })
         }
       })
   },
@@ -177,7 +184,7 @@ export default {
       this.form = formName
     },
     async submitProductEditForm (newTitle, newDescription) {
-      let prod = { ...this.getProduct }
+      const prod = { ...this.getProduct }
       prod.title = newTitle
       prod.description = newDescription
 
@@ -186,15 +193,12 @@ export default {
         await this.editProduct(prod).then(() => {
           this.showDialog = false
           this.form = ''
-          this.isSubmittingForm = false
-        }).catch((response) => {
-          console.log(response.error)
-          this.isSubmittingForm = false
         })
+        this.isSubmittingForm = false
       }
     },
     async submitProductPriceForm (newPrice) {
-      let prod = { ...this.getProduct }
+      const prod = { ...this.getProduct }
       prod.originalPrice = newPrice
 
       if (!this.isSubmittingForm) {
@@ -202,11 +206,8 @@ export default {
         await this.editProduct(prod).then(() => {
           this.showDialog = false
           this.form = ''
-          this.isSubmittingForm = false
-        }).catch((response) => {
-          this.isSubmittingForm = false
-          console.log(response.error)
         })
+        this.isSubmittingForm = false
       }
     },
     async submitProductDiscountForm (discountPercent, discountAmount, discountDescription) {
@@ -221,11 +222,8 @@ export default {
         await this.createProductDiscount(discountItem).then(() => {
           this.showDialog = false
           this.form = ''
-          this.isSubmittingForm = false
-        }).catch((response) => {
-          this.isSubmittingForm = false
-          console.log(response.data)
         })
+        this.isSubmittingForm = false
       }
     }
   }

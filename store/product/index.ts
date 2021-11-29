@@ -1,6 +1,7 @@
-import { GetterTree, MutationTree, ActionTree } from "vuex"
+import { GetterTree, MutationTree, ActionTree } from 'vuex'
 import { RootState } from '../index'
-import Product from "~/models/product"
+import Product from '~/models/product'
+import Issue from '~/models/issue_tracker/issue'
 
 const namespace = 'product'
 
@@ -13,34 +14,44 @@ const state = (): ProductState => ({
 })
 
 const mutations = <MutationTree<ProductState>>{
-  setProduct(state, prod) {
+  setProduct (state, prod) {
     state.product = new Product(prod.id, prod.shop, prod.finalPrice, prod.shortcode,
-                                prod.title, prod.description, prod.displayImage, prod.originalPrice,
-                                prod.rate, prod.isExisting, prod.createdAt, prod.updatedAt,
-                                prod.discountPercent, prod.discountAmount)
+      prod.title, prod.description, prod.displayImage, prod.originalPrice, prod.rate,
+      prod.isExisting, prod.createdAt, prod.updatedAt, prod.discountPercent, prod.discountAmount)
   }
 }
 
 const actions = <ActionTree<ProductState, RootState>>{
-  productDetail(vuexContext, shortcode) {
+  productDetail (vuexContext, shortcode) {
     const url = process.env.baseURL + `shop/product/${shortcode}/`
 
     return this.$client.get(url).then((response) => {
       vuexContext.commit('setProduct', response.data)
     }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('productDetail', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
-  editProduct(vuexContext, product) {
+  editProduct (vuexContext, product) {
     const url = process.env.baseURL + `shop/product/${product.shortcode}/`
 
     return this.$client.put(url, product).then((response) => {
       vuexContext.commit('setProduct', response.data)
     }).catch((e) => {
-      throw e.response
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('editProduct', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
-  createProductDiscount(vuexContext, payloadData) {
+  createProductDiscount (vuexContext, payloadData) {
     const product = vuexContext.getters.getProduct
     const url = process.env.baseURL + `shop/product/${product.shortcode}/discount/`
     payloadData.product = product.id
@@ -48,7 +59,12 @@ const actions = <ActionTree<ProductState, RootState>>{
     return this.$client.post(url, payloadData).then((response) => {
       vuexContext.commit('setProduct', response.data.product)
     }).catch((e) => {
-      throw e.response
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('createProductDiscount', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
     })
   }
 }
@@ -56,7 +72,7 @@ const actions = <ActionTree<ProductState, RootState>>{
 const getters = <GetterTree<ProductState, RootState>>{
   getProduct: (state) : Product | null => {
     return state.product
-  },
+  }
 }
 
 export default {

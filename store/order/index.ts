@@ -1,6 +1,7 @@
 import { GetterTree, MutationTree, ActionTree } from 'vuex'
 import { RootState } from '../index'
 import Order from '~/models/order'
+import Issue from '~/models/issue_tracker/issue'
 
 const namespace = 'order'
 
@@ -33,7 +34,12 @@ const actions = <ActionTree<OrderState, RootState>>{
         vuexContext.commit('appendToOrderList', element)
       })
     }).catch((e) => {
-      throw e.response
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('shopOrders', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
     })
   }
 }
