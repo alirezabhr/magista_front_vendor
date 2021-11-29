@@ -4,6 +4,7 @@ import Shop from '~/models/shop'
 import InstagramProfileInfo from '~/models/instagram_profile_info'
 import PostPreview from '~/models/post_preview'
 import Product from '~/models/product'
+import Issue from '~/models/issue_tracker/issue'
 
 const namespace = 'shop'
 
@@ -99,6 +100,15 @@ const actions = <ActionTree<ShopState, RootState>>{
       vuexContext.commit('setInstagramUsername', igUsername)
       vuexContext.commit('setUserIgProfileInfo', response.data)
     }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('saveInstagramMediaQueryFile', k, e.response.data[k][0], null)
+        if (e.response.status === 500 || e.response.status === 503) {
+          issue.setCritical()
+        }
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
@@ -118,6 +128,15 @@ const actions = <ActionTree<ShopState, RootState>>{
         vuexContext.commit('concatToPostPreviewList', response.data.postsData)
         hasNext = response.data.hasNext
       }).catch((e) => {
+        vuexContext.commit('issue/createNewIssues', null, { root: true })
+        for (const k in e.response.data) {
+          const issue = new Issue('getInstagramMediaQueryFile', k, e.response.data[k][0], null)
+          if (e.response.status === 500 || e.response.status === 503) {
+            issue.setCritical()
+          }
+          vuexContext.commit('issue/addIssue', issue, { root: true })
+        }
+        vuexContext.dispatch('issue/capture', null, { root: true })
         throw e.response
       })
     }
@@ -133,6 +152,15 @@ const actions = <ActionTree<ShopState, RootState>>{
     payload.userId = userPk
 
     return this.$client.put(url, payload, { params: queryParams }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('removeExtraMediaQuery', k, e.response.data[k][0], null)
+        if (e.response.status === 500 || e.response.status === 503) {
+          issue.setCritical()
+        }
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
@@ -149,6 +177,15 @@ const actions = <ActionTree<ShopState, RootState>>{
       vuexContext.commit('appendShop', response.data)
       vuexContext.commit('setCurrentShop', response.data)
     }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('createShop', k, e.response.data[k][0], null)
+        if (e.response.status === 500 || e.response.status === 503) {
+          issue.setCritical()
+        }
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
@@ -161,6 +198,12 @@ const actions = <ActionTree<ShopState, RootState>>{
     }
 
     return this.$client.post(url, payload).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('createAllProducts', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
@@ -171,6 +214,12 @@ const actions = <ActionTree<ShopState, RootState>>{
     return this.$client.get(url).then((response) => {
       vuexContext.commit('setCurrentShopProducts', response.data)
     }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('currentShopProducts', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   }

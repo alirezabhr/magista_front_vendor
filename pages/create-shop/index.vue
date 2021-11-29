@@ -71,15 +71,14 @@ export default {
         this.creationStep = 'shop form'
         this.retrieveInstagramMedia()
       }).catch((response) => {
-        console.log('catch in saveInstagramMediaQuery')
         this.isSubmitting = false
-        if (response.status === 404 || response.status === 400) {
-          this.snackbarMessage = response.data.error[0]
-        } else {
-          this.snackbarMessage = 'خطا در دریافت اطلاعات اینستاگرام'
-          console.log(response)
+        if (response.status === 404) {
+          this.snackbarMessage = 'صفحه مورد نظر یافت نشد.'
+          this.showSnackbar = true
+        } else if (response.status === 451) {
+          this.snackbarMessage = 'پیج مورد نظر پرایوت است.'
+          this.showSnackbar = true
         }
-        this.showSnackbar = true
       })
     },
 
@@ -88,9 +87,7 @@ export default {
 
       this.getInstagramMediaQueryFile().then(() => {
         this.isGettingQueryMedia = false
-      }).catch((response) => {
-        console.log('catch in retrirveInstagramMedia')
-        console.log(response.data)
+      }).catch(() => {
         this.isGettingQueryMedia = false
         this.snackbarMessage = 'خطا در دریافت محتوای اینستاگرام'
         this.showSnackbar = true
@@ -103,12 +100,10 @@ export default {
       this.createShop(shopData).then(() => {
         this.isSubmitting = false
         this.creationStep = 'shop preview'
-      }).catch((response) => {
+      }).catch(() => {
         this.isSubmitting = false
-        for (const key in response.data) {
-          this.snackbarMessage = response.data[key][0]
-          this.showSnackbar = true
-        }
+        this.snackbarMessage = 'خطا در فرآیند ساخت فروشگاه. در صورت امکان به پشتیبانی اصطلاع دهید.'
+        this.showSnackbar = true
       })
     },
 
@@ -127,14 +122,11 @@ export default {
         extra_posts: removedPostList
       }).then(() => {
         didRemoveExtraPosts = true
-      }).catch((response) => {
-        console.log('catch in removeExtraMediaQuery')
+      }).catch(() => {
         this.isSubmitting = false
         didRemoveExtraPosts = false
-        for (const key in response.data) {
-          this.snackbarMessage = response.data[key][0]
-          this.showSnackbar = true
-        }
+        this.snackbarMessage = 'در حال دریافت محتوای ایسنتاگرام. لطفا کمی صبر کنید.'
+        this.showSnackbar = true
       })
 
       if (!didRemoveExtraPosts) {
@@ -145,7 +137,6 @@ export default {
         this.isSubmitting = false
         this.$router.push('dashboard')
       }).catch(() => {
-        console.log('catch in createAllProducts')
         this.isSubmitting = false
         this.snackbarMessage = 'خطا در ذخیره اطلاعات. لطفا کمی بعد تلاش کنید.'
         this.showSnackbar = true
