@@ -30,7 +30,34 @@
       </v-row>
     </v-col>
     <v-col v-else cols="12" class="ma-0 px-0 pt-0 pb-10">
-      <v-row no-gutters class="ma-0 pa-0" dir="ltr">
+      <v-snackbar
+        v-model="showSnackbar"
+        color="grey darken-3"
+      >
+        {{ snackbarMessage }}
+      </v-snackbar>
+      <v-row class="pa-5" no-gutters>
+        <v-row no-gutters>
+          <v-col>
+            <v-btn @click.prevent="copyShopLink">
+              <v-icon class="pl-1">mdi-content-copy</v-icon>
+              لینک فروشگاه
+            </v-btn>
+            <v-row no-gutters class="pt-2">
+              موجودی: {{ getCurrentShop.wallet }} تومان
+            </v-row>
+          </v-col>
+          <v-spacer />
+          <v-avatar
+            color="primary"
+            size="60"
+            style="border-style: solid; border-width: 1px;"
+          >
+            <v-img :src="profileImageFullUrl" />
+          </v-avatar>
+        </v-row>
+      </v-row>
+      <v-row no-gutters class="ma-0 pa-0 mt-5" dir="ltr">
         <v-col v-for="prod in getCurrentShopProducts" :key="prod.id" cols="4" class="ma-0 pa-0">
           <ProductPreview :product="prod" />
         </v-col>
@@ -51,14 +78,22 @@ export default {
   layout: 'panel',
   data () {
     return {
-      isLoadingPage: false
+      isLoadingPage: false,
+      showSnackbar: false,
+      snackbarMessage: ''
     }
   },
   computed: {
-    ...mapGetters('shop', ['getShops', 'getCurrentShopProducts']),
+    ...mapGetters('shop', ['getShops', 'getCurrentShopProducts', 'getCurrentShop']),
 
     getEmptyStateImage () {
       return require('~/assets/images/empty_state.png')
+    },
+    profileImageFullUrl () {
+      return process.env.baseURL + this.getCurrentShop.profileImageUrl
+    },
+    getShopLink () {
+      return `https://magista.ir/shop/${this.getCurrentShop.instagramUsername}`
     }
   },
   async mounted () {
@@ -79,6 +114,12 @@ export default {
           this.showSnackbar = true
         }
       })
+    },
+    copyShopLink () {
+      navigator.clipboard.writeText(this.getShopLink)
+
+      this.snackbarMessage = 'لینک فروشگاه کپی شد.'
+      this.showSnackbar = true
     }
   }
 }
