@@ -23,7 +23,7 @@
     </v-col>
     <v-col v-else cols="12" class="ma-0 px-0 pt-0 pb-10">
       <v-row v-for="(order, index) in getOrderList" :key="index" no-gutters class="ma-0 py-4 px-0" justify="center">
-        <v-col cols="11">
+        <v-col v-if="order.status > 1" cols="11">
           <v-card elevation="6" color="grey lighten-3">
             <v-col>
               <v-card-title class="pt-0 pb-6">
@@ -54,6 +54,10 @@
                 {{ order.totalPrice }}
                 تومان
               </v-row>
+              <v-row v-if="order.status === 2" no-gutters justify="space-around">
+                <v-btn color="red lighten-1" class="white--text" @click.prevent="cancelOrder(order)">لغو</v-btn>
+                <v-btn color="green" class="white--text font-weight-bold" @click.prevent="verifyOrder(order)">تایید سفارش</v-btn>
+              </v-row>
             </v-col>
           </v-card>
         </v-col>
@@ -65,6 +69,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import OrderItem from '@/components/OrderItem.vue'
+import OrderStatus from '@/models/order_status'
 
 export default {
   name: 'OrdersPage',
@@ -93,7 +98,18 @@ export default {
     this.isLoadingPage = false
   },
   methods: {
-    ...mapActions('order', ['shopOrders'])
+    ...mapActions('order', ['shopOrders', 'editOrder']),
+
+    async verifyOrder (order) {
+      const o = { ...order }
+      o.status = OrderStatus.VERIFIED
+      await this.editOrder(o)
+    },
+    async cancelOrder (order) {
+      const o = { ...order }
+      o.status = OrderStatus.CANCELED
+      await this.editOrder(o)
+    }
   }
 }
 </script>
