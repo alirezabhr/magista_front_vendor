@@ -40,7 +40,7 @@ const mutations = <MutationTree<ShopState>>{
   },
   setShops (state, shops) {
     shops.forEach((shop: any) => {
-      const s = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.profilePic)
+      const s = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.wallet, shop.profilePic)
       state.shops.push(s)
     })
   },
@@ -48,7 +48,7 @@ const mutations = <MutationTree<ShopState>>{
     state.shops.push(shop)
   },
   setCurrentShop (state, shop) {
-    state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.profilePic)
+    state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.wallet, shop.profilePic)
     localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
   },
   setCurrentShopProducts (state, products) {
