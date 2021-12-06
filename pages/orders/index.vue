@@ -54,9 +54,15 @@
                 {{ order.totalPrice }}
                 تومان
               </v-row>
+
+              <!-- if order status is paid -->
               <v-row v-if="order.status === 2" no-gutters justify="space-around">
                 <v-btn color="red lighten-1" class="white--text" @click.prevent="cancelOrder(order)">لغو</v-btn>
                 <v-btn color="green" class="white--text font-weight-bold" @click.prevent="verifyOrder(order)">تایید سفارش</v-btn>
+              </v-row>
+              <!-- if order status is verified -->
+              <v-row v-else-if="order.status === 3" no-gutters justify="center">
+                <v-btn color="green" class="white--text font-weight-bold" @click.prevent="orderHadSent(order)">ارسال شد</v-btn>
               </v-row>
             </v-col>
           </v-card>
@@ -108,6 +114,11 @@ export default {
     async cancelOrder (order) {
       const o = { ...order }
       o.status = OrderStatus.CANCELED
+      await this.editOrder(o)
+    },
+    async orderHadSent (order) {
+      const o = { ...order }
+      o.status = OrderStatus.SHIPPED
       await this.editOrder(o)
     }
   }
