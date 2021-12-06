@@ -15,11 +15,16 @@ const state = (): OrderState => ({
 
 const mutations = <MutationTree<OrderState>>{
   appendToOrderList (state, order: any) {
-    const item = new Order(order.id, order.status, order.shop, order.customer, order.orderItems, order.totalPrice, order.updatedAt, order.createdAt)
+    const item = new Order(order.id, order.status, order.statusText, order.shop, order.customer, order.orderItems, order.totalPrice, order.updatedAt, order.createdAt)
     state.orderList.splice(0, 0, item) // insert order at index 0
   },
   clearOrderList (state) {
     state.orderList = []
+  },
+  changeOrderStatusInList (state, order) {
+    const orderIndex = state.orderList.findIndex(el => el.id === order.id)
+    state.orderList[orderIndex].status = order.status
+    state.orderList[orderIndex].statusText = order.statusText
   }
 }
 
@@ -37,6 +42,23 @@ const actions = <ActionTree<OrderState, RootState>>{
       vuexContext.commit('issue/createNewIssues', null, { root: true })
       for (const k in e.response.data) {
         const issue = new Issue('shopOrders', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  editOrder (vuexContext, order) {
+    const url = process.env.baseURL + `order/${order.id}/`
+
+    order.shop = order.shop.id // add pk instead of Object
+    order.customer = order.customer.id // add pk instead of Object
+
+    return this.$client.put(url, order).then((response) => {
+      vuexContext.commit('changeOrderStatusInList', response.data)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('editOrder', k, e.response.data[k][0], null)
         vuexContext.commit('issue/addIssue', issue, { root: true })
       }
       vuexContext.dispatch('issue/capture', null, { root: true })
