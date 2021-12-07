@@ -84,16 +84,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('shop', ['getShops', 'getCurrentShopProducts', 'getCurrentShop']),
+    ...mapGetters('shop', ['getShops', 'getCurrentShopProducts', 'getCurrentShop', 'getShopLink']),
 
     getEmptyStateImage () {
       return require('~/assets/images/empty_state.png')
     },
     profileImageFullUrl () {
       return process.env.baseURL + this.getCurrentShop.profileImageUrl
-    },
-    getShopLink () {
-      return `https://magista.ir/shop/${this.getCurrentShop.instagramUsername}`
     }
   },
   async mounted () {
