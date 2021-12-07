@@ -5,6 +5,7 @@ import InstagramProfileInfo from '~/models/instagram_profile_info'
 import PostPreview from '~/models/post_preview'
 import Product from '~/models/product'
 import Issue from '~/models/issue_tracker/issue'
+import BankCredits from '~/models/bank_credit'
 
 const namespace = 'shop'
 
@@ -12,6 +13,7 @@ interface ShopState {
   shops: Shop[]
   currentShop: Shop | null
   currentShopProducts: Product[]
+  currentShopBankCredits: BankCredits[]
   instagramUsername: string | null
   userIgProfileInfo: InstagramProfileInfo | null
   postsPreviewList: PostPreview[]
@@ -21,6 +23,7 @@ const state = (): ShopState => ({
   shops: [],
   currentShop: null,
   currentShopProducts: [],
+  currentShopBankCredits: [],
   instagramUsername: null,
   userIgProfileInfo: null,
   postsPreviewList: []
@@ -40,7 +43,7 @@ const mutations = <MutationTree<ShopState>>{
   },
   setShops (state, shops) {
     shops.forEach((shop: any) => {
-      const s = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.wallet, shop.profilePic)
+      const s = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province, shop.city, shop.wallet, shop.profilePic, shop.withdrawalAmount)
       state.shops.push(s)
     })
   },
@@ -48,11 +51,17 @@ const mutations = <MutationTree<ShopState>>{
     state.shops.push(shop)
   },
   setCurrentShop (state, shop) {
-    state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.province, shop.city, shop.wallet, shop.profilePic)
+    state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province, shop.city, shop.wallet, shop.profilePic, shop.withdrawalAmount)
     localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
   },
   setCurrentShopProducts (state, products) {
     state.currentShopProducts = products
+  },
+  setCurrentShopBankCredits (state, bankCredits) {
+    state.currentShopBankCredits = bankCredits
+  },
+  appendBankCredit (state, bankCredits) {
+    state.currentShopBankCredits.push(bankCredits)
   },
   setInstagramUsername (state, username) {
     state.instagramUsername = username
@@ -222,6 +231,37 @@ const actions = <ActionTree<ShopState, RootState>>{
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
+  },
+  currentShopBankCredits (vuexContext) {
+    const shopPk = vuexContext.getters.getCurrentShop.id
+    const url = process.env.baseURL + `shop/${shopPk}/bank-credit/`
+
+    return this.$client.get(url).then((response) => {
+      vuexContext.commit('setCurrentShopBankCredits', response.data)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('currentShopBankCredits', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  addBankCredit (vuexContext, payload) {
+    const shopPk = vuexContext.getters.getCurrentShop.id
+    const url = process.env.baseURL + `shop/${shopPk}/bank-credit/`
+    payload.shop = shopPk
+
+    return this.$client.post(url, payload).then((response) => {
+      vuexContext.commit('appendBankCredit', response.data)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('addBankCredit', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
   }
 }
 
@@ -241,6 +281,9 @@ const getters = <GetterTree<ShopState, RootState>>{
   getCurrentShopProducts: (state) : Product[] => {
     return state.currentShopProducts
   },
+  getCurrentShopBankCredits: (state) : BankCredits[] => {
+    return state.currentShopBankCredits
+  },
   getPostsPreviewList: (state) => {
     return state.postsPreviewList
   },
@@ -249,6 +292,11 @@ const getters = <GetterTree<ShopState, RootState>>{
       return state.userIgProfileInfo.postsCount
     }
     return 0
+  },
+  getShopLink (state) {
+    if (state.currentShop) {
+      return `https://magista.ir/shop/${state.currentShop.instagramUsername}`
+    }
   }
 }
 
