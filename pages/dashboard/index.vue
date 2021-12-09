@@ -50,7 +50,7 @@
           <v-spacer />
           <v-avatar
             color="primary"
-            size="60"
+            size="75"
             style="border-style: solid; border-width: 1px;"
           >
             <v-img :src="profileImageFullUrl" />
