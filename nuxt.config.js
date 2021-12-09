@@ -82,6 +82,7 @@ export default {
           primary: colors.deepPurple.accent4, // #6200EA
           primaryVariant1: colors.deepPurple.darken4, // #311B92
           primaryVariant2: colors.purple.lighten4, // #CE93D8
+          secondary: colors.yellow.darken1,
           accent: colors.indigo.base, // #3F51B5
           background: colors.grey.lighten3,
           surface: colors.shades.white
