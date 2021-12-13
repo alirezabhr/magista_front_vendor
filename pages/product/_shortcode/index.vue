@@ -35,6 +35,10 @@
           @submit="submitProductEditForm"
           @close="showDialog = false"
         />
+        <ProductAttributesForm
+          v-else-if="form === 'attributes'"
+          @close="showDialog = false"
+        />
       </v-dialog>
       <v-row dir="ltr" no-gutters class="px-2 py-1 white" align="center">
         <v-avatar color="primary" style="border-style: solid;">
@@ -119,7 +123,14 @@
         <v-row class="font-weight-bold" no-gutters>
           {{ getProduct.title }}
         </v-row>
-        <v-row class="font-weight-light" no-gutters>
+        <v-col v-if="getProduct.attributes.length > 0" class="px-0 py-3">
+          <div class="font-weight-bold text-body-2" no-gutters>مشخصات</div>
+          <v-row v-for="(attr, index) in getProduct.attributes" :key="index" no-gutters>
+            {{ attr.name }}:  {{ attr.value }}
+          </v-row>
+        </v-col>
+        <v-row v-if="getProduct.description" class="font-weight-light" no-gutters>
+          <div class="font-weight-bold text-body-2" no-gutters>توضیح</div>
           {{ getProduct.description }}
         </v-row>
       </v-col>
@@ -133,13 +144,15 @@ import { mapActions, mapGetters } from 'vuex'
 import ProductPriceForm from '@/components/product/ProductPriceForm'
 import ProductEditForm from '@/components/product/ProductEditForm'
 import ProductDiscountForm from '@/components/product/ProductDiscountForm'
+import ProductAttributesForm from '@/components/product/ProductAttributesForm'
 
 export default {
   name: 'ProductShortcodePage',
   components: {
     ProductPriceForm,
     ProductEditForm,
-    ProductDiscountForm
+    ProductDiscountForm,
+    ProductAttributesForm
   },
   async asyncData ({ params, store, error }) {
     await store.dispatch('product/productDetail', params.shortcode)
@@ -156,8 +169,9 @@ export default {
       options: [
         { title: 'تغییر قیمت', color: 'black', icon: { title: 'mdi-trending-up mdi-18px', color: 'grey darken-2' }, form: 'price' },
         { title: 'تغییر توضیحات', color: 'black', icon: { title: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' },
-        { title: 'اعمال تخفیف', color: 'black', icon: { title: 'mdi-percent mdi-18px', color: 'grey darken-2' }, form: 'discount' },
-        { title: 'حذف تخفیف', color: 'black', icon: { title: 'mdi-tag-remove-outline mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
+        { title: 'اعمال تخفیف', color: 'black', icon: { title: 'mdi-label-percent-outline mdi-flip-h mdi-18px', color: 'grey darken-2' }, form: 'discount' },
+        { title: 'مشخصات کالا', color: 'black', icon: { title: 'mdi-tag-outline mdi-18px', color: 'grey darken-2' }, form: 'attributes' },
+        { title: 'حذف تخفیف', color: 'black', icon: { title: 'mdi-cash-remove mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
         { title: 'حذف محصول', color: 'red', icon: { title: 'mdi-delete-outline mdi-18px', color: 'red' }, form: 'delete' }
       ],
       form: '',

@@ -17,7 +17,19 @@ const mutations = <MutationTree<ProductState>>{
   setProduct (state, prod) {
     state.product = new Product(prod.id, prod.shop, prod.finalPrice, prod.shortcode,
       prod.title, prod.description, prod.displayImage, prod.originalPrice, prod.rate,
-      prod.isExisting, prod.createdAt, prod.updatedAt, prod.discountPercent, prod.discountAmount)
+      prod.isExisting, prod.createdAt, prod.updatedAt, prod.discountPercent, prod.discountAmount,
+      prod.attributes)
+  },
+  appendProductAttribute (state, attr) {
+    state.product?.attributes.push(attr)
+  },
+  removeProductAttribute (state, attrId) {
+    const i = state.product?.attributes.findIndex(el => el.id === attrId)
+    if (i) {
+      state.product?.attributes.splice(i, 1)
+    } else if (i === 0) {
+      state.product?.attributes.splice(0, 1)
+    }
   }
 }
 
@@ -62,6 +74,36 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('issue/createNewIssues', null, { root: true })
       for (const k in e.response.data) {
         const issue = new Issue('createProductDiscount', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  createAttribute (vuexContext, payload) {
+    const product = vuexContext.getters.getProduct
+    const url = process.env.baseURL + `shop/product/${product.shortcode}/attribute/`
+
+    return this.$client.post(url, payload).then((response) => {
+      vuexContext.commit('appendProductAttribute', response.data)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('createAttribute', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  removeAttribute (vuexContext, productAttributeId) {
+    const product = vuexContext.getters.getProduct
+    const url = process.env.baseURL + `shop/product/${product.shortcode}/attribute/${productAttributeId}/`
+
+    return this.$client.delete(url).then(() => {
+      vuexContext.commit('removeProductAttribute', productAttributeId)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('removeAttribute', k, e.response.data[k][0], null)
         vuexContext.commit('issue/addIssue', issue, { root: true })
       }
       vuexContext.dispatch('issue/capture', null, { root: true })
