@@ -15,10 +15,9 @@ const state = (): ProductState => ({
 
 const mutations = <MutationTree<ProductState>>{
   setProduct (state, prod) {
-    state.product = new Product(prod.id, prod.shop, prod.finalPrice, prod.shortcode,
-      prod.title, prod.description, prod.displayImage, prod.originalPrice, prod.rate,
-      prod.isExisting, prod.createdAt, prod.updatedAt, prod.discountPercent, prod.discountAmount,
-      prod.attributes)
+    state.product = new Product(prod.id, prod.finalPrice, prod.title, prod.description,
+      prod.originalPrice, prod.rate, prod.isExisting, prod.createdAt, prod.updatedAt,
+      prod.discountPercent, prod.discountAmount, prod.discountDescription, prod.attributes)
   },
   appendProductAttribute (state, attr) {
     state.product?.attributes.push(attr)
@@ -50,7 +49,7 @@ const actions = <ActionTree<ProductState, RootState>>{
     })
   },
   editProduct (vuexContext, product) {
-    const url = process.env.baseURL + `shop/product/${product.shortcode}/`
+    const url = process.env.baseURL + `shop/product/${product.id}/`
 
     return this.$client.put(url, product).then((response) => {
       vuexContext.commit('setProduct', response.data)
@@ -65,7 +64,7 @@ const actions = <ActionTree<ProductState, RootState>>{
   },
   createProductDiscount (vuexContext, payloadData) {
     const product = vuexContext.getters.getProduct
-    const url = process.env.baseURL + `shop/product/${product.shortcode}/discount/`
+    const url = process.env.baseURL + `shop/product/${product.id}/discount/`
     payloadData.product = product.id
 
     return this.$client.post(url, payloadData).then((response) => {
@@ -81,7 +80,7 @@ const actions = <ActionTree<ProductState, RootState>>{
   },
   createAttribute (vuexContext, payload) {
     const product = vuexContext.getters.getProduct
-    const url = process.env.baseURL + `shop/product/${product.shortcode}/attribute/`
+    const url = process.env.baseURL + `shop/product/${product.id}/attribute/`
 
     return this.$client.post(url, payload).then((response) => {
       vuexContext.commit('appendProductAttribute', response.data)
@@ -96,7 +95,7 @@ const actions = <ActionTree<ProductState, RootState>>{
   },
   removeAttribute (vuexContext, productAttributeId) {
     const product = vuexContext.getters.getProduct
-    const url = process.env.baseURL + `shop/product/${product.shortcode}/attribute/${productAttributeId}/`
+    const url = process.env.baseURL + `shop/product/${product.id}/attribute/${productAttributeId}/`
 
     return this.$client.delete(url).then(() => {
       vuexContext.commit('removeProductAttribute', productAttributeId)
