@@ -58,8 +58,8 @@
         </v-row>
       </v-row>
       <v-row no-gutters class="ma-0 pa-0 mt-5" dir="ltr">
-        <v-col v-for="prod in getCurrentShopProducts" :key="prod.id" cols="4" class="ma-0 pa-0">
-          <ProductPreview :product="prod" />
+        <v-col v-for="p in getCurrentShopPosts" :key="p.id" cols="4" class="ma-0 pa-0">
+          <PostPreview :post="p" />
         </v-col>
       </v-row>
     </v-col>
@@ -68,12 +68,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ProductPreview from '@/components/ProductPreview.vue'
+import PostPreview from '~/components/PostPreview.vue'
 
 export default {
   name: 'DashboardPage',
   components: {
-    ProductPreview
+    PostPreview
   },
   layout: 'panel',
   data () {
@@ -84,7 +84,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('shop', ['getShops', 'getCurrentShopProducts', 'getCurrentShop', 'getShopLink']),
+    ...mapGetters('shop', ['getShops', 'getCurrentShopPosts', 'getCurrentShop', 'getShopLink']),
 
     getEmptyStateImage () {
       return require('~/assets/images/empty_state.png')
@@ -97,12 +97,12 @@ export default {
     this.isLoadingPage = true
     await this.getUserShops()
     if (this.getShops.length > 0) {
-      await this.currentShopProducts()
+      await this.currentShopPosts()
     }
     this.isLoadingPage = false
   },
   methods: {
-    ...mapActions('shop', ['getVendorShops', 'createShop', 'currentShopProducts']),
+    ...mapActions('shop', ['getVendorShops', 'currentShopPosts']),
 
     async getUserShops () {
       await this.getVendorShops().catch((response) => {

@@ -1,13 +1,18 @@
 <template>
-  <NuxtLink :to="productRoute(product.shortcode)">
+  <NuxtLink :to="productRoute(post.shortcode)">
     <v-card flat rounded="0">
-      <v-img :aspect-ratio="1" :src="productImageUrl(product.displayImage)">
+      <v-img
+        v-for="img in post.productImages"
+        :key="img.displayImage"
+        :aspect-ratio="1"
+        :src="productImageUrl(img.displayImage)"
+      >
         <v-overlay
           absolute
-          :value="!product.finalPrice"
+          :value="!post.hasProduct"
           class="my-overlay"
         >
-          <v-img :src="noPriceImage" :aspect-ratio="1" />
+          <v-img :src="noProductImage" :aspect-ratio="1" />
         </v-overlay>
       </v-img>
     </v-card>
@@ -16,18 +21,19 @@
 
 <script lang="ts">
 import { PropType } from 'vue'
-import Product from '~/models/product'
+import Post from '~/models/post'
 
 export default {
-  name: 'ProductPreview',
+  name: 'PostPreview',
   props: {
-    product: {
-      type: Object as PropType<Product>,
+    post: {
+      type: Object as PropType<Post>,
       required: true
     }
   },
   computed: {
-    noPriceImage () {
+    noProductImage () {
+      // TODO image should change to no product
       return require('~/assets/images/no_price.png')
     }
   },
