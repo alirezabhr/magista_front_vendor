@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     ...mapActions('shop', ['saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile',
-      'createShop', 'removeExtraMediaQuery', 'createAllProducts']),
+      'createShop', 'removeExtraMediaQuery', 'createAllPosts']),
     ...mapMutations('shop', ['removePost', 'addPosts']),
 
     saveMediaQuery (igUsername) {
@@ -136,7 +136,7 @@ export default {
         return
       }
 
-      this.createAllProducts().then(() => {
+      this.createAllPosts().then(() => {
         this.isSubmitting = false
         this.$router.push('dashboard')
       }).catch(() => {
