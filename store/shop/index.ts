@@ -3,16 +3,16 @@ import { RootState } from '../index'
 import Shop from '~/models/shop'
 import InstagramProfileInfo from '~/models/instagram_profile_info'
 import PostPreview from '~/models/post_preview'
-import Product from '~/models/product'
 import Issue from '~/models/issue_tracker/issue'
 import BankCredits from '~/models/bank_credit'
+import Post from '~/models/post'
 
 const namespace = 'shop'
 
 interface ShopState {
   shops: Shop[]
   currentShop: Shop | null
-  currentShopProducts: Product[]
+  currentShopPosts: Post[]
   currentShopBankCredits: BankCredits[]
   instagramUsername: string | null
   userIgProfileInfo: InstagramProfileInfo | null
@@ -22,7 +22,7 @@ interface ShopState {
 const state = (): ShopState => ({
   shops: [],
   currentShop: null,
-  currentShopProducts: [],
+  currentShopPosts: [],
   currentShopBankCredits: [],
   instagramUsername: null,
   userIgProfileInfo: null,
@@ -54,8 +54,8 @@ const mutations = <MutationTree<ShopState>>{
     state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province, shop.city, shop.wallet, shop.profilePic, shop.withdrawalAmount)
     localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
   },
-  setCurrentShopProducts (state, products) {
-    state.currentShopProducts = products
+  setCurrentShopPosts (state, posts) {
+    state.currentShopPosts = posts
   },
   setCurrentShopBankCredits (state, bankCredits) {
     state.currentShopBankCredits = bankCredits
@@ -198,9 +198,9 @@ const actions = <ActionTree<ShopState, RootState>>{
       throw e.response
     })
   },
-  createAllProducts (vuexContext) {
+  createAllPosts (vuexContext) {
     const shopPk = vuexContext.getters.getCurrentShop.id
-    const url = process.env.baseURL + `shop/${shopPk}/products/`
+    const url = process.env.baseURL + `shop/${shopPk}/post/`
 
     const payload = {
       instagramUsername: vuexContext.getters.getInstagramUsername
@@ -209,23 +209,23 @@ const actions = <ActionTree<ShopState, RootState>>{
     return this.$client.post(url, payload).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
       for (const k in e.response.data) {
-        const issue = new Issue('createAllProducts', k, e.response.data[k][0], null)
+        const issue = new Issue('createAllPosts', k, e.response.data[k][0], null)
         vuexContext.commit('issue/addIssue', issue, { root: true })
       }
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
-  currentShopProducts (vuexContext) {
+  currentShopPosts (vuexContext) {
     const shopPk = vuexContext.getters.getCurrentShop.id
-    const url = process.env.baseURL + `shop/${shopPk}/products/`
+    const url = process.env.baseURL + `shop/${shopPk}/post/`
 
     return this.$client.get(url).then((response) => {
-      vuexContext.commit('setCurrentShopProducts', response.data)
+      vuexContext.commit('setCurrentShopPosts', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
       for (const k in e.response.data) {
-        const issue = new Issue('currentShopProducts', k, e.response.data[k][0], null)
+        const issue = new Issue('currentShopPosts', k, e.response.data[k][0], null)
         vuexContext.commit('issue/addIssue', issue, { root: true })
       }
       vuexContext.dispatch('issue/capture', null, { root: true })
@@ -278,8 +278,8 @@ const getters = <GetterTree<ShopState, RootState>>{
   getCurrentShop: (state) => {
     return state.currentShop
   },
-  getCurrentShopProducts: (state) : Product[] => {
-    return state.currentShopProducts
+  getCurrentShopPosts: (state) : Post[] => {
+    return state.currentShopPosts
   },
   getCurrentShopBankCredits: (state) : BankCredits[] => {
     return state.currentShopBankCredits
