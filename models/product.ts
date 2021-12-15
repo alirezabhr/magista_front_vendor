@@ -1,4 +1,5 @@
 import ProductAttribute from './product_attribute'
+import TagLocation from './tag_location'
 
 class Product {
   id: number
@@ -12,12 +13,13 @@ class Product {
   discountAmount: number | null
   discountDescription: string
   attributes: ProductAttribute[]
+  tag: TagLocation
   createdAt: Date
   updatedAt: Date
 
   constructor (id: number, finalPrice: number, title: string, description: string, originalPrice: number,
     rate: number | null, isExisting: boolean, createdAt: Date, updatedAt: Date, discountPercent: number | null,
-    discountAmount: number | null, discountDescription: string, attributes: ProductAttribute[]) {
+    discountAmount: number | null, discountDescription: string, attributes: ProductAttribute[], tag: TagLocation) {
     this.id = id
     this.finalPrice = finalPrice
     this.originalPrice = originalPrice
@@ -29,6 +31,7 @@ class Product {
     this.discountAmount = discountAmount
     this.discountDescription = discountDescription
     this.attributes = attributes
+    this.tag = tag
     this.createdAt = createdAt
     this.updatedAt = updatedAt
   }
