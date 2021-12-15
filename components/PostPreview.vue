@@ -2,10 +2,8 @@
   <NuxtLink :to="productRoute(post.shortcode)">
     <v-card flat rounded="0">
       <v-img
-        v-for="img in post.productImages"
-        :key="img.displayImage"
         :aspect-ratio="1"
-        :src="productImageUrl(img.displayImage)"
+        :src="productImageUrl((post.productImages)[0].displayImage)"
       >
         <v-overlay
           absolute
