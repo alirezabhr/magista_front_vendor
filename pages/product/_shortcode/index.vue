@@ -1,5 +1,5 @@
 <template>
-  <v-progress-circular v-if="!getProduct" indeterminate size="64" />
+  <v-progress-circular v-if="!getPost" indeterminate size="64" />
   <v-col
     v-else
     class="pa-0 mx-auto"
@@ -14,21 +14,21 @@
         max-width="600px"
       >
         <ProductPriceForm
-          v-if="form === 'price'"
+          v-if="productForm === 'price'"
           :is-submitting-form="isSubmittingForm"
           :product-price="getProduct.originalPrice"
           @submit="submitProductPriceForm"
           @close="showDialog = false"
         />
         <ProductDiscountForm
-          v-else-if="form === 'discount'"
+          v-else-if="productForm === 'discount'"
           :is-submitting-form="isSubmittingForm"
           :product-price="getProduct.originalPrice"
           @submit="submitProductDiscountForm"
           @close="showDialog = false"
         />
         <ProductEditForm
-          v-else-if="form === 'edit'"
+          v-else-if="productForm === 'edit'"
           :is-submitting-form="isSubmittingForm"
           :product-title="getProduct.title"
           :product-description="getProduct.description"
@@ -36,7 +36,7 @@
           @close="showDialog = false"
         />
         <ProductAttributesForm
-          v-else-if="form === 'attributes'"
+          v-else-if="productForm === 'attributes'"
           @close="showDialog = false"
         />
       </v-dialog>
@@ -57,13 +57,13 @@
           </template>
           <v-list>
             <v-list-item
-              v-for="(option, index) in options"
+              v-for="(option, index) in postOptions"
               :key="index"
               link
               @click.prevent="optionsOnClick(option.form)"
             >
               <v-icon class="pl-2" :color="option.icon.color">
-                {{ option.icon.title }}
+                {{ option.icon.name }}
               </v-icon>
               <v-list-item-title :class="`${option.color}--text`">
                 {{ option.title }}
@@ -72,66 +72,54 @@
           </v-list>
         </v-menu>
       </v-row>
-      <v-img :src="productImageUrl" :aspect-ratio="1" />
+      <v-carousel
+        v-model="carouselIndex"
+        :show-arrows="getPost.productImages.length > 1"
+        :hide-delimiters="getPost.productImages.length <= 1"
+        hide-delimiter-background
+        class="pa-0 ma-0"
+        height="100%"
+      >
+        <v-carousel-item
+          v-for="(productImage, i) in getPost.productImages"
+          :key="i"
+        >
+          <v-img :src="productImageUrl(productImage)" :aspect-ratio="1">  <!-- @click.prevent="showProductTags = !showProductTags" -->
+            <section v-for="product in productImage.products" v-show="showProductTags" :key="product.id" @click="t()">
+              <!-- tag section -->
+              <div
+                class="tag"
+                :style="`left: ${product.tag.x}%; bottom: ${product.tag.y}%;`"
+                style="transform: translate(-50%, 100%); max-width: 130px;"
+              >
+                <div class="arrow-up" style="opacity: 85%;" />
+                <v-card
+                  rounded="md"
+                  color="black"
+                  max-width="130"
+                  style="opacity: 85%;"
+                  class="px-3 py-1"
+                  flat
+                >
+                  <div class="white--text font-weight-bold text-caption text-truncate pb-1">{{ product.title }}</div>
+                  <v-row v-if="product.discountPercent" class="px-1 white--text font-weight-light text-decoration-line-through" style="font-size: .600rem;" no-gutters>
+                    {{ product.originalPrice }}
+                  </v-row>
+                  <v-row class="white--text font-weight-medium text-caption px-1" no-gutters>
+                    {{ product.finalPrice }}
+                    <v-spacer />
+                    <span class="currency">تومان</span>
+                  </v-row>
+                </v-card>
+              </div>
+            </section>
+          </v-img>
+        </v-carousel-item>
+      </v-carousel>
       <v-col class="pa-3" no-gutters>
-        <v-row no-gutters align="center">
-          <v-rating
-            v-model="getProduct.rate"
-            background-color="yellow accent-4"
-            color="yellow accent-4"
-            readonly
-            half-increments
-            dense
-            size="24"
-          />
-          <div class="grey-text text-darken-1 font-weight-light px-2">
-            <div v-if="getProduct.rate">
-              ({{ getProduct.rate }})
-            </div>
-            <div v-else>
-              بدون نظر
-            </div>
-          </div>
-        </v-row>
-        <v-row no-gutters class="px-1">
-          قیمت:
-          <v-row v-if="getProduct.originalPrice" no-gutters class="pr-2">
-            <div v-show="getProduct.discountPercent" class="pr-2 text-decoration-line-through">
-              {{ getProduct.originalPrice }}
-            </div>
-            <v-icon v-show="getProduct.discountPercent" class="pr-1">mdi-chevron-triple-left</v-icon>
-            <div>
-              {{ getProduct.finalPrice }}
-            </div>
-            تومان
-          </v-row>
-          <div v-else>
-            ندارد
-          </div>
-        </v-row>
-        <v-row no-gutters class="px-1 pb-3">
-          تخفیف:
-          <div v-if="getProduct.discountPercent" class="px-2 font-weight-bold">
-            <v-icon color="grey darken-2">mdi-percent mdi-18px</v-icon>
-            {{ getProduct.discountPercent }}
-          </div>
-          <div v-else>
-            ندارد
-          </div>
-        </v-row>
-        <v-divider class="pa-1" />
-        <v-row class="font-weight-bold" no-gutters>
-          {{ getProduct.title }}
-        </v-row>
-        <v-col v-if="getProduct.attributes.length > 0" class="px-0 py-3">
-          <div class="font-weight-bold text-body-2" no-gutters>مشخصات</div>
-          <v-row v-for="(attr, index) in getProduct.attributes" :key="index" no-gutters>
-            {{ attr.name }}:  {{ attr.value }}
-          </v-row>
-        </v-col>
-        <v-row v-if="getProduct.description" class="font-weight-light" no-gutters>
-          <div class="font-weight-bold text-body-2" no-gutters>توضیح</div>
-          {{ getProduct.description }}
+        <v-row v-if="getPost.description" class="font-weight-light" no-gutters>
+          <div class="font-weight-bold text-body-2" no-gutters>توضیح پُست</div>
+          {{ getPost.description }}
         </v-row>
       </v-col>
     </v-card>
@@ -155,7 +143,7 @@ export default {
     ProductAttributesForm
   },
   async asyncData ({ params, store, error }) {
-    await store.dispatch('product/productDetail', params.shortcode)
+    await store.dispatch('product/postDetail', params.shortcode)
       .catch((response) => {
         if (response.status === 404) {
           error({ statusCode: 404, message: 'محصول یافت نشد.' })
@@ -166,33 +154,39 @@ export default {
   },
   data () {
     return {
-      options: [
-        { title: 'تغییر قیمت', color: 'black', icon: { title: 'mdi-trending-up mdi-18px', color: 'grey darken-2' }, form: 'price' },
-        { title: 'تغییر توضیحات', color: 'black', icon: { title: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' },
-        { title: 'اعمال تخفیف', color: 'black', icon: { title: 'mdi-label-percent-outline mdi-flip-h mdi-18px', color: 'grey darken-2' }, form: 'discount' },
-        { title: 'مشخصات کالا', color: 'black', icon: { title: 'mdi-tag-outline mdi-18px', color: 'grey darken-2' }, form: 'attributes' },
-        { title: 'حذف تخفیف', color: 'black', icon: { title: 'mdi-cash-remove mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
-        { title: 'حذف محصول', color: 'red', icon: { title: 'mdi-delete-outline mdi-18px', color: 'red' }, form: 'delete' }
+      showProductTags: true,
+      postOptions: [
+        { title: 'افزودن محصول', color: 'black', icon: { name: 'mdi-plus mdi-18px', color: 'green darken-1' } },
+        { title: 'توضیح پُست', color: 'black', icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' }
       ],
-      form: '',
+      carouselIndex: 0,
+      productOptions: [
+        { title: 'تغییر قیمت', color: 'black', icon: { name: 'mdi-trending-up mdi-18px', color: 'grey darken-2' }, form: 'price' },
+        { title: 'تغییر توضیحات', color: 'black', icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' },
+        { title: 'اعمال تخفیف', color: 'black', icon: { name: 'mdi-label-percent-outline mdi-flip-h mdi-18px', color: 'grey darken-2' }, form: 'discount' },
+        { title: 'مشخصات کالا', color: 'black', icon: { name: 'mdi-tag-outline mdi-18px', color: 'grey darken-2' }, form: 'attributes' },
+        { title: 'حذف تخفیف', color: 'black', icon: { name: 'mdi-cash-remove mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
+        { title: 'حذف محصول', color: 'red', icon: { name: 'mdi-delete-outline mdi-18px', color: 'red' }, form: 'delete' }
+      ],
+      productForm: '',
       showDialog: false,
       isSubmittingForm: false
     }
   },
   computed: {
     ...mapGetters('shop', ['getCurrentShop']),
-    ...mapGetters('product', ['getProduct']),
+    ...mapGetters('product', ['getPost', 'getProduct']),
 
     getProfilePhotoUrl () {
       return process.env.baseURL + this.getCurrentShop.profileImageUrl
-    },
-    productImageUrl () {
-      return process.env.baseURL + this.getProduct.displayImage
     }
   },
   methods: {
     ...mapActions('product', ['editProduct', 'createProductDiscount']),
 
+    productImageUrl (productImage) {
+      return process.env.baseURL + productImage.displayImage
+    },
     optionsOnClick (formName) {
       this.showDialog = true
       this.form = formName
@@ -243,3 +237,40 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.tag {
+  pointer-events: none;
+  position: absolute;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+  -webkit-transform-origin: center top;
+  transform-origin: center top;
+  -webkit-transition-duration: .2s;
+  transition-duration: .2s;
+  -webkit-transition-property: opacity,-webkit-transform;
+  transition-property: transform,opacity;
+  transition-property: transform,opacity,-webkit-transform;
+  -webkit-transition-timing-function: cubic-bezier(.16,1.275,.725,1.255);
+  transition-timing-function: cubic-bezier(.16,1.275,.725,1.255);
+}
+.arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;
+  margin-right: 40%;
+}
+.currency {
+  -webkit-text-size-adjust: 100%;
+    direction: rtl;
+    list-style: none;
+    text-align: center;
+    -webkit-box-direction: normal;
+    box-sizing: inherit;
+    outline: none!important;
+    font-size: .540rem;
+    line-height: 21px;
+}
+</style>
