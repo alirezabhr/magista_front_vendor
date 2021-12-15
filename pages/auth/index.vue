@@ -120,7 +120,7 @@ export default {
       }).catch((response) => {
         this.isLoading = false
         if (response.data.error) {
-          this.snackbarMessage = response.data.error
+          this.snackbarMessage = response.data.error[0]
           this.showSnackbar = true
         }
       })
