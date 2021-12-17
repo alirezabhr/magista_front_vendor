@@ -37,11 +37,13 @@
         <!-- TAG COMPONENT -->
         <div
           class="tag"
-          :style="`left: ${product.tag.x}%; bottom: ${product.tag.y}%;`"
+          :style="`left: ${tag.x}%; bottom: ${tag.y}%;`"
           style="transform: translate(-50%, 100%); max-width: 130px;"
-          draggable="true"
           v-bind="attrs"
           v-on="on"
+          @touchstart="touchStart($event)"
+          @touchmove.prevent="touchMove($event)"
+          @touchend.prevent="touchEnd()"
         >
           <div class="arrow-up" style="opacity: 85%;" />
           <v-card
@@ -84,8 +86,9 @@
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import { PropType } from 'vue'
+
 import Product from '@/models/product'
 import ProductPriceForm from '@/components/product/ProductPriceForm.vue'
 import ProductEditForm from '@/components/product/ProductEditForm.vue'
@@ -108,6 +111,10 @@ export default {
   },
   data () {
     return {
+      touchFirstX: 0,
+      touchFirstY: 0,
+      tagFirstX: 0,
+      tagFirstY: 0,
       productOptions: [
         { title: 'تغییر قیمت', color: 'black', icon: { name: 'mdi-trending-up mdi-18px', color: 'grey darken-2' }, form: 'price' },
         { title: 'تغییر توضیحات', color: 'black', icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' },
@@ -121,8 +128,55 @@ export default {
       isSubmittingForm: false
     }
   },
+  computed: {
+    tag: {
+      // getter
+      get () {
+        return this.product.tag
+      },
+      // setter
+      set (newValue) {
+        newValue.product = this.product.id
+        this.changedTagLocation(newValue)
+      }
+    }
+  },
   methods: {
-    ...mapActions('product', ['editProduct', 'createProductDiscount']),
+    ...mapActions('product', ['editProduct', 'createProductDiscount', 'changeTagLocation']),
+    ...mapMutations('product', ['changedTagLocation']),
+
+    touchStart (e: any) {
+      this.touchFirstX = e.touches[0].clientX
+      this.touchFirstY = e.touches[0].clientY
+      this.tagFirstX = this.tag.x
+      this.tagFirstY = this.tag.y
+    },
+    touchMove (e: any) {
+      const imageObj = document.getElementById('imageFrame')
+      if (imageObj) {
+        const imageWidth = imageObj.offsetWidth
+
+        const deltaX = (e.touches[0].clientX - this.touchFirstX) * 100 / imageWidth
+        const deltaY = (this.touchFirstY - e.touches[0].clientY) * 100 / imageWidth
+        const tagLastX = this.tagFirstX
+        const tagLastY = this.tagFirstY
+
+        this.tag = { x: tagLastX + deltaX, y: tagLastY + deltaY }
+      }
+    },
+    touchEnd () {
+      console.log('end')
+      const payload = {
+        x: Number.parseInt(this.tag.x),
+        y: Number.parseInt(this.tag.y),
+        product: this.product.id
+      }
+      if (payload.x <= 0 || payload.x >= 100 || payload.y <= 0 || payload.y >= 100) {
+        this.tag = { x: this.tagFirstX, y: this.tagFirstY }
+      } else {
+        this.changeTagLocation(payload)
+      }
+    },
 
     optionsOnClick (formName: string) {
       this.showDialog = true
