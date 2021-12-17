@@ -9,7 +9,7 @@
     </v-card-title>
 
     <v-col>
-      <v-card v-for="(attr, index) in getProduct.attributes" :key="index" outlined class="ma-2 px-1">
+      <v-card v-for="attr in product.attributes" :key="attr.id" outlined class="ma-2 px-1">
         <v-row no-gutters align="center">
           <div>
             <span class="px-2">{{ attr.name }}: </span>
@@ -57,10 +57,16 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'ProductAttributesForm',
+  props: {
+    product: {
+      type: Object,
+      required: true
+    }
+  },
   data () {
     return {
       attrName: '',
@@ -75,11 +81,12 @@ export default {
       ]
     }
   },
-  computed: {
-    ...mapGetters('product', ['getProduct'])
+  mounted () {
+    this.setSelectedProductId(this.product.id)
   },
   methods: {
     ...mapActions('product', ['createAttribute', 'removeAttribute']),
+    ...mapMutations('product', ['setSelectedProductId']),
 
     validateAndAddAttributes () {
       if (this.$refs.form.validate()) {
