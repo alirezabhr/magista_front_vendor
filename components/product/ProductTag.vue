@@ -1,63 +1,176 @@
 <template>
-  <div
-    class="tag"
-    :style="`left: ${product.tag.x}%; bottom: ${product.tag.y}%;`"
-    style="transform: translate(-50%, 100%); max-width: 130px;"
-  >
-    <div class="arrow-up" style="opacity: 85%;" />
-    <v-card
-      rounded="md"
-      color="black"
-      max-width="130"
-      style="opacity: 85%;"
-      class="px-3 py-1"
-      flat
+  <div>
+    <v-dialog
+      v-model="showDialog"
+      max-width="600px"
     >
-      <div class="white--text font-weight-bold text-caption text-truncate pb-1">{{ product.title }}</div>
-      <v-row v-if="product.discountPercent" class="px-1 white--text font-weight-light text-decoration-line-through" style="font-size: .600rem;" no-gutters>
-        {{ product.originalPrice }}
-      </v-row>
-      <v-row class="white--text font-weight-medium text-caption px-1" no-gutters>
-        {{ product.finalPrice }}
-        <v-spacer />
-        <span class="currency">تومان</span>
-      </v-row>
-    </v-card>
+      <ProductPriceForm
+        v-if="productForm === 'price'"
+        :is-submitting-form="isSubmittingForm"
+        :product-price="product.originalPrice"
+        @submit="submitProductPriceForm"
+        @close="showDialog = false"
+      />
+      <ProductDiscountForm
+        v-else-if="productForm === 'discount'"
+        :is-submitting-form="isSubmittingForm"
+        :product-price="product.originalPrice"
+        @submit="submitProductDiscountForm"
+        @close="showDialog = false"
+      />
+      <ProductEditForm
+        v-else-if="productForm === 'edit'"
+        :is-submitting-form="isSubmittingForm"
+        :product-title="product.title"
+        :product-description="product.description"
+        @submit="submitProductEditForm"
+        @close="showDialog = false"
+      />
+      <ProductAttributesForm
+        v-else-if="productForm === 'attributes'"
+        :product="product"
+        @close="showDialog = false"
+      />
+    </v-dialog>
+    <v-menu offset-y>
+      <template #activator="{ on, attrs }">
+        <!-- TAG COMPONENT -->
+        <div
+          class="tag"
+          :style="`left: ${product.tag.x}%; bottom: ${product.tag.y}%;`"
+          style="transform: translate(-50%, 100%); max-width: 130px;"
+          draggable="true"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <div class="arrow-up" style="opacity: 85%;" />
+          <v-card
+            rounded="md"
+            color="black"
+            max-width="130"
+            style="opacity: 85%;"
+            class="px-3 py-1"
+            flat
+          >
+            <div class="white--text font-weight-bold text-caption text-truncate pb-1">{{ product.title }}</div>
+            <v-row v-if="product.discountPercent" class="px-1 white--text font-weight-light text-decoration-line-through" style="font-size: .600rem;" no-gutters>
+              {{ product.originalPrice }}
+            </v-row>
+            <v-row class="white--text font-weight-medium text-caption px-1" no-gutters>
+              {{ product.finalPrice }}
+              <v-spacer />
+              <span class="currency">تومان</span>
+            </v-row>
+          </v-card>
+        </div>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(option, index) in productOptions"
+          :key="index"
+          link
+          @click.prevent="optionsOnClick(option.form)"
+        >
+          <v-icon class="pl-2" :color="option.icon.color">
+            {{ option.icon.name }}
+          </v-icon>
+          <v-list-item-title :class="`${option.color}--text`">
+            {{ option.title }}
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </div>
-  <!-- <v-menu offset-y>
-    <template #activator="{ on, attrs }">
-      <v-btn icon v-bind="attrs" @click.prevent="" v-on="on">
-        <v-icon color="grey darken-2">mdi-menu</v-icon>
-      </v-btn>
-    </template>
-    <v-list>
-      <v-list-item
-        v-for="(option, index) in options"
-        :key="index"
-        link
-        @click.prevent="optionsOnClick(option.form)"
-      >
-        <v-icon class="pl-2" :color="option.icon.color">
-          {{ option.icon.name }}
-        </v-icon>
-        <v-list-item-title :class="`${option.color}--text`">
-          {{ option.title }}
-        </v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu> -->
 </template>
 
 <script lang="ts">
+import { mapActions } from 'vuex'
 import { PropType } from 'vue'
 import Product from '@/models/product'
+import ProductPriceForm from '@/components/product/ProductPriceForm.vue'
+import ProductEditForm from '@/components/product/ProductEditForm.vue'
+import ProductDiscountForm from '@/components/product/ProductDiscountForm.vue'
+import ProductAttributesForm from '@/components/product/ProductAttributesForm.vue'
 
 export default {
   name: 'ProductTag',
+  components: {
+    ProductPriceForm,
+    ProductEditForm,
+    ProductDiscountForm,
+    ProductAttributesForm
+  },
   props: {
     product: {
       type: Object as PropType<Product>,
       required: true
+    }
+  },
+  data () {
+    return {
+      productOptions: [
+        { title: 'تغییر قیمت', color: 'black', icon: { name: 'mdi-trending-up mdi-18px', color: 'grey darken-2' }, form: 'price' },
+        { title: 'تغییر توضیحات', color: 'black', icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' },
+        { title: 'اعمال تخفیف', color: 'black', icon: { name: 'mdi-label-percent-outline mdi-flip-h mdi-18px', color: 'grey darken-2' }, form: 'discount' },
+        { title: 'مشخصات کالا', color: 'black', icon: { name: 'mdi-tag-outline mdi-18px', color: 'grey darken-2' }, form: 'attributes' },
+        { title: 'حذف تخفیف', color: 'black', icon: { name: 'mdi-cash-remove mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
+        { title: 'حذف محصول', color: 'red', icon: { name: 'mdi-delete-outline mdi-18px', color: 'red' }, form: 'delete' }
+      ],
+      showDialog: false,
+      productForm: '',
+      isSubmittingForm: false
+    }
+  },
+  methods: {
+    ...mapActions('product', ['editProduct', 'createProductDiscount']),
+
+    optionsOnClick (formName: string) {
+      this.showDialog = true
+      this.productForm = formName
+    },
+    async submitProductEditForm (newTitle: string, newDescription: string) {
+      const prod = { ...this.product }
+      prod.title = newTitle
+      prod.description = newDescription
+
+      if (!this.isSubmittingForm) {
+        this.isSubmittingForm = true
+        await this.editProduct(prod).then(() => {
+          this.showDialog = false
+          this.productForm = ''
+        })
+        this.isSubmittingForm = false
+      }
+    },
+    async submitProductPriceForm (newPrice: number) {
+      const prod = { ...this.product }
+      prod.originalPrice = newPrice
+
+      if (!this.isSubmittingForm) {
+        this.isSubmittingForm = true
+        await this.editProduct(prod).then(() => {
+          this.showDialog = false
+          this.productForm = ''
+        })
+        this.isSubmittingForm = false
+      }
+    },
+    async submitProductDiscountForm (discountPercent: number, discountAmount: number, discountDescription: string) {
+      const discountItem = {
+        percent: discountPercent,
+        amount: discountAmount,
+        description: discountDescription,
+        product: this.product.id
+      }
+
+      if (!this.isSubmittingForm) {
+        this.isSubmittingForm = true
+        await this.createProductDiscount(discountItem).then(() => {
+          this.showDialog = false
+          this.productForm = ''
+        })
+        this.isSubmittingForm = false
+      }
     }
   }
 }
@@ -65,7 +178,6 @@ export default {
 
 <style scoped>
 .tag {
-  pointer-events: none;
   position: absolute;
   -webkit-transform: scale(0);
   transform: scale(0);
