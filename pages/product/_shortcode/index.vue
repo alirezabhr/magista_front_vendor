@@ -9,37 +9,6 @@
     lg="6"
   >
     <v-card min-height="670">
-      <v-dialog
-        v-model="showDialog"
-        max-width="600px"
-      >
-        <ProductPriceForm
-          v-if="productForm === 'price'"
-          :is-submitting-form="isSubmittingForm"
-          :product-price="getProduct.originalPrice"
-          @submit="submitProductPriceForm"
-          @close="showDialog = false"
-        />
-        <ProductDiscountForm
-          v-else-if="productForm === 'discount'"
-          :is-submitting-form="isSubmittingForm"
-          :product-price="getProduct.originalPrice"
-          @submit="submitProductDiscountForm"
-          @close="showDialog = false"
-        />
-        <ProductEditForm
-          v-else-if="productForm === 'edit'"
-          :is-submitting-form="isSubmittingForm"
-          :product-title="getProduct.title"
-          :product-description="getProduct.description"
-          @submit="submitProductEditForm"
-          @close="showDialog = false"
-        />
-        <ProductAttributesForm
-          v-else-if="productForm === 'attributes'"
-          @close="showDialog = false"
-        />
-      </v-dialog>
       <v-row dir="ltr" no-gutters class="px-2 py-1 white" align="center">
         <v-avatar color="primary" style="border-style: solid;">
           <img
@@ -73,8 +42,8 @@
         </v-menu>
       </v-row>
       <div
-        v-for="(productImage, i) in getPost.productImages"
-        :key="i"
+        v-for="productImage in getPost.productImages"
+        :key="productImage.id"
       >
         <v-carousel
           v-model="carouselIndex"
@@ -85,15 +54,26 @@
           height="100%"
         >
           <v-carousel-item>
-            <v-img :src="productImageUrl(productImage)" :aspect-ratio="1" @click.prevent="showProductTags = !showProductTags">
-              <div v-for="prod in productImage.products" v-show="showProductTags" :key="prod.id" @click="t()">
-                <ProductTag :product="prod" />
+            <v-img
+              id="imageFrame"
+              :src="productImageUrl(productImage)"
+              :aspect-ratio="1"
+              @click.prevent="showProductTags = !showProductTags"
+              @drop="onDrop($event)"
+              @dragover.prevent
+              @dragenter.prevent
+            >
+              <!-- v-show="showProductTags" -->
+              <div v-for="prod in productImage.products" :key="prod.id">
+                <div draggable @dragstart="startDrag($event, prod)">
+                  <ProductTag :product="prod" />
+                </div>
               </div>
             </v-img>
           </v-carousel-item>
         </v-carousel>
         <v-col class="pa-3" no-gutters>
-          <div v-for="product in productImage.products" :key="product.id" @click="t()">
+          <div v-for="product in productImage.products" :key="product.id">
             <v-row class="font-weight-bold" no-gutters>
               {{ product.title }}
             </v-row>
@@ -144,7 +124,7 @@
             </v-row>
             <v-col v-if="product.attributes.length > 0" class="px-0 py-3">
               <div class="font-weight-bold text-body-2" no-gutters>مشخصات محصول</div>
-              <v-row v-for="(attr, index) in product.attributes" :key="index" no-gutters>
+              <v-row v-for="attr in product.attributes" :key="attr.id" no-gutters>
                 {{ attr.name }}:  {{ attr.value }}
               </v-row>
             </v-col>
@@ -163,22 +143,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import ProductTag from '@/components/product/ProductTag'
-import ProductPriceForm from '@/components/product/ProductPriceForm'
-import ProductEditForm from '@/components/product/ProductEditForm'
-import ProductDiscountForm from '@/components/product/ProductDiscountForm'
-import ProductAttributesForm from '@/components/product/ProductAttributesForm'
 
 export default {
   name: 'ProductShortcodePage',
   components: {
-    ProductTag,
-    ProductPriceForm,
-    ProductEditForm,
-    ProductDiscountForm,
-    ProductAttributesForm
+    ProductTag
   },
   async asyncData ({ params, store, error }) {
     await store.dispatch('product/postDetail', params.shortcode)
@@ -198,82 +170,57 @@ export default {
         { title: 'توضیح پُست', color: 'black', icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' }
       ],
       carouselIndex: 0,
-      productOptions: [
-        { title: 'تغییر قیمت', color: 'black', icon: { name: 'mdi-trending-up mdi-18px', color: 'grey darken-2' }, form: 'price' },
-        { title: 'تغییر توضیحات', color: 'black', icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' },
-        { title: 'اعمال تخفیف', color: 'black', icon: { name: 'mdi-label-percent-outline mdi-flip-h mdi-18px', color: 'grey darken-2' }, form: 'discount' },
-        { title: 'مشخصات کالا', color: 'black', icon: { name: 'mdi-tag-outline mdi-18px', color: 'grey darken-2' }, form: 'attributes' },
-        { title: 'حذف تخفیف', color: 'black', icon: { name: 'mdi-cash-remove mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
-        { title: 'حذف محصول', color: 'red', icon: { name: 'mdi-delete-outline mdi-18px', color: 'red' }, form: 'delete' }
-      ],
-      productForm: '',
-      showDialog: false,
+      postForm: '',
       isSubmittingForm: false
     }
   },
   computed: {
     ...mapGetters('shop', ['getCurrentShop']),
-    ...mapGetters('product', ['getPost', 'getProduct']),
+    ...mapGetters('product', ['getPost']),
 
     getProfilePhotoUrl () {
       return process.env.baseURL + this.getCurrentShop.profileImageUrl
     }
   },
   methods: {
-    ...mapActions('product', ['editProduct', 'createProductDiscount']),
+    ...mapActions('product', ['changeTagLocation']),
 
     productImageUrl (productImage) {
       return process.env.baseURL + productImage.displayImage
     },
-    t () {
-      console.log('hello')
+    startDrag (evt, product) {
+      evt.dataTransfer.dropEffect = 'move'
+      evt.dataTransfer.effectAllowed = 'move'
+      evt.dataTransfer.setData('draggedProductId', product.id)
+      evt.dataTransfer.setData('draggedProductTagX', product.tag.x)
+      evt.dataTransfer.setData('draggedProductTagY', product.tag.y)
+      evt.dataTransfer.setData('firstX', evt.clientX)
+      evt.dataTransfer.setData('firstY', evt.clientY)
     },
-    optionsOnClick (formName) {
-      this.showDialog = true
-      this.form = formName
-    },
-    async submitProductEditForm (newTitle, newDescription) {
-      const prod = { ...this.getProduct }
-      prod.title = newTitle
-      prod.description = newDescription
+    onDrop (evt) {
+      const productId = Number.parseInt(evt.dataTransfer.getData('draggedProductId'))
+      const productTagX = Number.parseInt(evt.dataTransfer.getData('draggedProductTagX'))
+      const productTagY = Number.parseInt(evt.dataTransfer.getData('draggedProductTagY'))
+      const width = document.getElementById('imageFrame').offsetWidth
+      const deltaX = (evt.clientX - Number.parseInt(evt.dataTransfer.getData('firstX'))) * 100 / width
+      const deltaY = (evt.clientY - Number.parseInt(evt.dataTransfer.getData('firstY'))) * 100 / width
 
-      if (!this.isSubmittingForm) {
-        this.isSubmittingForm = true
-        await this.editProduct(prod).then(() => {
-          this.showDialog = false
-          this.form = ''
-        })
-        this.isSubmittingForm = false
-      }
-    },
-    async submitProductPriceForm (newPrice) {
-      const prod = { ...this.getProduct }
-      prod.originalPrice = newPrice
-
-      if (!this.isSubmittingForm) {
-        this.isSubmittingForm = true
-        await this.editProduct(prod).then(() => {
-          this.showDialog = false
-          this.form = ''
-        })
-        this.isSubmittingForm = false
-      }
-    },
-    async submitProductDiscountForm (discountPercent, discountAmount, discountDescription) {
-      const discountItem = {
-        percent: discountPercent,
-        amount: discountAmount,
-        description: discountDescription
+      const newX = productTagX + Number.parseInt(deltaX)
+      const newY = productTagY - Number.parseInt(deltaY)
+      const payloadData = {
+        x: newX,
+        y: newY,
+        product: productId
       }
 
-      if (!this.isSubmittingForm) {
-        this.isSubmittingForm = true
-        await this.createProductDiscount(discountItem).then(() => {
-          this.showDialog = false
-          this.form = ''
-        })
-        this.isSubmittingForm = false
+      if (newX < 0) {
+        payloadData.x = 1
       }
+      if (newY < 0) {
+        payloadData.y = 1
+      }
+
+      this.changeTagLocation(payloadData)
     }
   }
 }
