@@ -275,6 +275,7 @@ export default {
       this.createNewProduct(payload).then(() => {
         this.isSubmittingForm = false
         this.postForm = ''
+        this.showDialog = false
       })
     }
   }
