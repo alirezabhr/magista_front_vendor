@@ -11,10 +11,7 @@
     <v-card min-height="670">
       <v-row dir="ltr" no-gutters class="px-2 py-1 white" align="center">
         <v-avatar color="primary" style="border-style: solid;">
-          <img
-            :src="getProfilePhotoUrl"
-            alt="profile"
-          >
+          <v-img :src="getProfilePhotoUrl" alt="profile" />
         </v-avatar>
         <div class="pl-3">{{ getCurrentShop.instagramUsername }}</div>
         <v-spacer />
@@ -41,10 +38,7 @@
           </v-list>
         </v-menu>
       </v-row>
-      <div
-        v-for="productImage in getPost.productImages"
-        :key="productImage.id"
-      >
+      <div v-for="productImage in getPost.productImages" :key="productImage.id">
         <v-carousel
           v-model="carouselIndex"
           :show-arrows="getPost.productImages.length > 1"
@@ -58,17 +52,23 @@
               id="imageFrame"
               :src="productImageUrl(productImage)"
               :aspect-ratio="1"
-              @click.prevent="showProductTags = !showProductTags"
+              style="cursor: pointer;"
+              @click.prevent="tapOnImage"
               @drop="onDrop($event)"
               @dragover.prevent
               @dragenter.prevent
             >
-              <!-- v-show="showProductTags" -->
-              <div v-for="prod in productImage.products" :key="prod.id">
-                <div draggable @dragstart="startDrag($event, prod)">
-                  <ProductTag :product="prod" />
+              <div v-for="prod in productImage.products" v-show="showProductTags" :key="prod.id">
+                <div
+                  draggable
+                  @dragstart="startDrag($event, prod)"
+                >
+                  <ProductTag :product="prod" :image-clicked="imageClickTrigger" />
                 </div>
               </div>
+              <v-row v-show="!showProductTags" class="shop-icon grey darken-4 rounded-circle pa-1" justify="center" align="center" no-gutters>
+                <v-icon color="white">mdi-shopping-outline mdi-18px</v-icon>
+              </v-row>
             </v-img>
           </v-carousel-item>
         </v-carousel>
@@ -88,18 +88,17 @@
                 size="24"
               />
               <div class="grey-text text-darken-1 font-weight-light px-2">
-                <div v-if="product.rate">
-                  ({{ product.rate }})
-                </div>
-                <div v-else>
-                  بدون نظر
-                </div>
+                <div v-if="product.rate">({{ product.rate }})</div>
+                <div v-else>بدون نظر</div>
               </div>
             </v-row>
             <v-row no-gutters class="px-1">
               قیمت:
               <v-row v-if="product.originalPrice" no-gutters class="pr-2">
-                <div v-show="product.discountPercent" class="pr-2 text-decoration-line-through">
+                <div
+                  v-show="product.discountPercent"
+                  class="pr-2 text-decoration-line-through"
+                >
                   {{ product.originalPrice }}
                 </div>
                 <v-icon v-show="product.discountPercent" class="pr-1">mdi-chevron-triple-left</v-icon>
@@ -108,9 +107,7 @@
                 </div>
                 تومان
               </v-row>
-              <div v-else>
-                ندارد
-              </div>
+              <div v-else>ندارد</div>
             </v-row>
             <v-row no-gutters class="px-1 pb-3">
               تخفیف:
@@ -118,14 +115,18 @@
                 <v-icon color="grey darken-2">mdi-percent mdi-18px</v-icon>
                 {{ product.discountPercent }}
               </div>
-              <div v-else>
-                ندارد
-              </div>
+              <div v-else>ندارد</div>
             </v-row>
             <v-col v-if="product.attributes.length > 0" class="px-0 py-3">
-              <div class="font-weight-bold text-body-2" no-gutters>مشخصات محصول</div>
-              <v-row v-for="attr in product.attributes" :key="attr.id" no-gutters>
-                {{ attr.name }}:  {{ attr.value }}
+              <div class="font-weight-bold text-body-2" no-gutters>
+                مشخصات محصول
+              </div>
+              <v-row
+                v-for="attr in product.attributes"
+                :key="attr.id"
+                no-gutters
+              >
+                {{ attr.name }}: {{ attr.value }}
               </v-row>
             </v-col>
             <v-divider />
@@ -166,12 +167,23 @@ export default {
     return {
       showProductTags: true,
       postOptions: [
-        { title: 'افزودن محصول', color: 'black', icon: { name: 'mdi-plus mdi-18px', color: 'green darken-1' } },
-        { title: 'توضیح پُست', color: 'black', icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' }
+        {
+          title: 'افزودن محصول',
+          color: 'black',
+          icon: { name: 'mdi-plus mdi-18px', color: 'green darken-1' }
+        },
+        {
+          title: 'توضیح پُست',
+          color: 'black',
+          icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' },
+          form: 'edit'
+        }
       ],
       carouselIndex: 0,
       postForm: '',
-      isSubmittingForm: false
+      isSubmittingForm: false,
+      showDialog: false,
+      imageClickTrigger: false
     }
   },
   computed: {
@@ -188,7 +200,12 @@ export default {
     productImageUrl (productImage) {
       return process.env.baseURL + productImage.displayImage
     },
+    tapOnImage () {
+      this.showProductTags = !this.showProductTags
+      this.imageClickTrigger = !this.imageClickTrigger
+    },
     startDrag (evt, product) {
+      // this method works for pc and laptop browsers. (Touchable devices are not supported)
       evt.dataTransfer.dropEffect = 'move'
       evt.dataTransfer.effectAllowed = 'move'
       evt.dataTransfer.setData('draggedProductId', product.id)
@@ -198,12 +215,13 @@ export default {
       evt.dataTransfer.setData('firstY', evt.clientY)
     },
     onDrop (evt) {
+      // this method works for pc and laptop browsers. (Touchable devices are not supported)
       const productId = Number.parseInt(evt.dataTransfer.getData('draggedProductId'))
       const productTagX = Number.parseInt(evt.dataTransfer.getData('draggedProductTagX'))
       const productTagY = Number.parseInt(evt.dataTransfer.getData('draggedProductTagY'))
       const width = document.getElementById('imageFrame').offsetWidth
-      const deltaX = (evt.clientX - Number.parseInt(evt.dataTransfer.getData('firstX'))) * 100 / width
-      const deltaY = (evt.clientY - Number.parseInt(evt.dataTransfer.getData('firstY'))) * 100 / width
+      const deltaX = ((evt.clientX - Number.parseInt(evt.dataTransfer.getData('firstX'))) * 100) / width
+      const deltaY = ((evt.clientY - Number.parseInt(evt.dataTransfer.getData('firstY'))) * 100) / width
 
       const newX = productTagX + Number.parseInt(deltaX)
       const newY = productTagY - Number.parseInt(deltaY)
@@ -225,3 +243,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.shop-icon {
+  cursor: pointer;
+  left: 2%;
+  bottom: 2%;
+  position: absolute;
+}
+</style>
