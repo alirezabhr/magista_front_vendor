@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click.prevent="t">
     <v-dialog
       v-model="showDialog"
       max-width="600px"
@@ -32,8 +32,8 @@
         @close="showDialog = false"
       />
     </v-dialog>
-    <v-menu offset-y>
-      <template #activator="{ on, attrs }">
+    <v-menu offset-y :value="openMenu">
+      <template #activator="{ on, attrs}">
         <!-- TAG COMPONENT -->
         <div
           class="tag"
@@ -41,29 +41,31 @@
           style="transform: translate(-50%, 100%); max-width: 130px;"
           v-bind="attrs"
           v-on="on"
-          @touchstart="touchStart($event)"
+          @touchstart.prevent="touchStart($event)"
           @touchmove.prevent="touchMove($event)"
           @touchend.prevent="touchEnd()"
         >
           <div class="arrow-up" style="opacity: 85%;" />
-          <v-card
-            rounded="md"
-            color="black"
-            max-width="130"
-            style="opacity: 85%;"
-            class="px-3 py-1"
-            flat
-          >
-            <div class="white--text font-weight-bold text-caption text-truncate pb-1">{{ product.title }}</div>
-            <v-row v-if="product.discountPercent" class="px-1 white--text font-weight-light text-decoration-line-through" style="font-size: .600rem;" no-gutters>
-              {{ product.originalPrice }}
-            </v-row>
-            <v-row class="white--text font-weight-medium text-caption px-1" no-gutters>
-              {{ product.finalPrice }}
-              <v-spacer />
-              <span class="currency">تومان</span>
-            </v-row>
-          </v-card>
+          <div class="rounded-lg" :style="isDragging ? 'border-width: 3px; border-style: solid; border-color: #202020;' : ''">
+            <v-card
+              rounded="md"
+              color="black"
+              max-width="130"
+              style="opacity: 85%;"
+              class="px-3 py-1"
+              flat
+            >
+              <div class="white--text font-weight-bold text-caption text-truncate pb-1">{{ product.title }}</div>
+              <v-row v-if="product.discountPercent" class="px-1 white--text font-weight-light text-decoration-line-through" style="font-size: .600rem;" no-gutters>
+                {{ product.originalPrice }}
+              </v-row>
+              <v-row class="white--text font-weight-medium text-caption px-1" no-gutters>
+                {{ product.finalPrice }}
+                <v-spacer />
+                <span class="currency">تومان</span>
+              </v-row>
+            </v-card>
+          </div>
         </div>
       </template>
       <v-list>
@@ -71,7 +73,7 @@
           v-for="(option, index) in productOptions"
           :key="index"
           link
-          @click.prevent="optionsOnClick(option.form)"
+          @click.prevent="productOptionsOnClick(option.form)"
         >
           <v-icon class="pl-2" :color="option.icon.color">
             {{ option.icon.name }}
@@ -85,11 +87,9 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { mapActions, mapMutations } from 'vuex'
-import { PropType } from 'vue'
 
-import Product from '@/models/product'
 import ProductPriceForm from '@/components/product/ProductPriceForm.vue'
 import ProductEditForm from '@/components/product/ProductEditForm.vue'
 import ProductDiscountForm from '@/components/product/ProductDiscountForm.vue'
@@ -105,12 +105,19 @@ export default {
   },
   props: {
     product: {
-      type: Object as PropType<Product>,
+      type: Object,
+      required: true
+    },
+    imageClicked: {
+      type: Boolean,
       required: true
     }
   },
   data () {
     return {
+      openMenu: false,
+      isTouching: false,
+      isDragging: false,
       touchFirstX: 0,
       touchFirstY: 0,
       tagFirstX: 0,
@@ -123,9 +130,9 @@ export default {
         { title: 'حذف تخفیف', color: 'black', icon: { name: 'mdi-cash-remove mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
         { title: 'حذف محصول', color: 'red', icon: { name: 'mdi-delete-outline mdi-18px', color: 'red' }, form: 'delete' }
       ],
+      isSubmittingForm: false,
       showDialog: false,
-      productForm: '',
-      isSubmittingForm: false
+      productForm: ''
     }
   },
   computed: {
@@ -141,19 +148,36 @@ export default {
       }
     }
   },
+  watch: {
+    imageClicked () {
+      this.openMenu = false
+    }
+  },
   methods: {
     ...mapActions('product', ['editProduct', 'createProductDiscount', 'changeTagLocation']),
     ...mapMutations('product', ['changedTagLocation']),
 
-    touchStart (e: any) {
-      this.touchFirstX = e.touches[0].clientX
-      this.touchFirstY = e.touches[0].clientY
-      this.tagFirstX = this.tag.x
-      this.tagFirstY = this.tag.y
+    productOptionsOnClick (formName) {
+      this.productForm = formName
+      this.showDialog = true
+      this.openMenu = false
     },
-    touchMove (e: any) {
+    touchStart (e) {
+      this.isTouching = true
+
+      setTimeout(() => {
+        if (this.isTouching) {
+          this.isDragging = true
+          this.touchFirstX = e.touches[0].clientX
+          this.touchFirstY = e.touches[0].clientY
+          this.tagFirstX = this.tag.x
+          this.tagFirstY = this.tag.y
+        }
+      }, 250)
+    },
+    touchMove (e) {
       const imageObj = document.getElementById('imageFrame')
-      if (imageObj) {
+      if (imageObj && this.isDragging) {
         const imageWidth = imageObj.offsetWidth
 
         const deltaX = (e.touches[0].clientX - this.touchFirstX) * 100 / imageWidth
@@ -165,24 +189,25 @@ export default {
       }
     },
     touchEnd () {
-      console.log('end')
-      const payload = {
-        x: Number.parseInt(this.tag.x),
-        y: Number.parseInt(this.tag.y),
-        product: this.product.id
-      }
-      if (payload.x <= 0 || payload.x >= 100 || payload.y <= 0 || payload.y >= 100) {
-        this.tag = { x: this.tagFirstX, y: this.tagFirstY }
-      } else {
-        this.changeTagLocation(payload)
+      this.isTouching = false
+      if (this.isDragging) { // touched and holded to drag the tag
+        this.isDragging = false
+        const payload = {
+          x: Number.parseInt(this.tag.x),
+          y: Number.parseInt(this.tag.y),
+          product: this.product.id
+        }
+        if (payload.x <= 0 || payload.x >= 100 || payload.y <= 0 || payload.y >= 100) {
+          this.tag = { x: this.tagFirstX, y: this.tagFirstY }
+        } else {
+          this.changeTagLocation(payload)
+        }
+      } else { // it was just a tap
+        // close the menu if it is open, and open it if it is closed
+        this.openMenu = !this.openMenu
       }
     },
-
-    optionsOnClick (formName: string) {
-      this.showDialog = true
-      this.productForm = formName
-    },
-    async submitProductEditForm (newTitle: string, newDescription: string) {
+    async submitProductEditForm (newTitle, newDescription) {
       const prod = { ...this.product }
       prod.title = newTitle
       prod.description = newDescription
@@ -196,7 +221,7 @@ export default {
         this.isSubmittingForm = false
       }
     },
-    async submitProductPriceForm (newPrice: number) {
+    async submitProductPriceForm (newPrice) {
       const prod = { ...this.product }
       prod.originalPrice = newPrice
 
@@ -209,7 +234,7 @@ export default {
         this.isSubmittingForm = false
       }
     },
-    async submitProductDiscountForm (discountPercent: number, discountAmount: number, discountDescription: string) {
+    async submitProductDiscountForm (discountPercent, discountAmount, discountDescription) {
       const discountItem = {
         percent: discountPercent,
         amount: discountAmount,
