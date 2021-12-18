@@ -10,10 +10,14 @@
   >
     <v-card min-height="670">
       <v-row dir="ltr" no-gutters class="px-2 py-1 white" align="center">
-        <v-avatar color="primary" style="border-style: solid;">
-          <v-img :src="getProfilePhotoUrl" alt="profile" />
-        </v-avatar>
-        <div class="pl-3">{{ getCurrentShop.instagramUsername }}</div>
+        <NuxtLink to="/dashboard">
+          <v-avatar color="primary" style="border: solid;">
+            <v-img :src="getProfilePhotoUrl" alt="profile" />
+          </v-avatar>
+        </NuxtLink>
+        <NuxtLink to="/dashboard" class="text-decoration-none" active-class="text-decoration-none">
+          <div class="pl-3 font-weight-bold grey--text text--darken-4">{{ getCurrentShop.instagramUsername }}</div>
+        </NuxtLink>
         <v-spacer />
         <v-menu offset-y>
           <template #activator="{ on, attrs }">
@@ -66,7 +70,7 @@
                   <ProductTag :product="prod" :image-clicked="imageClickTrigger" />
                 </div>
               </div>
-              <v-row v-show="!showProductTags" class="shop-icon grey darken-4 rounded-circle pa-1" justify="center" align="center" no-gutters>
+              <v-row v-show="!showProductTags && productImage.products.length > 0" class="shop-icon grey darken-4 rounded-circle pa-1" justify="center" align="center" no-gutters>
                 <v-icon color="white">mdi-shopping-outline mdi-18px</v-icon>
               </v-row>
             </v-img>
@@ -109,7 +113,7 @@
               </v-row>
               <div v-else>ندارد</div>
             </v-row>
-            <v-row no-gutters class="px-1 pb-3">
+            <v-row no-gutters class="px-1">
               تخفیف:
               <div v-if="product.discountPercent" class="px-2 font-weight-bold">
                 <v-icon color="grey darken-2">mdi-percent mdi-18px</v-icon>
@@ -129,11 +133,17 @@
                 {{ attr.name }}: {{ attr.value }}
               </v-row>
             </v-col>
-            <v-divider />
+            <div v-if="product.description" class="font-weight-bold text-body-2 pt-1">توضیحات</div>
+            <v-row v-if="product.description" class="font-weight-light" no-gutters>
+              {{ product.description }}
+            </v-row>
+            <div class="py-3">
+              <v-divider />
+            </div>
           </div>
         </v-col>
       </div>
-      <v-col class="pa-3" no-gutters>
+      <v-col class="px-3 py-0" no-gutters>
         <v-row v-if="getPost.description" class="font-weight-light" no-gutters>
           <div class="font-weight-bold text-body-2" no-gutters>توضیح پُست</div>
           {{ getPost.description }}
@@ -146,11 +156,13 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
+import CreateProductForm from '@/components/product/CreateProductForm'
 import ProductTag from '@/components/product/ProductTag'
 
 export default {
   name: 'ProductShortcodePage',
   components: {
+    CreateProductForm,
     ProductTag
   },
   async asyncData ({ params, store, error }) {
@@ -246,6 +258,9 @@ export default {
       }
 
       this.changeTagLocation(payloadData)
+    },
+    submitCreateProductForm (payload) {
+      
     }
   }
 }
