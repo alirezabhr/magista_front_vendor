@@ -26,7 +26,7 @@
               v-for="(option, index) in postOptions"
               :key="index"
               link
-              @click.prevent="optionsOnClick(option.form)"
+              @click.prevent="postOptionsOnClick(option.form)"
             >
               <v-icon class="pl-2" :color="option.icon.color">
                 {{ option.icon.name }}
@@ -170,13 +170,14 @@ export default {
         {
           title: 'افزودن محصول',
           color: 'black',
-          icon: { name: 'mdi-plus mdi-18px', color: 'green darken-1' }
+          icon: { name: 'mdi-plus mdi-18px', color: 'green darken-1' },
+          form: 'addProduct'
         },
         {
           title: 'توضیح پُست',
           color: 'black',
           icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' },
-          form: 'edit'
+          form: 'editPost'
         }
       ],
       carouselIndex: 0,
@@ -200,8 +201,14 @@ export default {
     productImageUrl (productImage) {
       return process.env.baseURL + productImage.displayImage
     },
+    postOptionsOnClick (form) {
+      this.postForm = form
+      this.showDialog = true
+    },
     tapOnImage () {
       this.showProductTags = !this.showProductTags
+
+      // this is because of watch in product tag component to close the product menu when the image tapped
       this.imageClickTrigger = !this.imageClickTrigger
     },
     startDrag (evt, product) {

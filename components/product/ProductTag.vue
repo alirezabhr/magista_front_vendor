@@ -118,8 +118,10 @@ export default {
       openMenu: false,
       isTouching: false,
       isDragging: false,
+      // cursor coordinates at the start of touching
       touchFirstX: 0,
       touchFirstY: 0,
+      // tag coordinates at the start of touching
       tagFirstX: 0,
       tagFirstY: 0,
       productOptions: [
@@ -143,6 +145,7 @@ export default {
       },
       // setter
       set (newValue) {
+        // setter for tag to change the location of product in view and store
         newValue.product = this.product.id
         this.changedTagLocation(newValue)
       }
@@ -150,6 +153,7 @@ export default {
   },
   watch: {
     imageClicked () {
+      // close product menu if parent image tapped
       this.openMenu = false
     }
   },
@@ -163,10 +167,12 @@ export default {
       this.openMenu = false
     },
     touchStart (e) {
+      // Just for touchable devices
       this.isTouching = true
 
       setTimeout(() => {
         if (this.isTouching) {
+          // draggable active if tag had been touched for 250 ms
           this.isDragging = true
           this.touchFirstX = e.touches[0].clientX
           this.touchFirstY = e.touches[0].clientY
@@ -176,6 +182,7 @@ export default {
       }, 250)
     },
     touchMove (e) {
+      // Just for touchable devices
       const imageObj = document.getElementById('imageFrame')
       if (imageObj && this.isDragging) {
         const imageWidth = imageObj.offsetWidth
@@ -189,6 +196,7 @@ export default {
       }
     },
     touchEnd () {
+      // Just for touchable devices
       this.isTouching = false
       if (this.isDragging) { // touched and holded to drag the tag
         this.isDragging = false
