@@ -21,7 +21,7 @@
           outlined
           dense
         />
-        <v-textarea
+        <v-text-field
           v-model="description"
           label="توضیحات"
           :rules="descriptionRules"
@@ -71,10 +71,10 @@ export default {
       description: '',
       titleRules: [
         value => !!value || 'عنوان خالی است.',
-        value => value.length <= 60 || 'عنوان طولانی است.'
+        value => value.length <= 30 || 'عنوان طولانی است.'
       ],
       descriptionRules: [
-        value => value.length <= 600 || 'توضیحات بسیار طولانی است.'
+        value => value.length <= 50 || 'توضیحات بسیار طولانی است.'
       ]
     }
   },
