@@ -43,6 +43,18 @@
         </v-menu>
       </v-row>
       <div v-for="productImage in getPost.productImages" :key="productImage.id">
+        <v-dialog
+          v-model="showDialog"
+          max-width="600px"
+        >
+          <CreateProductForm
+            v-if="postForm === 'addProduct'"
+            :is-submitting-form="isSubmittingForm"
+            :image-id="productImage.id"
+            @submit="submitCreateProductForm"
+            @close="showDialog = false"
+          />
+        </v-dialog>
         <v-carousel
           v-model="carouselIndex"
           :show-arrows="getPost.productImages.length > 1"
@@ -208,7 +220,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('product', ['changeTagLocation']),
+    ...mapActions('product', ['changeTagLocation', 'createNewProduct']),
 
     productImageUrl (productImage) {
       return process.env.baseURL + productImage.displayImage
@@ -260,7 +272,10 @@ export default {
       this.changeTagLocation(payloadData)
     },
     submitCreateProductForm (payload) {
-      
+      this.createNewProduct(payload).then(() => {
+        this.isSubmittingForm = false
+        this.postForm = ''
+      })
     }
   }
 }
