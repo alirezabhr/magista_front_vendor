@@ -73,6 +73,13 @@ const mutations = <MutationTree<ProductState>>{
       const indexList = getIndexes(state.post.productImages, tagData.product)
       state.post.productImages[indexList[0]].products[indexList[1]].tag = tagData
     }
+  },
+  addNewProduct (state, product) {
+    if (state.post) {
+      const piIndex = state.post.productImages.findIndex(pi => pi.id === product.image)
+      product.tag = { x: 50, y: 50 }
+      state.post.productImages[piIndex].products.push(product)
+    }
   }
 }
 
@@ -188,6 +195,21 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('issue/createNewIssues', null, { root: true })
       for (const k in e.response.data) {
         const issue = new Issue('changeTagLocation', k, e.response.data[k][0], null)
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+      }
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  createNewProduct (vuexContext, payload) {
+    const url = process.env.baseURL + 'shop/product/'
+
+    return this.$client.post(url, payload).then((rsp) => {
+      vuexContext.commit('addNewProduct', rsp.data)
+      vuexContext.dispatch('createProductTag', { product: rsp.data.id })
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      for (const k in e.response.data) {
+        const issue = new Issue('createNewProduct', k, e.response.data[k][0], null)
         vuexContext.commit('issue/addIssue', issue, { root: true })
       }
       vuexContext.dispatch('issue/capture', null, { root: true })
