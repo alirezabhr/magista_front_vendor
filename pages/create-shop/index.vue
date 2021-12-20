@@ -23,6 +23,7 @@
           :posts-list="getPostsPreviewList"
           :is-submitting="isSubmitting"
           :posts-count="getPostsCount"
+          :is-getting-posts="isGettingQueryMedia"
           @submit="removeExtraPostsAndCreateProducts"
         />
       </v-col>
@@ -87,7 +88,8 @@ export default {
 
       this.getInstagramMediaQueryFile().then(() => {
         this.isGettingQueryMedia = false
-      }).catch(() => {
+      }).catch((e) => {
+        console.log(e)
         this.isGettingQueryMedia = false
         this.snackbarMessage = 'خطا در دریافت محتوای اینستاگرام'
         this.showSnackbar = true
@@ -109,7 +111,6 @@ export default {
 
     async removeExtraPostsAndCreateProducts (removedPostList) {
       this.isSubmitting = true
-      let didRemoveExtraPosts = false
 
       if (this.isGettingQueryMedia) {
         this.isSubmitting = false
@@ -117,22 +118,21 @@ export default {
         this.showSnackbar = true
         return
       }
+      console.log('before removing posts')
 
       await this.removeExtraMediaQuery({
         extra_posts: removedPostList
       }).then(() => {
-        didRemoveExtraPosts = true
+        console.log('before creating posts')
+        this.createShopPosts()
+        console.log('after creating posts')
       }).catch(() => {
         this.isSubmitting = false
-        didRemoveExtraPosts = false
-        this.snackbarMessage = 'در حال دریافت محتوای ایسنتاگرام. لطفا کمی صبر کنید.'
+        this.snackbarMessage = 'ساخت فروشگاه با مشکل مواجه شده :('
         this.showSnackbar = true
       })
-
-      if (!didRemoveExtraPosts) {
-        return
-      }
-
+    },
+    createShopPosts () {
       this.createAllPosts().then(() => {
         this.isSubmitting = false
         this.$router.push('dashboard')
