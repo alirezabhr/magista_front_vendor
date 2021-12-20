@@ -23,8 +23,6 @@
           :posts-list="getPostsPreviewList"
           :is-submitting="isSubmitting"
           :posts-count="getPostsCount"
-          @removeItem="removePost"
-          @addItem="addPosts"
           @submit="removeExtraPostsAndCreateProducts"
         />
       </v-col>
@@ -33,7 +31,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import InstagramIdForm from '@/components/create_shop/InstagramIdForm.vue'
 import ShopDataForm from '@/components/create_shop/ShopDataForm.vue'
@@ -61,7 +59,6 @@ export default {
   methods: {
     ...mapActions('shop', ['saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile',
       'createShop', 'removeExtraMediaQuery', 'createAllPosts']),
-    ...mapMutations('shop', ['removePost', 'addPosts']),
 
     saveMediaQuery (igUsername) {
       this.isSubmitting = true
