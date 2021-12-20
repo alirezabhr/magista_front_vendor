@@ -72,14 +72,28 @@ const mutations = <MutationTree<ShopState>>{
   concatToPostPreviewList (state, postsList) {
     state.postsPreviewList = state.postsPreviewList.concat(postsList)
   },
-  removePost (state, post) {
-    state.postsPreviewList = state.postsPreviewList.filter(item => item !== post)
+  removePreviewPost (state, post) {
+    if (post.parent) {
+      const parentIndex = state.postsPreviewList.findIndex(el => el.id === post.parent)
+      const childIndex = state.postsPreviewList[parentIndex].children.findIndex(e => e.id === post.id)
+      state.postsPreviewList[parentIndex].children.splice(childIndex, 1)
+    } else {
+      state.postsPreviewList = state.postsPreviewList.filter(item => item.id !== post.id)
+    }
   },
-  addPosts (state, post) {
-    state.postsPreviewList.splice(post.index, 0, post)
-    state.postsPreviewList.sort(
-      function (first, second) { return first.index - second.index }
-    )
+  addPreviewPost (state, post) {
+    if (post.parent) {
+      const parentIndex = state.postsPreviewList.findIndex(el => el.id === post.parent)
+      state.postsPreviewList[parentIndex].children.splice(post.index, 0, post)
+      state.postsPreviewList[parentIndex].children.sort(
+        function (first, second) { return first.index - second.index }
+      )
+    } else {
+      state.postsPreviewList.splice(post.index, 0, post)
+      state.postsPreviewList.sort(
+        function (first, second) { return first.index - second.index }
+      )
+    }
   }
 }
 
