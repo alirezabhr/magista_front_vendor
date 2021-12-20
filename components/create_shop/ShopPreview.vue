@@ -1,5 +1,16 @@
 <template>
   <v-card min-height="670">
+    <v-dialog
+      v-model="showDialog"
+      max-width="600px"
+    >
+      <ShopSlidePostsPreview
+        v-if="selectedParentPost"
+        :images="selectedParentPost.children"
+        @remove="removeItem"
+        @imageSrc="imageSource"
+      />
+    </v-dialog>
     <v-card-title>
       <v-alert
         dense
@@ -9,11 +20,18 @@
         محصولاتی که مایل به نمایش آنها <strong>نیستید</strong> را حذف کنید.
       </v-alert>
     </v-card-title>
+    <v-row v-if="isGettingPosts" class="px-4" no-gutters>
+      <v-progress-linear
+        indeterminate
+        color="cyan"
+        rounded
+      />
+    </v-row>
     <v-row class="px-5 mb-5">
       <v-btn
         icon
         color="grey darken-4"
-        :disabled="removedPostList.length == 0"
+        :disabled="removedPostStack.length == 0"
         @click.prevent="undo"
       >
         <v-icon>mdi-undo mdi-flip-h</v-icon>
@@ -39,10 +57,10 @@
       >
         <v-card>
           <v-img
-            contain
             :aspect-ratio="1"
-            :src="imageSource(post.thumbnailSrc)"
+            :src="imageSource(post.displayImage)"
             style="border-style: solid; border-width: 0.5px; border-color: grey;"
+            @click.prevent="imageOnClick(post)"
           >
             <template #placeholder>
               <v-row
@@ -52,26 +70,28 @@
               >
                 <v-progress-circular
                   indeterminate
-                  color="grey lighten-2"
+                  color="grey lighten-5"
                 />
               </v-row>
             </template>
+            <v-overlay absolute class="my-overlay" opacity="0.2">
+              <v-row align="center" justify="end" class="pa-2" no-gutters>
+                <v-btn
+                  v-if="post.children.length === 0"
+                  icon
+                  class="red"
+                  width="24px"
+                  height="24px"
+                  @click.prevent="removeItem(post)"
+                >
+                  <v-icon>mdi-close mdi-18px</v-icon>
+                </v-btn>
+                <v-icon v-else>
+                  mdi-image-multiple-outline
+                </v-icon>
+              </v-row>
+            </v-overlay>
           </v-img>
-          <v-card-title class="pa-0">
-            <v-btn
-              dark
-              small
-              fab
-              top
-              right
-              absolute
-              color="red"
-              style="right: 4px; top: 4px;"
-              @click.prevent="removeItem(post)"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-card-title>
         </v-card>
       </v-col>
     </v-row>
@@ -79,8 +99,15 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
+import ShopSlidePostsPreview from '@/components/create_shop/ShopSlidePostsPreview'
+
 export default {
   name: 'ShopPreview',
+  components: {
+    ShopSlidePostsPreview
+  },
   props: {
     isSubmitting: {
       type: Boolean,
@@ -93,28 +120,59 @@ export default {
     postsCount: {
       type: Number,
       required: true
+    },
+    isGettingPosts: {
+      type: Boolean,
+      required: true
     }
   },
   data () {
     return {
-      removedPostList: []
+      showDialog: false,
+      selectedParentPost: null,
+      removedPostStack: []
+    }
+  },
+  watch: {
+    showDialog (val) {
+      if (val === false) {
+        this.selectedParentPost = null
+      }
     }
   },
   methods: {
+    ...mapMutations('shop', ['removePreviewPost', 'addPreviewPost']),
+
     imageSource (src) {
       return `${process.env.baseURL}${src}`
     },
     removeItem (post) {
-      this.removedPostList.push(post)
-      this.$emit('removeItem', post)
+      if (post.parent && this.selectedParentPost.children.length === 1) {
+        this.showDialog = false
+      }
+      this.removedPostStack.push(post)
+      this.removePreviewPost(post)
     },
     undo () {
-      const removedPost = this.removedPostList.pop()
-      this.$emit('addItem', removedPost)
+      const removedPost = this.removedPostStack.pop()
+      this.addPreviewPost(removedPost)
     },
     submit () {
-      this.$emit('submit', this.removedPostList)
+      this.$emit('submit', this.removedPostStack)
+    },
+    imageOnClick (post) {
+      if (post.children.length > 0) {
+        this.selectedParentPost = post
+        this.showDialog = true
+      }
     }
   }
 }
 </script>
+
+<style scoped>
+  .my-overlay >>> .v-overlay__content {
+    width: 100%;
+    height: 100%;
+  }
+</style>
