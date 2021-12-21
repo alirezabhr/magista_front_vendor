@@ -88,8 +88,7 @@ export default {
 
       this.getInstagramMediaQueryFile().then(() => {
         this.isGettingQueryMedia = false
-      }).catch((e) => {
-        console.log(e)
+      }).catch(() => {
         this.isGettingQueryMedia = false
         this.snackbarMessage = 'خطا در دریافت محتوای اینستاگرام'
         this.showSnackbar = true
@@ -118,14 +117,11 @@ export default {
         this.showSnackbar = true
         return
       }
-      console.log('before removing posts')
 
       await this.removeExtraMediaQuery({
         extra_posts: removedPostList
       }).then(() => {
-        console.log('before creating posts')
         this.createShopPosts()
-        console.log('after creating posts')
       }).catch(() => {
         this.isSubmitting = false
         this.snackbarMessage = 'ساخت فروشگاه با مشکل مواجه شده :('
