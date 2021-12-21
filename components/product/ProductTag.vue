@@ -1,5 +1,5 @@
 <template>
-  <div @click.prevent="t">
+  <div>
     <v-dialog
       v-model="showDialog"
       max-width="600px"
