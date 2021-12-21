@@ -8,6 +8,18 @@
     md="7"
     lg="6"
   >
+    <v-dialog
+      v-model="showDialog"
+      max-width="600px"
+    >
+      <CreateProductForm
+        v-if="postForm === 'addProduct'"
+        :is-submitting-form="isSubmittingForm"
+        :image-id="getPost.productImages[carouselIndex].id"
+        @submit="submitCreateProductForm"
+        @close="showDialog = false"
+      />
+    </v-dialog>
     <v-card min-height="670">
       <v-row dir="ltr" no-gutters class="px-2 py-1 white" align="center">
         <NuxtLink to="/dashboard">
@@ -42,30 +54,22 @@
           </v-list>
         </v-menu>
       </v-row>
-      <div v-for="productImage in getPost.productImages" :key="productImage.id">
-        <v-dialog
-          v-model="showDialog"
-          max-width="600px"
-        >
-          <CreateProductForm
-            v-if="postForm === 'addProduct'"
-            :is-submitting-form="isSubmittingForm"
-            :image-id="productImage.id"
-            @submit="submitCreateProductForm"
-            @close="showDialog = false"
-          />
-        </v-dialog>
+      <div>
         <v-carousel
+          id="imageFrame"
           v-model="carouselIndex"
-          :show-arrows="getPost.productImages.length > 1"
+          :show-arrows="false"
           :hide-delimiters="getPost.productImages.length <= 1"
           hide-delimiter-background
+          :touchless="isTouchingTag"
           class="pa-0 ma-0"
           height="100%"
         >
-          <v-carousel-item>
+          <v-carousel-item
+            v-for="productImage in getPost.productImages"
+            :key="productImage.id"
+          >
             <v-img
-              id="imageFrame"
               :src="productImageUrl(productImage)"
               :aspect-ratio="1"
               style="cursor: pointer;"
@@ -79,7 +83,7 @@
                   draggable
                   @dragstart="startDrag($event, prod)"
                 >
-                  <ProductTag :product="prod" :image-clicked="imageClickTrigger" />
+                  <ProductTag :product="prod" :image-clicked="imageClickTrigger" @tagTouched="touchTag" />
                 </div>
               </div>
               <v-row v-show="!showProductTags && productImage.products.length > 0" class="shop-icon grey darken-4 rounded-circle pa-1" justify="center" align="center" no-gutters>
@@ -89,7 +93,7 @@
           </v-carousel-item>
         </v-carousel>
         <v-col class="pa-3" no-gutters>
-          <div v-for="product in productImage.products" :key="product.id">
+          <div v-for="product in getPost.productImages[carouselIndex].products" :key="product.id">
             <v-row class="font-weight-bold" no-gutters>
               {{ product.title }}
             </v-row>
@@ -189,7 +193,7 @@ export default {
   },
   data () {
     return {
-      showProductTags: true,
+      showProductTags: false,
       postOptions: [
         {
           title: 'افزودن محصول',
@@ -208,6 +212,7 @@ export default {
       postForm: '',
       isSubmittingForm: false,
       showDialog: false,
+      isTouchingTag: false,
       imageClickTrigger: false
     }
   },
@@ -224,6 +229,9 @@ export default {
 
     productImageUrl (productImage) {
       return process.env.baseURL + productImage.displayImage
+    },
+    touchTag (val) {
+      this.isTouchingTag = val
     },
     postOptionsOnClick (form) {
       this.postForm = form

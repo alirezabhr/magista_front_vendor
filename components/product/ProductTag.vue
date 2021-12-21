@@ -128,7 +128,7 @@ export default {
         { title: 'تغییر قیمت', color: 'black', icon: { name: 'mdi-trending-up mdi-18px', color: 'grey darken-2' }, form: 'price' },
         { title: 'تغییر توضیحات', color: 'black', icon: { name: 'mdi-pencil mdi-18px', color: 'grey darken-2' }, form: 'edit' },
         { title: 'اعمال تخفیف', color: 'black', icon: { name: 'mdi-label-percent-outline mdi-flip-h mdi-18px', color: 'grey darken-2' }, form: 'discount' },
-        { title: 'مشخصات کالا', color: 'black', icon: { name: 'mdi-tag-outline mdi-18px', color: 'grey darken-2' }, form: 'attributes' },
+        { title: 'ویژگی‌های کالا', color: 'black', icon: { name: 'mdi-tag-multiple-outline mdi-18px', color: 'grey darken-2' }, form: 'attributes' },
         { title: 'حذف تخفیف', color: 'black', icon: { name: 'mdi-cash-remove mdi-18px', color: 'grey darken-2' }, form: 'removeDiscount' },
         { title: 'حذف محصول', color: 'red', icon: { name: 'mdi-delete-outline mdi-18px', color: 'red' }, form: 'delete' }
       ],
@@ -155,6 +155,9 @@ export default {
     imageClicked () {
       // close product menu if parent image tapped
       this.openMenu = false
+    },
+    isTouching (val) {
+      this.$emit('tagTouched', val)
     }
   },
   methods: {
