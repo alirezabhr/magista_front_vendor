@@ -71,6 +71,9 @@
         </v-col>
       </v-card-actions>
     </v-card>
+    <v-row no-gutters>
+      <v-btn class="mx-auto font-weight-bold text-body-1" outlined color="red" text @click.prevent="userLogout">خروج</v-btn>
+    </v-row>
   </v-container>
 </template>
 
@@ -93,6 +96,7 @@ export default {
   },
   methods: {
     ...mapActions('shop', ['currentShopBankCredits']),
+    ...mapActions('auth', ['userLogout']),
 
     selectBankCredit (credit) {
       this.showDialog = false
