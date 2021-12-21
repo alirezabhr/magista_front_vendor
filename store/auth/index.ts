@@ -63,10 +63,8 @@ const actions = <ActionTree<AuthState, RootState>>{
       return response
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('checkUserExistence', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('checkUserExistence', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
@@ -81,10 +79,8 @@ const actions = <ActionTree<AuthState, RootState>>{
       vuexContext.commit('setUserPhone', payload.phone)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('requestOtpCode', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('requestOtpCode', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -96,15 +92,9 @@ const actions = <ActionTree<AuthState, RootState>>{
       payload
     ).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        if (k !== 'error') {
-          const issue = new Issue('checkOtpCode', k, e.response.data[k][0], null)
-          vuexContext.commit('issue/addIssue', issue, { root: true })
-        }
-      }
-      if (vuexContext.rootGetters['issue/getIssues'].length > 0) {
-        vuexContext.dispatch('issue/capture', null, { root: true })
-      }
+      const issue = new Issue('checkOtpCode', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
@@ -124,10 +114,8 @@ const actions = <ActionTree<AuthState, RootState>>{
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('userSignup', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('userSignup', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -147,15 +135,9 @@ const actions = <ActionTree<AuthState, RootState>>{
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        if (e.response.data[k][0] !== 'Unable to log in with provided credentials.') {
-          const issue = new Issue('userLogin', k, e.response.data[k][0], null)
-          vuexContext.commit('issue/addIssue', issue, { root: true })
-        }
-      }
-      if (vuexContext.rootGetters['issue/getIssues'].length > 0) {
-        vuexContext.dispatch('issue/capture', null, { root: true })
-      }
+      const issue = new Issue('userLogin', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
@@ -175,15 +157,9 @@ const actions = <ActionTree<AuthState, RootState>>{
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        if (k !== 'error') {
-          const issue = new Issue('changeUserPassword', k, e.response.data[k][0], null)
-          vuexContext.commit('issue/addIssue', issue, { root: true })
-        }
-      }
-      if (vuexContext.rootGetters['issue/getIssues'].length > 0) {
-        vuexContext.dispatch('issue/capture', null, { root: true })
-      }
+      const issue = new Issue('changeUserPassword', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },

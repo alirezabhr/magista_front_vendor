@@ -91,10 +91,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('setPost', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('postDetail', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('postDetail', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
@@ -106,10 +104,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('productDetail', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('productDetail', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
@@ -121,10 +117,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('setPostProduct', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('editProduct', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('editProduct', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -135,10 +129,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('setPostProduct', response.data.product)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('createProductDiscount', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('createProductDiscount', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -150,10 +142,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('appendProductAttribute', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('createAttribute', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('createAttribute', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -165,10 +155,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('removeProductAttribute', productAttributeId)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('removeAttribute', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('removeAttribute', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -179,10 +167,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('changedTagLocation', rsp.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('createProductTag', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('createProductTag', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -193,10 +179,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('changedTagLocation', rsp.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('changeTagLocation', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('changeTagLocation', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -208,10 +192,8 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.dispatch('createProductTag', { product: rsp.data.id })
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('createNewProduct', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('createNewProduct', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   }

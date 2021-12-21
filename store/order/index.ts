@@ -40,10 +40,8 @@ const actions = <ActionTree<OrderState, RootState>>{
       })
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('shopOrders', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('shopOrders', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
@@ -57,10 +55,8 @@ const actions = <ActionTree<OrderState, RootState>>{
       vuexContext.commit('changeOrderStatusInList', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      for (const k in e.response.data) {
-        const issue = new Issue('editOrder', k, e.response.data[k][0], null)
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-      }
+      const issue = new Issue('editOrder', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   }
