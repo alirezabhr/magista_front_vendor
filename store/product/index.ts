@@ -91,7 +91,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('setPost', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('postDetail', JSON.stringify(e.response))
+      const issue = new Issue('postDetail', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
@@ -104,7 +104,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('productDetail', JSON.stringify(e.response))
+      const issue = new Issue('productDetail', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
@@ -117,7 +117,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('setPostProduct', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('editProduct', JSON.stringify(e.response))
+      const issue = new Issue('editProduct', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
@@ -129,7 +129,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('setPostProduct', response.data.product)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('createProductDiscount', JSON.stringify(e.response))
+      const issue = new Issue('createProductDiscount', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
@@ -142,7 +142,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('appendProductAttribute', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('createAttribute', JSON.stringify(e.response))
+      const issue = new Issue('createAttribute', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
@@ -155,7 +155,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('removeProductAttribute', productAttributeId)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('removeAttribute', JSON.stringify(e.response))
+      const issue = new Issue('removeAttribute', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
@@ -167,7 +167,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('changedTagLocation', rsp.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('createProductTag', JSON.stringify(e.response))
+      const issue = new Issue('createProductTag', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
@@ -179,7 +179,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('changedTagLocation', rsp.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('changeTagLocation', JSON.stringify(e.response))
+      const issue = new Issue('changeTagLocation', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
@@ -192,7 +192,7 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.dispatch('createProductTag', { product: rsp.data.id })
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('createNewProduct', JSON.stringify(e.response))
+      const issue = new Issue('createNewProduct', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })

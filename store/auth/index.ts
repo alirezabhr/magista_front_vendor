@@ -63,7 +63,7 @@ const actions = <ActionTree<AuthState, RootState>>{
       return response
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('checkUserExistence', JSON.stringify(e.response))
+      const issue = new Issue('checkUserExistence', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
@@ -79,7 +79,7 @@ const actions = <ActionTree<AuthState, RootState>>{
       vuexContext.commit('setUserPhone', payload.phone)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('requestOtpCode', JSON.stringify(e.response))
+      const issue = new Issue('requestOtpCode', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
@@ -92,7 +92,7 @@ const actions = <ActionTree<AuthState, RootState>>{
       payload
     ).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('checkOtpCode', JSON.stringify(e.response))
+      const issue = new Issue('checkOtpCode', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
@@ -114,7 +114,7 @@ const actions = <ActionTree<AuthState, RootState>>{
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('userSignup', JSON.stringify(e.response))
+      const issue = new Issue('userSignup', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
@@ -135,7 +135,7 @@ const actions = <ActionTree<AuthState, RootState>>{
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('userLogin', JSON.stringify(e.response))
+      const issue = new Issue('userLogin', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
@@ -157,7 +157,7 @@ const actions = <ActionTree<AuthState, RootState>>{
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('changeUserPassword', JSON.stringify(e.response))
+      const issue = new Issue('changeUserPassword', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
