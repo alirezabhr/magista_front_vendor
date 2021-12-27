@@ -10,7 +10,7 @@
           :value="!post.hasProduct"
           class="my-overlay"
         >
-          <v-img :src="noProductImage" :aspect-ratio="1" />
+          <v-row class="fill-height text-h5 grey--text text--lighten-4 font-weight-bold" align="center" justify="center" no-gutters>بدون کالا</v-row>
         </v-overlay>
       </v-img>
     </v-card>
@@ -27,12 +27,6 @@ export default {
     post: {
       type: Object as PropType<Post>,
       required: true
-    }
-  },
-  computed: {
-    noProductImage () {
-      // TODO image should change to no product
-      return require('~/assets/images/no_price.png')
     }
   },
   methods: {
