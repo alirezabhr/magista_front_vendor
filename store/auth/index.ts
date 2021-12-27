@@ -45,6 +45,7 @@ const mutations = <MutationTree<AuthState>>{
     localStorage.setItem('MagistaId', id)
   },
   removeUserToken (state) {
+    localStorage.clear()
     localStorage.removeItem('MagistaToken')
     axios.defaults.headers.common.Authorization = ''
     state.userToken = null
