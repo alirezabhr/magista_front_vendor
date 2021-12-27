@@ -24,8 +24,7 @@
       },
       "types": [
         "@types/node",
-        "@nuxt/types",
-        "@nuxtjs/sentry"
+        "@nuxt/types"
       ]
     },
     "exclude": [
