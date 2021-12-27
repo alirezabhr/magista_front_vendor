@@ -1,11 +1,11 @@
 <template>
-  <div v-if="isLoadingPage">
-    <v-col cols="12">
+  <div v-if="isLoadingPage" style="height: 100%;">
+    <v-row class="fill-height" align="center" justify="center" no-gutters>
       <v-progress-circular
         indeterminate
         size="64"
       />
-    </v-col>
+    </v-row>
   </div>
   <div v-else>
     <v-col v-if="getOrderList.length === 0" cols="12">
