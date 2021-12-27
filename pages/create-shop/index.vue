@@ -26,6 +26,12 @@
           :is-getting-posts="isGettingQueryMedia"
           @submit="removeExtraPostsAndCreateProducts"
         />
+        <ShopRequestForm
+          v-else-if="creationStep === 'shop request'"
+          :is-submitting-form="isSubmitting"
+          :request-sent="requestSent"
+          @submit="requestForShop"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -34,6 +40,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
+import ShopRequestForm from '@/components/create_shop/ShopRequestForm.vue'
 import InstagramIdForm from '@/components/create_shop/InstagramIdForm.vue'
 import ShopDataForm from '@/components/create_shop/ShopDataForm.vue'
 import ShopPreview from '@/components/create_shop/ShopPreview.vue'
@@ -41,12 +48,14 @@ import ShopPreview from '@/components/create_shop/ShopPreview.vue'
 export default {
   name: 'CreateShopPage',
   components: {
+    ShopRequestForm,
     InstagramIdForm,
     ShopDataForm,
     ShopPreview
   },
   data () {
     return {
+      requestSent: false,
       showSnackbar: false,
       snackbarMessage: '',
       creationStep: 'instagram username',
@@ -59,7 +68,7 @@ export default {
   },
   methods: {
     ...mapActions('shop', ['saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile',
-      'createShop', 'removeExtraMediaQuery', 'createAllPosts']),
+      'createShop', 'removeExtraMediaQuery', 'createAllPosts', 'shopRequest']),
 
     saveMediaQuery (igUsername) {
       this.isSubmitting = true
@@ -79,6 +88,8 @@ export default {
         } else if (response.status === 400 && response.data.error) {
           this.snackbarMessage = response.data.error[0]
           this.showSnackbar = true
+        } else if (response.status === 500) { // if media is not ready
+          this.creationStep = 'shop request'
         }
       })
     },
@@ -136,6 +147,15 @@ export default {
         this.isSubmitting = false
         this.snackbarMessage = 'خطا در ذخیره اطلاعات. لطفا کمی بعد تلاش کنید.'
         this.showSnackbar = true
+      })
+    },
+    requestForShop () {
+      this.isSubmitting = true
+      this.shopRequest().then(() => {
+        this.isSubmitting = false
+        this.snackbarMessage = 'درخواست شما با موفقیت ثبت شد.'
+        this.showSnackbar = true
+        this.requestSent = true
       })
     }
   }

@@ -119,17 +119,19 @@ const actions = <ActionTree<ShopState, RootState>>{
       instagramUsername: igUsername
     }
 
+    vuexContext.commit('setInstagramUsername', igUsername)
     return this.$client.post(url, null, { params: queryParams }).then((response) => {
-      vuexContext.commit('setInstagramUsername', igUsername)
       vuexContext.commit('setUserIgProfileInfo', response.data)
     }).catch((e) => {
-      vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('saveInstagramMediaQueryFile', JSON.stringify(e.response))
-      if (e.response.status === 500 || e.response.status === 503) {
-        issue.setCritical()
+      if (e.response.status !== 500) { // 500 means media is not ready
+        vuexContext.commit('issue/createNewIssues', null, { root: true })
+        const issue = new Issue('saveInstagramMediaQueryFile', JSON.stringify(e.response))
+        if (e.response.status === 500 || e.response.status === 503) {
+          issue.setCritical()
+        }
+        vuexContext.commit('issue/addIssue', issue, { root: true })
+        vuexContext.dispatch('issue/capture', null, { root: true })
       }
-      vuexContext.commit('issue/addIssue', issue, { root: true })
-      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
@@ -257,6 +259,21 @@ const actions = <ActionTree<ShopState, RootState>>{
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
       const issue = new Issue('addBankCredit', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  shopRequest (vuexContext, userEmail) {
+    const url = process.env.baseURL + 'shop/request/'
+
+    const payload = {
+      email: userEmail,
+      instagram_username: vuexContext.getters.getInstagramUsername
+    }
+
+    return this.$client.post(url, payload).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('shopRequest', JSON.stringify(e.response))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
