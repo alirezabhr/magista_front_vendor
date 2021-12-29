@@ -170,12 +170,7 @@ export default {
       })
     },
     redirect () {
-      const routeFrom = this.$router.app.context.from
-      if (routeFrom.path === '/auth') {
-        this.$router.push('/')
-      } else {
-        this.$router.push(routeFrom.path)
-      }
+      this.$router.push('/dashboard')
     }
   }
 }
