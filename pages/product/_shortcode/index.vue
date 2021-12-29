@@ -284,6 +284,7 @@ export default {
         this.isSubmittingForm = false
         this.postForm = ''
         this.showDialog = false
+        this.showProductTags = true
       })
     }
   }
