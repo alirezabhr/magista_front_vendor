@@ -114,7 +114,7 @@ export default {
         this.creationStep = 'shop preview'
       }).catch(() => {
         this.isSubmitting = false
-        this.snackbarMessage = 'خطا در فرآیند ساخت فروشگاه. در صورت امکان به پشتیبانی اصطلاع دهید.'
+        this.snackbarMessage = 'خطا در فرآیند ساخت فروشگاه. در صورت امکان به پشتیبانی اطلاع دهید.'
         this.showSnackbar = true
       })
     },
@@ -142,7 +142,7 @@ export default {
     createShopPosts () {
       this.createAllPosts().then(() => {
         this.isSubmitting = false
-        this.$router.push('dashboard')
+        this.$router.push('/dashboard')
       }).catch(() => {
         this.isSubmitting = false
         this.snackbarMessage = 'خطا در ذخیره اطلاعات. لطفا کمی بعد تلاش کنید.'
