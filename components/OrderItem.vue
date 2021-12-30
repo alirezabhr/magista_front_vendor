@@ -6,7 +6,7 @@
           <v-card outlined>
             <v-img
               :aspect-ratio="1"
-              :src="getFullImageUrl(orderItem.product.displayImage)"
+              :src="getFullImageUrl(orderItem.product.displayImageUrl)"
             >
               <template #placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
