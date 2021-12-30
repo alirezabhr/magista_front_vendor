@@ -1,5 +1,5 @@
 enum OrderStatus {
-    AWAITING_PAYMENT = 1,
+    AWAITING_PAYMENT = 0,
     PAID,
     VERIFIED,
     SHIPPED,
