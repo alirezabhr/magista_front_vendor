@@ -10,10 +10,15 @@ class Order {
     customer: Customer
     orderItems: OrderItem[]
     totalPrice: number
-    updatedAt: Date
+    shippedBy: number
+    paidAt: Date
+    verifiedAt: Date
+    shippedAt: Date
+    canceledAt: Date
     createdAt: Date
 
-    constructor (id: number, status: number, statusText: string, shop: Shop, customer: Customer, orderItems: OrderItem[], totalPrice: number, updatedAt: Date, createdAt: Date) {
+    constructor (id: number, status: number, statusText: string, shop: Shop, customer: Customer, orderItems: OrderItem[],
+      totalPrice: number, shippedBy: number, paidAt: Date, verifiedAt: Date, shippedAt: Date, canceledAt: Date, createdAt: Date) {
       this.id = id
       this.status = status
       this.statusText = statusText
@@ -21,7 +26,11 @@ class Order {
       this.customer = customer
       this.orderItems = orderItems
       this.totalPrice = totalPrice
-      this.updatedAt = updatedAt
+      this.shippedBy = shippedBy
+      this.paidAt = paidAt
+      this.verifiedAt = verifiedAt
+      this.shippedAt = shippedAt
+      this.canceledAt = canceledAt
       this.createdAt = createdAt
     }
 }
