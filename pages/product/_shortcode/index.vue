@@ -19,16 +19,23 @@
         @submit="submitCreateProductForm"
         @close="showDialog = false"
       />
+      <PostEditForm
+        v-else-if="postForm === 'editPost'"
+        :is-submitting-form="isSubmittingForm"
+        :post-description="getPost.description"
+        @submit="submitPostEditForm"
+        @close="showDialog = false"
+      />
     </v-dialog>
     <v-card min-height="670">
-      <v-row dir="ltr" no-gutters class="px-2 py-1 white" align="center">
+      <v-row dir="ltr" no-gutters class="px-3 py-2 grey lighten-4" align="center">
         <NuxtLink to="/dashboard">
-          <v-avatar color="primary" style="border: solid;">
+          <v-avatar size="45">
             <v-img :src="getProfilePhotoUrl" alt="profile" />
           </v-avatar>
         </NuxtLink>
         <NuxtLink to="/dashboard" class="text-decoration-none" active-class="text-decoration-none">
-          <div class="pl-3 font-weight-bold grey--text text--darken-4">{{ getCurrentShop.instagramUsername }}</div>
+          <div class="pl-3 font-weight-bold text-body-2 grey--text text--darken-4">{{ getCurrentShop.instagramUsername }}</div>
         </NuxtLink>
         <v-spacer />
         <v-menu offset-y>
@@ -172,12 +179,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
+import PostEditForm from '@/components/product/PostEditForm'
 import CreateProductForm from '@/components/product/CreateProductForm'
 import ProductTag from '@/components/product/ProductTag'
 
 export default {
   name: 'ProductShortcodePage',
   components: {
+    PostEditForm,
     CreateProductForm,
     ProductTag
   },
@@ -225,7 +234,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('product', ['changeTagLocation', 'createNewProduct']),
+    ...mapActions('product', ['changeTagLocation', 'createNewProduct', 'editPost']),
 
     productImageUrl (productImage) {
       return process.env.baseURL + productImage.displayImage
@@ -280,11 +289,23 @@ export default {
       this.changeTagLocation(payloadData)
     },
     submitCreateProductForm (payload) {
+      this.isSubmittingForm = true
       this.createNewProduct(payload).then(() => {
         this.isSubmittingForm = false
         this.postForm = ''
         this.showDialog = false
         this.showProductTags = true
+      })
+    },
+    submitPostEditForm (description) {
+      this.isSubmittingForm = true
+      const post = { ...this.getPost }
+      post.description = description
+
+      this.editPost(post).then(() => {
+        this.isSubmittingForm = false
+        this.postForm = ''
+        this.showDialog = false
       })
     }
   }
