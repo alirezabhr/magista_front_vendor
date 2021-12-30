@@ -26,11 +26,11 @@
         <v-col v-if="order.status > 1" cols="11">
           <v-card elevation="6" color="grey lighten-3">
             <v-col>
-              <v-card-title class="pt-0 pb-6">
+              <v-card-title class="pt-0 pb-4">
                 وضعیت:
                 {{ order.statusText }}
               </v-card-title>
-              <v-card-subtitle class="py-0">
+              <v-card-subtitle class="pt-0 pb-4">
                 {{ order.createdAt }}
               </v-card-subtitle>
               <v-card-subtitle class="py-0">
@@ -42,6 +42,9 @@
                 {{ order.customer.province }} -
                 {{ order.customer.city }} -
                 {{ order.customer.address }}
+              </v-card-subtitle>
+              <v-card-subtitle class="py-0">
+                کد پستی: {{ order.customer.postalCode }}
               </v-card-subtitle>
               <v-divider class="mt-2 pb-6" />
               <div class="py-2">
