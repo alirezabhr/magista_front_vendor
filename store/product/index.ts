@@ -97,17 +97,16 @@ const actions = <ActionTree<ProductState, RootState>>{
       throw e.response
     })
   },
-  productDetail (vuexContext, shortcode) {
-    const url = process.env.baseURL + `shop/product/${shortcode}/`
+  editPost (vuexContext, post) {
+    const url = process.env.baseURL + `shop/post/${post.shortcode}/`
 
-    return this.$client.get(url).then((response) => {
-      vuexContext.commit('', response.data)
+    return this.$client.put(url, post).then((response) => {
+      vuexContext.commit('setPost', response.data)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
-      const issue = new Issue('productDetail', JSON.stringify(e.response.data))
+      const issue = new Issue('editPost', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
-      throw e.response
     })
   },
   editProduct (vuexContext, product) {
