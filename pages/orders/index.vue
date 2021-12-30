@@ -23,6 +23,17 @@
     </v-col>
     <v-col v-else cols="12" class="ma-0 px-0 pt-0 pb-10">
       <v-row v-for="(order, index) in getOrderList" :key="index" no-gutters class="ma-0 py-4 px-0" justify="center">
+        <v-dialog
+          v-model="showDialog"
+          max-width="600px"
+        >
+          <ChooseShippingOption
+            :order="order"
+            :is-submitting="isSubmitting"
+            @submit="orderHadSent"
+            @close="showDialog = false"
+          />
+        </v-dialog>
         <v-col v-if="order.status > 1" cols="11">
           <v-card elevation="6" color="grey lighten-3">
             <v-col>
@@ -65,7 +76,7 @@
               </v-row>
               <!-- if order status is verified -->
               <v-row v-else-if="order.status === 3" no-gutters justify="center">
-                <v-btn color="green" class="white--text font-weight-bold" @click.prevent="orderHadSent(order)">ارسال شد</v-btn>
+                <v-btn color="green" class="white--text font-weight-bold" @click.prevent="showDialog = true">ارسال کردم</v-btn>
               </v-row>
             </v-col>
           </v-card>
@@ -78,16 +89,20 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import OrderItem from '@/components/OrderItem.vue'
+import ChooseShippingOption from '@/components/ChooseShippingOption.vue'
 import OrderStatus from '@/models/order_status'
 
 export default {
   name: 'OrdersPage',
   components: {
+    ChooseShippingOption,
     OrderItem
   },
   layout: 'panel',
   data () {
     return {
+      isSubmitting: false,
+      showDialog: false,
       isLoadingPage: false
     }
   },
@@ -119,10 +134,16 @@ export default {
       o.status = OrderStatus.CANCELED
       await this.editOrder(o)
     },
-    async orderHadSent (order) {
+    orderHadSent (order, shippingOpt) {
       const o = { ...order }
       o.status = OrderStatus.SHIPPED
-      await this.editOrder(o)
+      o.shippedBy = shippingOpt
+      this.isSubmitting = true
+
+      this.editOrder(o).then(() => {
+        this.isSubmitting = false
+        this.showDialog = false
+      })
     }
   }
 }
