@@ -72,8 +72,9 @@ export default {
 
     saveMediaQuery (igUsername) {
       this.isSubmitting = true
+      const instagramUsername = igUsername.toLowerCase() // make it lower to find correct media directory in backend
 
-      this.saveInstagramMediaQueryFile(igUsername).then(() => {
+      this.saveInstagramMediaQueryFile(instagramUsername).then(() => {
         this.isSubmitting = false
         this.creationStep = 'shop form'
         this.retrieveInstagramMedia()
