@@ -73,7 +73,7 @@ export default {
     treeShake: true,
     defaultAssets: {
       font: {
-        family: 'MyWebFont'
+        family: 'Vazir'
       }
     },
     customVariables: ['~/assets/styles/variables.scss'],
