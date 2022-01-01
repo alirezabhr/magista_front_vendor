@@ -42,13 +42,13 @@
         </v-row>
       </v-card-title>
       <v-card-text class="py-1">
-        نام فروشگاه: {{ getCurrentShop.instagramUsername }}
+        نام فروشگاه: <span v-if="getCurrentShop">{{ getCurrentShop.instagramUsername }}</span>
       </v-card-text>
       <v-card-text class="py-1">
-        آدرس: {{ getCurrentShop.province }}-{{ getCurrentShop.city }}،{{ getCurrentShop.address }}
+        آدرس: <span v-if="getCurrentShop">{{ getCurrentShop.province }}-{{ getCurrentShop.city }}،{{ getCurrentShop.address }}</span>
       </v-card-text>
       <v-card-text class="py-1">
-        ایمیل: {{ getCurrentShop.email }}
+        ایمیل: <span v-if="getCurrentShop">{{ getCurrentShop.email }}</span>
       </v-card-text>
     </v-card>
     <v-card class="pb-2 my-4 mx-4">
@@ -58,10 +58,10 @@
         </v-row>
       </v-card-title>
       <v-card-text class="py-1">
-        موجودی: {{ getCurrentShop.wallet }}
+        موجودی: <span v-if="getCurrentShop">{{ getCurrentShop.wallet }}</span>
       </v-card-text>
       <v-card-text class="py-1">
-        قابل برداشت: {{ getCurrentShop.withdrawalAmount }}
+        قابل برداشت: <span v-if="getCurrentShop">{{ getCurrentShop.withdrawalAmount }}</span>
       </v-card-text>
       <v-card-actions>
         <v-col cols="6" class="pa-0 mx-auto">

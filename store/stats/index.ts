@@ -46,7 +46,11 @@ const mutations = <MutationTree<StatState>>{
 
 const actions = <ActionTree<StatState, RootState>>{
   shopStats (vuexContext) {
-    const shopPk = vuexContext.rootGetters['shop/getCurrentShop'].id
+    const currentShop = vuexContext.rootGetters['shop/getCurrentShop']
+    if (!currentShop) {
+      return
+    }
+    const shopPk = currentShop.id
     const url = process.env.baseURL + `order/shop/${shopPk}/stats/`
     const queryParams = {
       days: 30

@@ -237,6 +237,9 @@ const actions = <ActionTree<ShopState, RootState>>{
     })
   },
   currentShopBankCredits (vuexContext) {
+    if (!vuexContext.getters.getCurrentShop) {
+      return
+    }
     const shopPk = vuexContext.getters.getCurrentShop.id
     const url = process.env.baseURL + `shop/${shopPk}/bank-credit/`
 
