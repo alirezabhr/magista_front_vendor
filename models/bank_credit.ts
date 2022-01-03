@@ -1,12 +1,14 @@
 class BankCredits {
   shop: number // shop pk
   sheba: string
-  fullName: string
+  firstName: string
+  lastName: string
 
-  constructor (shop:number, sheba: string, fullName: string) {
+  constructor (shop:number, sheba: string, firstName: string, lastName: string) {
     this.shop = shop
     this.sheba = sheba
-    this.fullName = fullName
+    this.firstName = firstName
+    this.lastName = lastName
   }
 }
 
