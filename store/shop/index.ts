@@ -94,6 +94,11 @@ const mutations = <MutationTree<ShopState>>{
         function (first, second) { return first.index - second.index }
       )
     }
+  },
+  clearCurrentShopRemainingAmount (state) {
+    if (state.currentShop) {
+      state.currentShop.remainingAmount = 0
+    }
   }
 }
 
@@ -279,6 +284,29 @@ const actions = <ActionTree<ShopState, RootState>>{
       const issue = new Issue('shopRequest', JSON.stringify(e.response))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  withdraw (vuexContext, shebaNumber) {
+    if (!vuexContext.getters.getCurrentShop) {
+      return
+    }
+
+    const url = process.env.baseURL + 'payment/withdraw/'
+
+    const payload = {
+      shop: vuexContext.getters.getCurrentShop.id,
+      sheba: shebaNumber
+    }
+
+    return this.$client.post(url, payload).then(() => {
+      vuexContext.commit('clearCurrentShopRemainingAmount')
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('withdraw', JSON.stringify(e.response))
+      issue.setCritical()
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
+      throw e.response
     })
   }
 }
