@@ -80,6 +80,12 @@ const mutations = <MutationTree<ProductState>>{
       product.tag = { x: 50, y: 50 }
       state.post.productImages[piIndex].products.push(product)
     }
+  },
+  removeProductFromPost (state, product) {
+    if (state.post) {
+      const indexList = getIndexes(state.post.productImages, product.id)
+      state.post.productImages[indexList[0]].products.splice(indexList[1], 1)
+    }
   }
 }
 
@@ -192,6 +198,18 @@ const actions = <ActionTree<ProductState, RootState>>{
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
       const issue = new Issue('createNewProduct', JSON.stringify(e.response.data))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  deleteProduct (vuexContext, product) {
+    const url = process.env.baseURL + `shop/product/${product.id}/`
+
+    return this.$client.delete(url, product).then(() => {
+      vuexContext.commit('removeProductFromPost', product)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('deleteProduct', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })

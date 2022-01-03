@@ -31,6 +31,12 @@
         :product="product"
         @close="showDialog = false"
       />
+      <ProductDeleteForm
+        v-else-if="productForm === 'delete'"
+        :is-submitting-form="isSubmittingForm"
+        @submit="submitDeleteProduct"
+        @close="showDialog = false"
+      />
     </v-dialog>
     <v-menu offset-y :value="openMenu">
       <template #activator="{ on, attrs}">
@@ -92,6 +98,7 @@ import { mapActions, mapMutations } from 'vuex'
 
 import ProductPriceForm from '@/components/product/ProductPriceForm.vue'
 import ProductEditForm from '@/components/product/ProductEditForm.vue'
+import ProductDeleteForm from '@/components/product/ProductDeleteForm.vue'
 import ProductDiscountForm from '@/components/product/ProductDiscountForm.vue'
 import ProductAttributesForm from '@/components/product/ProductAttributesForm.vue'
 
@@ -100,6 +107,7 @@ export default {
   components: {
     ProductPriceForm,
     ProductEditForm,
+    ProductDeleteForm,
     ProductDiscountForm,
     ProductAttributesForm
   },
@@ -161,7 +169,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('product', ['editProduct', 'createProductDiscount', 'changeTagLocation']),
+    ...mapActions('product', ['editProduct', 'createProductDiscount', 'changeTagLocation', 'deleteProduct']),
     ...mapMutations('product', ['changedTagLocation']),
 
     productOptionsOnClick (formName) {
@@ -256,6 +264,18 @@ export default {
       if (!this.isSubmittingForm) {
         this.isSubmittingForm = true
         await this.createProductDiscount(discountItem).then(() => {
+          this.showDialog = false
+          this.productForm = ''
+        })
+        this.isSubmittingForm = false
+      }
+    },
+    async submitDeleteProduct () {
+      const prod = { ...this.product }
+
+      if (!this.isSubmittingForm) {
+        this.isSubmittingForm = true
+        await this.deleteProduct(prod).then(() => {
           this.showDialog = false
           this.productForm = ''
         })
