@@ -5,20 +5,22 @@ class Shop {
     address: string
     province: string
     city: string
+    commissionPercent: number
     wallet: number
     profileImageUrl: string
-    withdrawalAmount: number
+    remainingAmount: number
 
-    constructor (id:number, igUsername: string, email: string, address: string, province: string, city: string, wallet:number, profileUrl: string, withdrawalAmount: number) {
+    constructor (id:number, igUsername: string, email: string, address: string, province: string, city: string, commissionPercent: number, wallet:number, profileUrl: string, remainingAmount: number) {
       this.id = id
       this.instagramUsername = igUsername
       this.email = email
       this.address = address
       this.province = province
       this.city = city
+      this.commissionPercent = commissionPercent
       this.wallet = wallet
       this.profileImageUrl = profileUrl
-      this.withdrawalAmount = withdrawalAmount
+      this.remainingAmount = remainingAmount
     }
 
     toJSON () {
