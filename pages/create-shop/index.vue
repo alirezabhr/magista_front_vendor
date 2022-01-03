@@ -150,9 +150,9 @@ export default {
         this.showSnackbar = true
       })
     },
-    requestForShop () {
+    requestForShop (email) {
       this.isSubmitting = true
-      this.shopRequest().then(() => {
+      this.shopRequest(email).then(() => {
         this.isSubmitting = false
         this.snackbarMessage = 'درخواست شما با موفقیت ثبت شد.'
         this.showSnackbar = true
