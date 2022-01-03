@@ -58,10 +58,7 @@
         </v-row>
       </v-card-title>
       <v-card-text class="py-1">
-        موجودی: <span v-if="getCurrentShop">{{ getCurrentShop.wallet }}</span>
-      </v-card-text>
-      <v-card-text class="py-1">
-        قابل برداشت: <span v-if="getCurrentShop">{{ getCurrentShop.remainingAmount }}</span>
+        موجودی قابل برداشت: <span v-if="getCurrentShop">{{ getCurrentShop.remainingAmount }}</span>
       </v-card-text>
       <v-card-actions>
         <v-col cols="6" class="pa-0 mx-auto">

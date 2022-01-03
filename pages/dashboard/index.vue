@@ -44,7 +44,7 @@
               لینک فروشگاه
             </v-btn>
             <v-row no-gutters class="pt-2">
-              موجودی: {{ getCurrentShop.wallet }} تومان
+              موجودی: {{ getCurrentShop.remainingAmount }} تومان
             </v-row>
           </v-col>
           <v-spacer />
