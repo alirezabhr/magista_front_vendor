@@ -81,6 +81,8 @@
 import { mapGetters, mapActions } from 'vuex'
 import BankCreditForm from '@/components/BankCreditForm.vue'
 
+const MINIMUM_WITHDRAWAL_AMOUNT = 80000
+
 export default {
   name: 'WithdrawPage',
   components: {
@@ -127,18 +129,24 @@ export default {
     },
     requestWithdraw () {
       if (this.selectedCredit) {
-        this.isSubmitting = true
-        this.withdraw(this.selectedCreditSheba).then(() => {
-          this.isSubmitting = false
-          this.snakcbarColor = 'green'
-          this.snackbarMessage = 'عملیات تسویه با موفقیت انجام شد.'
-          this.showSnackbar = true
-        }).catch(() => {
-          this.isSubmitting = false
+        if (this.settlementAmount > MINIMUM_WITHDRAWAL_AMOUNT) {
+          this.isSubmitting = true
+          this.withdraw(this.selectedCreditSheba).then(() => {
+            this.isSubmitting = false
+            this.snakcbarColor = 'green'
+            this.snackbarMessage = 'عملیات تسویه با موفقیت انجام شد.'
+            this.showSnackbar = true
+          }).catch(() => {
+            this.isSubmitting = false
+            this.snakcbarColor = 'red'
+            this.snackbarMessage = 'در حال حاضر امکان برقراری ارتباط با بانک وجود ندارد!'
+            this.showSnackbar = true
+          })
+        } else {
           this.snakcbarColor = 'red'
-          this.snackbarMessage = 'در حال حاضر امکان برقراری ارتباط با بانک وجود ندارد!'
+          this.snackbarMessage = 'حداقل مبلغ قابل برداشت 80،000 تومان است.'
           this.showSnackbar = true
-        })
+        }
       } else {
         this.snakcbarColor = 'red'
         this.snackbarMessage = 'هیچ شماره حسابی انتخاب نشده است!'
