@@ -31,6 +31,12 @@
         :product="product"
         @close="showDialog = false"
       />
+      <ProductRemoveDiscount
+        v-else-if="productForm === 'removeDiscount'"
+        :is-submitting-form="isSubmittingForm"
+        @submit="removeDiscount"
+        @close="showDialog = false"
+      />
       <ProductDeleteForm
         v-else-if="productForm === 'delete'"
         :is-submitting-form="isSubmittingForm"
@@ -98,18 +104,20 @@ import { mapActions, mapMutations } from 'vuex'
 
 import ProductPriceForm from '@/components/product/ProductPriceForm.vue'
 import ProductEditForm from '@/components/product/ProductEditForm.vue'
-import ProductDeleteForm from '@/components/product/ProductDeleteForm.vue'
 import ProductDiscountForm from '@/components/product/ProductDiscountForm.vue'
 import ProductAttributesForm from '@/components/product/ProductAttributesForm.vue'
+import ProductRemoveDiscount from '@/components/product/ProductRemoveDiscount.vue'
+import ProductDeleteForm from '@/components/product/ProductDeleteForm.vue'
 
 export default {
   name: 'ProductTag',
   components: {
     ProductPriceForm,
     ProductEditForm,
-    ProductDeleteForm,
     ProductDiscountForm,
-    ProductAttributesForm
+    ProductAttributesForm,
+    ProductRemoveDiscount,
+    ProductDeleteForm
   },
   props: {
     product: {
@@ -169,7 +177,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('product', ['editProduct', 'createProductDiscount', 'changeTagLocation', 'deleteProduct']),
+    ...mapActions('product', ['editProduct', 'createProductDiscount', 'changeTagLocation', 'deleteProduct', 'removeProductDiscount']),
     ...mapMutations('product', ['changedTagLocation']),
 
     productOptionsOnClick (formName) {
@@ -264,6 +272,18 @@ export default {
       if (!this.isSubmittingForm) {
         this.isSubmittingForm = true
         await this.createProductDiscount(discountItem).then(() => {
+          this.showDialog = false
+          this.productForm = ''
+        })
+        this.isSubmittingForm = false
+      }
+    },
+    async removeDiscount () {
+      const prod = { ...this.product }
+
+      if (!this.isSubmittingForm) {
+        this.isSubmittingForm = true
+        await this.removeProductDiscount(prod.id).then(() => {
           this.showDialog = false
           this.productForm = ''
         })

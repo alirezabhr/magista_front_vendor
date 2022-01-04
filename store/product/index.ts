@@ -81,6 +81,16 @@ const mutations = <MutationTree<ProductState>>{
       state.post.productImages[piIndex].products.push(product)
     }
   },
+  removeDiscount (state, productId) {
+    if (state.post) {
+      const indexList = getIndexes(state.post.productImages, productId)
+      state.post.productImages[indexList[0]].products[indexList[1]].discountPercent = 0
+      state.post.productImages[indexList[0]].products[indexList[1]].discountAmount = 0
+      state.post.productImages[indexList[0]].products[indexList[1]].discountDescription = ''
+      const originalPrice = state.post.productImages[indexList[0]].products[indexList[1]].originalPrice
+      state.post.productImages[indexList[0]].products[indexList[1]].finalPrice = originalPrice
+    }
+  },
   removeProductFromPost (state, product) {
     if (state.post) {
       const indexList = getIndexes(state.post.productImages, product.id)
@@ -198,6 +208,22 @@ const actions = <ActionTree<ProductState, RootState>>{
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
       const issue = new Issue('createNewProduct', JSON.stringify(e.response.data))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
+  removeProductDiscount (vuexContext, productId) {
+    const url = process.env.baseURL + `shop/product/${productId}/discount/`
+
+    const payload = {
+      product: productId
+    }
+
+    return this.$client.put(url, payload).then(() => {
+      vuexContext.commit('removeDiscount', productId)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('removeProductDiscount', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
