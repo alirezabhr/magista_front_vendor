@@ -108,7 +108,7 @@ export default {
       } else {
         const dAmount = this.productPrice * Number.parseInt(this.discountPercent) / 100
         final = this.productPrice - dAmount
-        final = Number.parseInt(final / 1000) * 1000
+        final = Number.parseInt(final)
       }
       return final
     }
