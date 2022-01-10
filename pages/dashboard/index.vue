@@ -39,10 +39,33 @@
       <v-row class="pa-5" no-gutters>
         <v-row no-gutters>
           <v-col>
-            <v-btn @click.prevent="copyShopLink">
-              <v-icon class="pl-1">mdi-content-copy</v-icon>
-              لینک فروشگاه
-            </v-btn>
+            <v-menu>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="option in shopOptions"
+                  :key="option.title"
+                  ripple
+                  @click.prevent="option.onClick"
+                >
+                  <v-list-item-icon>
+                    <v-icon>{{ option.icon }}</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>{{ option.title }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
             <v-row no-gutters class="pt-2">
               موجودی: {{ getCurrentShop.remainingAmount }} تومان
             </v-row>
@@ -78,6 +101,13 @@ export default {
   layout: 'panel',
   data () {
     return {
+      drawer: false,
+      shopOptions: [
+        { title: 'لینک فروشگاه', icon: 'mdi-content-copy', onClick: this.copyShopLink },
+        { title: 'پست جدید', icon: 'mdi-image-multiple-outline', onClick: this.routeToGetNewPosts },
+        { title: 'تخفیف سراسری', icon: 'mdi-percent', onClick: this.doNothing },
+        { title: 'افزایش قیمت کلی', icon: 'mdi-trending-up', onClick: this.doNothing }
+      ],
       isLoadingPage: false,
       showSnackbar: false,
       snackbarMessage: ''
@@ -117,6 +147,11 @@ export default {
 
       this.snackbarMessage = 'لینک فروشگاه کپی شد.'
       this.showSnackbar = true
+    },
+    routeToGetNewPosts () {
+      this.$router.push('/dashboard/new-posts/')
+    },
+    doNothing () {
     }
   }
 }
