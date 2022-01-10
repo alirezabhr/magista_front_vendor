@@ -43,7 +43,8 @@ const mutations = <MutationTree<ShopState>>{
   },
   setShops (state, shops) {
     shops.forEach((shop: any) => {
-      const s = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province, shop.city, shop.commissionPercent, shop.wallet, shop.profilePic, shop.remainingAmount)
+      const s = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province, shop.city,
+        shop.commissionPercent, shop.wallet, shop.profilePic, shop.remainingAmount, shop.lastScrape)
       state.shops.push(s)
     })
   },
@@ -51,7 +52,8 @@ const mutations = <MutationTree<ShopState>>{
     state.shops.push(shop)
   },
   setCurrentShop (state, shop) {
-    state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province, shop.city, shop.commissionPercent, shop.wallet, shop.profilePic, shop.remainingAmount)
+    state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province,
+      shop.city, shop.commissionPercent, shop.wallet, shop.profilePic, shop.remainingAmount, shop.lastScrape)
     localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
   },
   setCurrentShopPosts (state, posts) {
@@ -324,6 +326,9 @@ const getters = <GetterTree<ShopState, RootState>>{
   getCurrentShop: (state) => {
     return state.currentShop
   },
+  getCurrentShopInstagramUsername: (state) => {
+    return state.currentShop?.instagramUsername
+  },
   getCurrentShopPosts: (state) : Post[] => {
     return state.currentShopPosts
   },
@@ -342,6 +347,11 @@ const getters = <GetterTree<ShopState, RootState>>{
   getShopLink (state) {
     if (state.currentShop) {
       return `https://magista.ir/shop/${state.currentShop.instagramUsername}`
+    }
+  },
+  getCurrentShopLastScrape (state) {
+    if (state.currentShop) {
+      return state.currentShop.lastScrape
     }
   }
 }
