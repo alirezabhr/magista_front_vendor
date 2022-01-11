@@ -6,32 +6,32 @@
     >
       {{ snackbarMessage }}
     </v-snackbar>
-    <v-row justify="center">
+    <v-row justify="center" no-gutters>
       <v-col col="10" sm="6" md="5" lg="4">
-        <InstagramIdForm
+        <!-- <InstagramIdForm
           v-if="creationStep === 'instagram username'"
           :is-submitting-ig-id="isSubmitting"
           @submitForm="saveMediaQuery"
-        />
-        <ShopDataForm
+        /> -->
+        <!-- <ShopDataForm
           v-else-if="creationStep === 'shop form'"
           :is-submitting-form="isSubmitting"
           @submit="submitShopForm"
-        />
-        <ShopPreview
+        /> -->
+        <!-- <ShopPreview
           v-else-if="creationStep === 'shop preview'"
           :posts-list="getPostsPreviewList"
           :is-submitting="isSubmitting"
           :posts-count="getPostsCount"
           :is-getting-posts="isGettingQueryMedia"
           @submit="removeExtraPostsAndCreateProducts"
-        />
-        <ShopRequestForm
+        /> -->
+        <!-- <ShopRequestForm
           v-else-if="creationStep === 'shop request'"
           :is-submitting-form="isSubmitting"
           :request-sent="requestSent"
           @submit="requestForShop"
-        />
+        /> -->
       </v-col>
     </v-row>
   </v-container>
@@ -40,18 +40,18 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
-import ShopRequestForm from '@/components/create_shop/ShopRequestForm.vue'
-import InstagramIdForm from '@/components/create_shop/InstagramIdForm.vue'
-import ShopDataForm from '@/components/create_shop/ShopDataForm.vue'
-import ShopPreview from '@/components/create_shop/ShopPreview.vue'
+// import ShopRequestForm from '@/components/create_shop/ShopRequestForm.vue'
+// import InstagramIdForm from '@/components/create_shop/InstagramIdForm.vue'
+// import ShopDataForm from '@/components/create_shop/ShopDataForm.vue'
+// import ShopPreview from '@/components/create_shop/ShopPreview.vue'
 
 export default {
   name: 'CreateShopPage',
   components: {
-    ShopRequestForm,
-    InstagramIdForm,
-    ShopDataForm,
-    ShopPreview
+    // ShopRequestForm,
+    // InstagramIdForm,
+    // ShopDataForm,
+    // ShopPreview
   },
   data () {
     return {
@@ -66,99 +66,102 @@ export default {
   computed: {
     ...mapGetters('shop', ['getPostsPreviewList', 'getPostsCount'])
   },
+  mounted () {
+    this.$router.push('/create-shop/request')
+  },
   methods: {
     ...mapActions('shop', ['saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile',
-      'createShop', 'removeExtraMediaQuery', 'createAllPosts', 'shopRequest']),
+      'createShop', 'removeExtraMediaQuery', 'createAllPosts', 'shopRequest'])
 
-    saveMediaQuery (igUsername) {
-      this.isSubmitting = true
-      const instagramUsername = igUsername.toLowerCase() // make it lower to find correct media directory in backend
+    // saveMediaQuery (igUsername) {
+    //   this.isSubmitting = true
+    //   const instagramUsername = igUsername.toLowerCase() // make it lower to find correct media directory in backend
 
-      this.saveInstagramMediaQueryFile(instagramUsername).then(() => {
-        this.isSubmitting = false
-        this.creationStep = 'shop form'
-        this.retrieveInstagramMedia()
-      }).catch((response) => {
-        this.isSubmitting = false
-        if (response.status === 404) {
-          this.snackbarMessage = 'صفحه مورد نظر یافت نشد.'
-          this.showSnackbar = true
-        } else if (response.status === 451) {
-          this.snackbarMessage = 'پیج مورد نظر پرایوت است.'
-          this.showSnackbar = true
-        } else if (response.status === 400 && response.data.error) {
-          this.snackbarMessage = response.data.error[0]
-          this.showSnackbar = true
-        } else if (response.status === 500) { // if media is not ready
-          this.creationStep = 'shop request'
-        }
-      })
-    },
+    //   this.saveInstagramMediaQueryFile(instagramUsername).then(() => {
+    //     this.isSubmitting = false
+    //     this.creationStep = 'shop form'
+    //     this.retrieveInstagramMedia()
+    //   }).catch((response) => {
+    //     this.isSubmitting = false
+    //     if (response.status === 404) {
+    //       this.snackbarMessage = 'صفحه مورد نظر یافت نشد.'
+    //       this.showSnackbar = true
+    //     } else if (response.status === 451) {
+    //       this.snackbarMessage = 'پیج مورد نظر پرایوت است.'
+    //       this.showSnackbar = true
+    //     } else if (response.status === 400 && response.data.error) {
+    //       this.snackbarMessage = response.data.error[0]
+    //       this.showSnackbar = true
+    //     } else if (response.status === 500) { // if media is not ready
+    //       this.creationStep = 'shop request'
+    //     }
+    //   })
+    // },
 
-    retrieveInstagramMedia () {
-      this.isGettingQueryMedia = true
+    // retrieveInstagramMedia () {
+    //   this.isGettingQueryMedia = true
 
-      this.getInstagramMediaQueryFile().then(() => {
-        this.isGettingQueryMedia = false
-      }).catch(() => {
-        this.isGettingQueryMedia = false
-        this.snackbarMessage = 'خطا در دریافت محتوای اینستاگرام'
-        this.showSnackbar = true
-      })
-    },
+    //   this.getInstagramMediaQueryFile().then(() => {
+    //     this.isGettingQueryMedia = false
+    //   }).catch(() => {
+    //     this.isGettingQueryMedia = false
+    //     this.snackbarMessage = 'خطا در دریافت محتوای اینستاگرام'
+    //     this.showSnackbar = true
+    //   })
+    // },
 
-    submitShopForm (shopData) {
-      this.isSubmitting = true
+    // submitShopForm (shopData) {
+    //   this.isSubmitting = true
 
-      this.createShop(shopData).then(() => {
-        this.isSubmitting = false
-        this.creationStep = 'shop preview'
-      }).catch(() => {
-        this.isSubmitting = false
-        this.snackbarMessage = 'خطا در فرآیند ساخت فروشگاه. در صورت امکان به پشتیبانی اطلاع دهید.'
-        this.showSnackbar = true
-      })
-    },
+    //   this.createShop(shopData).then(() => {
+    //     this.isSubmitting = false
+    //     this.creationStep = 'shop preview'
+    //   }).catch(() => {
+    //     this.isSubmitting = false
+    //     this.snackbarMessage = 'خطا در فرآیند ساخت فروشگاه. در صورت امکان به پشتیبانی اطلاع دهید.'
+    //     this.showSnackbar = true
+    //   })
+    // },
 
-    async removeExtraPostsAndCreateProducts (removedPostList) {
-      this.isSubmitting = true
+    // async removeExtraPostsAndCreateProducts (removedPostList) {
+    //   this.isSubmitting = true
 
-      if (this.isGettingQueryMedia) {
-        this.isSubmitting = false
-        this.snackbarMessage = 'در حال دریافت محتوای ایسنتاگرام. لطفا کمی صبر کنید.'
-        this.showSnackbar = true
-        return
-      }
+    //   if (this.isGettingQueryMedia) {
+    //     this.isSubmitting = false
+    //     this.snackbarMessage = 'در حال دریافت محتوای ایسنتاگرام. لطفا کمی صبر کنید.'
+    //     this.showSnackbar = true
+    //     return
+    //   }
 
-      await this.removeExtraMediaQuery({
-        extra_posts: removedPostList
-      }).then(() => {
-        this.createShopPosts()
-      }).catch(() => {
-        this.isSubmitting = false
-        this.snackbarMessage = 'ساخت فروشگاه با مشکل مواجه شده :('
-        this.showSnackbar = true
-      })
-    },
-    createShopPosts () {
-      this.createAllPosts().then(() => {
-        this.isSubmitting = false
-        this.$router.push('/dashboard')
-      }).catch(() => {
-        this.isSubmitting = false
-        this.snackbarMessage = 'خطا در ذخیره اطلاعات. لطفا کمی بعد تلاش کنید.'
-        this.showSnackbar = true
-      })
-    },
-    requestForShop (email) {
-      this.isSubmitting = true
-      this.shopRequest(email).then(() => {
-        this.isSubmitting = false
-        this.snackbarMessage = 'درخواست شما با موفقیت ثبت شد.'
-        this.showSnackbar = true
-        this.requestSent = true
-      })
-    }
+    //   await this.removeExtraMediaQuery({
+    //     extra_posts: removedPostList
+    //   }).then(() => {
+    //     this.createShopPosts()
+    //   }).catch(() => {
+    //     this.isSubmitting = false
+    //     this.snackbarMessage = 'ساخت فروشگاه با مشکل مواجه شده :('
+    //     this.showSnackbar = true
+    //   })
+    // },
+    // createShopPosts () {
+    //   this.createAllPosts().then(() => {
+    //     this.isSubmitting = false
+    //     this.$router.push('/dashboard')
+    //   }).catch(() => {
+    //     this.isSubmitting = false
+    //     this.snackbarMessage = 'خطا در ذخیره اطلاعات. لطفا کمی بعد تلاش کنید.'
+    //     this.showSnackbar = true
+    //   })
+    // },
+    // requestForShop (email) {
+    //   this.isSubmitting = true
+    //   this.shopRequest(email).then(() => {
+    //     this.isSubmitting = false
+    //     this.snackbarMessage = 'درخواست شما با موفقیت ثبت شد.'
+    //     this.showSnackbar = true
+    //     this.requestSent = true
+    //   })
+    // }
   }
 }
 </script>
