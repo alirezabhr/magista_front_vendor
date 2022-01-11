@@ -17,6 +17,7 @@ interface ShopState {
   instagramUsername: string | null
   userIgProfileInfo: InstagramProfileInfo | null
   postsPreviewList: PostPreview[]
+  isGettingMediaQuery: Boolean
 }
 
 const state = (): ShopState => ({
@@ -26,7 +27,8 @@ const state = (): ShopState => ({
   currentShopBankCredits: [],
   instagramUsername: null,
   userIgProfileInfo: null,
-  postsPreviewList: []
+  postsPreviewList: [],
+  isGettingMediaQuery: false
 })
 
 const mutations = <MutationTree<ShopState>>{
@@ -101,6 +103,9 @@ const mutations = <MutationTree<ShopState>>{
     if (state.currentShop) {
       state.currentShop.remainingAmount = 0
     }
+  },
+  setIsGettingMediaQuery (state, val: boolean) {
+    state.isGettingMediaQuery = val
   }
 }
 
@@ -145,6 +150,8 @@ const actions = <ActionTree<ShopState, RootState>>{
   async getInstagramMediaQueryFile (vuexContext) {
     const url = process.env.baseURL + 'shop/media-query/'
 
+    vuexContext.commit('setIsGettingMediaQuery', true)
+
     let hasNext = true
     let pageNo = 1
     while (hasNext) {
@@ -168,6 +175,7 @@ const actions = <ActionTree<ShopState, RootState>>{
         throw e.response
       })
     }
+    vuexContext.commit('setIsGettingMediaQuery', false)
   },
   removeExtraMediaQuery (vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
@@ -353,6 +361,9 @@ const getters = <GetterTree<ShopState, RootState>>{
     if (state.currentShop) {
       return state.currentShop.lastScrape
     }
+  },
+  getIsGettingMediaQuery (state) {
+    return state.isGettingMediaQuery
   }
 }
 
