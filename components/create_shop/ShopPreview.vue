@@ -19,8 +19,8 @@
     <PostsPreviewList
       :is-submitting="isSubmitting"
       :posts-list="postsList"
-      :posts-count="postCount"
-      :is-getting-posts="isLoading"
+      :posts-count="postsCount"
+      :is-getting-posts="isGettingPosts"
       @removePreviewPost="removePreviewPost"
       @addPreviewPost="addPreviewPost"
       @submit="$emit('submit')"
