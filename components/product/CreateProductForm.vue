@@ -34,6 +34,7 @@
           :rules="priceRules"
           type="number"
           suffix="تومان"
+          :prefix="product.originalPrice ? '000' : ''"
           outlined
           dense
         />
@@ -91,7 +92,7 @@ export default {
       ],
       priceRules: [
         value => !!value || 'قیمت را وارد کنید.',
-        value => value >= 5000 || 'قیمت بسیار پایین است.',
+        value => value >= 5 || 'قیمت بسیار پایین است.',
         value => !value.includes('.') || 'قیمت نامعتبر است'
       ]
     }
@@ -99,7 +100,7 @@ export default {
   computed: {
     price () {
       // need for watch (because can not watch a property of object (product.originalPrice))
-      return this.product.originalPrice
+      return this.product.originalPrice * 1000
     }
   },
   watch: {
@@ -110,7 +111,9 @@ export default {
   methods: {
     validateAndSubmitForm () {
       if (this.$refs.form.validate()) {
-        this.$emit('submit', this.product)
+        const prod = { ...this.product }
+        prod.originalPrice = this.product.originalPrice * 1000
+        this.$emit('submit', prod)
       }
     }
   }
