@@ -98,9 +98,6 @@ export default {
     }
   },
   computed: {
-    dicountAmount () {
-      return this.productPrice - this.finalPrice
-    },
     finalPrice () {
       let final = 0
       if (this.discountPercent >= 100 || this.discountPercent <= 0) {
@@ -116,7 +113,7 @@ export default {
   methods: {
     validateAndSubmitForm () {
       if (this.$refs.form.validate()) {
-        this.$emit('submit', Number.parseInt(this.discountPercent), this.dicountAmount, this.discountDescription)
+        this.$emit('submit', Number.parseInt(this.discountPercent), this.discountDescription)
       }
     }
   }

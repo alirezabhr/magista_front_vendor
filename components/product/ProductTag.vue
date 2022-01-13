@@ -261,10 +261,9 @@ export default {
         this.isSubmittingForm = false
       }
     },
-    async submitProductDiscountForm (discountPercent, discountAmount, discountDescription) {
+    async submitProductDiscountForm (discountPercent, discountDescription) {
       const discountItem = {
         percent: discountPercent,
-        amount: discountAmount,
         description: discountDescription,
         product: this.product.id
       }
