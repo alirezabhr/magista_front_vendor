@@ -3,7 +3,7 @@
     <v-card flat rounded="0">
       <v-img
         :aspect-ratio="1"
-        :src="productImageUrl((post.productImages)[0].displayImage)"
+        :src="productImageUrl(post.previewImage)"
       >
         <v-overlay
           absolute
