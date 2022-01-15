@@ -7,12 +7,14 @@ import ProductImage from '~/models/product_image'
 const namespace = 'product'
 
 interface ProductState {
-  post: Post | null,
+  post: Post | null
+  postProductImages: ProductImage[]
   selectedProductId: number
 }
 
 const state = (): ProductState => ({
   post: null,
+  postProductImages: [],
   selectedProductId: 0
 })
 
@@ -42,59 +44,65 @@ const mutations = <MutationTree<ProductState>>{
     state.selectedProductId = id
   },
   setPost (state, p) {
-    state.post = new Post(p.id, p.shop.id, p.productImages, p.shortcode, p.description,
+    state.post = new Post(p.id, p.shop.id, p.previewImage, p.shortcode, p.description,
       p.hasProduct, p.createdAt, p.updatedAt)
+  },
+  clearPostProductImages (state) {
+    state.postProductImages = []
+  },
+  setPostProductImages (state, productImages) {
+    state.postProductImages = productImages
   },
   setPostProduct (state, prod) {
     if (state.post) {
-      const indexList = getIndexes(state.post.productImages, prod.id)
-      state.post.productImages[indexList[0]].products.splice(indexList[1], 1, prod)
+      const indexList = getIndexes(state.postProductImages, prod.id)
+      state.postProductImages[indexList[0]].products.splice(indexList[1], 1, prod)
     }
   },
   appendProductAttribute (state, attr) {
     if (state.post) {
-      const indexList = getIndexes(state.post.productImages, state.selectedProductId)
-      state.post.productImages[indexList[0]].products[indexList[1]].attributes.push(attr)
+      const indexList = getIndexes(state.postProductImages, state.selectedProductId)
+      state.postProductImages[indexList[0]].products[indexList[1]].attributes.push(attr)
     }
   },
   removeProductAttribute (state, attrId) {
     if (state.post) {
-      const indexList = getIndexes(state.post.productImages, state.selectedProductId)
-      const i = state.post.productImages[indexList[0]].products[indexList[1]].attributes.findIndex(el => el.id === attrId)
+      const indexList = getIndexes(state.postProductImages, state.selectedProductId)
+      const i = state.postProductImages[indexList[0]].products[indexList[1]].attributes.findIndex(el => el.id === attrId)
       if (i) {
-        state.post.productImages[indexList[0]].products[indexList[1]].attributes.splice(i, 1)
+        state.postProductImages[indexList[0]].products[indexList[1]].attributes.splice(i, 1)
       } else if (i === 0) {
-        state.post.productImages[indexList[0]].products[indexList[1]].attributes.splice(0, 1)
+        state.postProductImages[indexList[0]].products[indexList[1]].attributes.splice(0, 1)
       }
     }
   },
   changedTagLocation (state, tagData) {
     if (state.post) {
-      const indexList = getIndexes(state.post.productImages, tagData.product)
-      state.post.productImages[indexList[0]].products[indexList[1]].tag = tagData
+      const indexList = getIndexes(state.postProductImages, tagData.product)
+      state.postProductImages[indexList[0]].products[indexList[1]].tag = tagData
     }
   },
   addNewProduct (state, product) {
     if (state.post) {
-      const piIndex = state.post.productImages.findIndex(pi => pi.id === product.image)
+      const piIndex = state.postProductImages.findIndex(pi => pi.id === product.image)
       product.tag = { x: 50, y: 50 }
-      state.post.productImages[piIndex].products.push(product)
+      state.postProductImages[piIndex].products.push(product)
     }
   },
   removeDiscount (state, productId) {
     if (state.post) {
-      const indexList = getIndexes(state.post.productImages, productId)
-      state.post.productImages[indexList[0]].products[indexList[1]].discountPercent = 0
-      state.post.productImages[indexList[0]].products[indexList[1]].discountAmount = 0
-      state.post.productImages[indexList[0]].products[indexList[1]].discountDescription = ''
-      const originalPrice = state.post.productImages[indexList[0]].products[indexList[1]].originalPrice
-      state.post.productImages[indexList[0]].products[indexList[1]].finalPrice = originalPrice
+      const indexList = getIndexes(state.postProductImages, productId)
+      state.postProductImages[indexList[0]].products[indexList[1]].discountPercent = 0
+      state.postProductImages[indexList[0]].products[indexList[1]].discountAmount = 0
+      state.postProductImages[indexList[0]].products[indexList[1]].discountDescription = ''
+      const originalPrice = state.postProductImages[indexList[0]].products[indexList[1]].originalPrice
+      state.postProductImages[indexList[0]].products[indexList[1]].finalPrice = originalPrice
     }
   },
   removeProductFromPost (state, product) {
     if (state.post) {
-      const indexList = getIndexes(state.post.productImages, product.id)
-      state.post.productImages[indexList[0]].products.splice(indexList[1], 1)
+      const indexList = getIndexes(state.postProductImages, product.id)
+      state.postProductImages[indexList[0]].products.splice(indexList[1], 1)
     }
   }
 }
@@ -111,6 +119,18 @@ const actions = <ActionTree<ProductState, RootState>>{
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
+    })
+  },
+  postProductImages (vuexContext, shortcode) {
+    const url = process.env.baseURL + `shop/post/${shortcode}/product-images/`
+
+    return this.$client.get(url).then((response) => {
+      vuexContext.commit('setPostProductImages', response.data)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('postProductImages', JSON.stringify(e.response.data))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
   editPost (vuexContext, post) {
@@ -248,6 +268,9 @@ const getters = <GetterTree<ProductState, RootState>>{
   },
   getPost: (state) : Post | null => {
     return state.post
+  },
+  getPostProductImages: (state) : ProductImage[] => {
+    return state.postProductImages
   }
 }
 
