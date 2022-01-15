@@ -1,20 +1,18 @@
-import ProductImage from './product_image'
-
 class Post {
   id: number
   shop: number
-  productImages: ProductImage[]
+  previewImage: string
   shortcode: string
   description: string
   hasProduct: boolean
   createdAt: Date
   updatedAt: Date
 
-  constructor (id: number, shop: number, productImages: ProductImage[], shortcode: string, description: string,
+  constructor (id: number, shop: number, previewImage: string, shortcode: string, description: string,
     hasProduct: boolean, createdAt: Date, updatedAt: Date) {
     this.id = id
     this.shop = shop
-    this.productImages = productImages
+    this.previewImage = previewImage
     this.shortcode = shortcode
     this.description = description
     this.hasProduct = hasProduct
