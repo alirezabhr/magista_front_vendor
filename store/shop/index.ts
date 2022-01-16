@@ -296,6 +296,21 @@ const actions = <ActionTree<ShopState, RootState>>{
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
+  shopProductsInflation (vuexContext, inflationPercent) {
+    const shopPk = vuexContext.getters.getCurrentShop.id
+    const url = process.env.baseURL + `shop/${shopPk}/inflation/`
+
+    const payload = {
+      percent: inflationPercent
+    }
+
+    return this.$client.post(url, payload).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('shopProductsInflation', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
   withdraw (vuexContext, shebaNumber) {
     if (!vuexContext.getters.getCurrentShop) {
       return
