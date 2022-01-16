@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-main class="background">
-      <v-container py-0 py-md-5>
-        <v-row class="pt-3 pt-md-5" no-gutters>
+      <v-container pa-0 py-md-5>
+        <v-row class="pt-0 pt-md-5" no-gutters>
           <NavigationDrawer @logout="logout" />
           <v-col
             sm="9"
