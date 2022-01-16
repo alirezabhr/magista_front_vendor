@@ -30,7 +30,7 @@
 
       <v-card-actions class="px-8">
         <v-col>
-          <v-row v-if="isSubmittingIgId" justify="center" class="mb-1 primary--text text-caption">
+          <v-row v-if="isSubmittingIgId" justify="center" class="mb-1 primary--text text-caption" no-gutters>
             در حال بررسی صفحه اینستاگرام...
           </v-row>
           <v-btn
@@ -41,7 +41,7 @@
           >
             تایید
           </v-btn>
-          <v-row justify="center">
+          <v-row justify="center" no-gutters>
             <v-btn
               text
               :disabled="isSubmittingIgId"

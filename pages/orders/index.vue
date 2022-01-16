@@ -9,10 +9,10 @@
   </div>
   <div v-else>
     <v-col v-if="getOrderList.length === 0" cols="12">
-      <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center">
+      <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center" no-gutters>
         هیچ سفارشی ندارید!
       </v-row>
-      <v-row justify="center">
+      <v-row justify="center" no-gutters>
         <v-img
           contain
           max-height="250"
@@ -22,7 +22,7 @@
       </v-row>
     </v-col>
     <v-col v-else cols="12" class="ma-0 px-0 pt-0 pb-10">
-      <v-row v-for="(order, index) in getOrderList" :key="index" no-gutters class="ma-0 py-4 px-0" justify="center">
+      <v-row v-for="(order, index) in getOrderList" :key="index" class="ma-0 py-4 px-0" justify="center" no-gutters>
         <OrderCard :order="order" />
       </v-row>
     </v-col>

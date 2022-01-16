@@ -30,7 +30,7 @@
 
       <v-card-actions>
         <v-col>
-          <v-row class="px-8">
+          <v-row class="px-8" no-gutters>
             <v-btn
               block
               rounded
@@ -41,7 +41,7 @@
               ورود
             </v-btn>
           </v-row>
-          <v-row justify="center">
+          <v-row justify="center" no-gutters>
             <v-btn
               text
               color="primary"

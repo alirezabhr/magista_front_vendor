@@ -2,7 +2,7 @@
   <v-app>
     <v-main class="background">
       <v-container py-0 py-md-5>
-        <v-row class="pt-3 pt-md-5">
+        <v-row class="pt-3 pt-md-5" no-gutters>
           <NavigationDrawer @logout="logout" />
           <v-col
             sm="9"

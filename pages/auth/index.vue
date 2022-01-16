@@ -6,7 +6,7 @@
     >
       {{ snackbarMessage }}
     </v-snackbar>
-    <v-row class="py-6" justify="center">
+    <v-row class="py-6" justify="center" no-gutters>
       <v-col col="10" sm="6" md="4">
         <PhoneForm
           v-if="authStep === 'phone'"

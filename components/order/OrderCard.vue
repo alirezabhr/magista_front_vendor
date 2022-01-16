@@ -36,7 +36,7 @@
           </v-card-subtitle>
           <v-divider class="mt-2 pb-6" />
           <div class="py-2">
-            <v-row v-for="(orderItem, i) in order.orderItems" :key="i" class="px-2" justify="center">
+            <v-row v-for="(orderItem, i) in order.orderItems" :key="i" class="px-2" justify="center" no-gutters>
               <OrderItem :order-item="orderItem" />
             </v-row>
           </div>
@@ -47,7 +47,7 @@
           </v-row>
 
           <!-- if order status is paid -->
-          <v-row v-if="order.status === orderStatus.PAID" no-gutters justify="space-around">
+          <v-row v-if="order.status === orderStatus.PAID" justify="space-around" no-gutters>
             <v-btn color="red lighten-1" class="white--text" @click.prevent="cancelOrder(order)">لغو</v-btn>
             <v-btn color="green" class="white--text font-weight-bold" @click.prevent="verifyOrder(order)">تایید سفارش</v-btn>
           </v-row>

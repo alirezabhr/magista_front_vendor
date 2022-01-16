@@ -14,7 +14,7 @@
       </v-card-title>
 
       <v-col class="py-0 px-8">
-        <v-row v-show="finalPrice" no-gutters class="pb-2 text-body1" align="center">
+        <v-row v-show="finalPrice" class="pb-2 text-body1" align="center" no-gutters>
           <div class="text-decoration-line-through font-weight-medium">{{ productPrice }}</div>
           <v-icon class="px-2">mdi-chevron-triple-left</v-icon>
           <div class="font-weight-bold primary--text">{{ finalPrice }}</div>
@@ -38,7 +38,7 @@
       </v-col>
       <v-card-actions class="px-8 pb-5 pt-4">
         <v-col cols="12">
-          <v-row justify="center">
+          <v-row justify="center" no-gutters>
             <v-btn
               block
               class="primary font-weight-bold py-5"
@@ -54,7 +54,7 @@
   </v-card>
   <v-card v-else class="py-2">
     <v-card-title>
-      <v-row>
+      <v-row no-gutters>
         <v-icon color="red">mdi-alert-decagram-outline</v-icon>
         <div class="text-body2 pr-2 py-2">ابتدا قیمت محصول را وارد نمایید.</div>
       </v-row>

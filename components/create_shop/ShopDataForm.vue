@@ -20,7 +20,7 @@
           dense
           style="direction: ltr"
         />
-        <v-row>
+        <v-row no-gutters>
           <v-col cols="12" md="6" class="my-0 py-0">
             <v-autocomplete
               v-model="shopData.province"

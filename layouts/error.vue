@@ -2,9 +2,9 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-row justify="center">
+        <v-row justify="center" no-gutters>
           <v-col cols="10" md="8" class="pt-6 pt-md-10">
-            <v-row justify="center">
+            <v-row justify="center" no-gutters>
               <h1 v-if="error.statusCode === 404">
                 {{ pageNotFound }}
               </h1>
@@ -15,7 +15,7 @@
                 </div>
               </h1>
             </v-row>
-            <v-row justify="center">
+            <v-row justify="center" no-gutters>
               <NuxtLink to="/"> Home page </NuxtLink>
             </v-row>
           </v-col>

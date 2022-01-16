@@ -9,10 +9,10 @@
   </div>
   <div v-else>
     <v-col v-if="getShops.length === 0" cols="12">
-      <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center">
+      <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center" no-gutters>
         هیچ فروشگاهی ندارید!
       </v-row>
-      <v-row justify="center">
+      <v-row justify="center" no-gutters>
         <v-img
           contain
           max-height="250"
@@ -20,7 +20,7 @@
           :src="getEmptyStateImage"
         />
       </v-row>
-      <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center">
+      <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center" no-gutters>
         <v-btn
           class="primary font-weight-bold py-5"
           @click.prevent="$router.push('/create-shop')"
@@ -66,7 +66,7 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-            <v-row no-gutters class="pt-2">
+            <v-row class="pt-2" no-gutters>
               موجودی: {{ getCurrentShop.remainingAmount }} تومان
             </v-row>
           </v-col>
@@ -80,7 +80,7 @@
           </v-avatar>
         </v-row>
       </v-row>
-      <v-row no-gutters class="ma-0 pa-0 mt-5" dir="ltr">
+      <v-row class="ma-0 pa-0 mt-5" dir="ltr" no-gutters>
         <v-col v-for="p in getCurrentShopPosts" :key="p.id" cols="4" class="ma-0 pa-0">
           <PostPreview :post="p" />
         </v-col>

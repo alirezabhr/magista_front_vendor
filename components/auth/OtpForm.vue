@@ -36,12 +36,12 @@
           >
             تایید
           </v-btn>
-          <!-- <v-row justify="center">
-          <v-btn text color="primary" class="text-subtitle-2 my-4 px-2">
-            دریافت مجدد
-          </v-btn>
-        </v-row> -->
-          <v-row justify="center">
+          <!-- <v-row justify="center" no-gutters>
+            <v-btn text color="primary" class="text-subtitle-2 my-4 px-2">
+              دریافت مجدد
+            </v-btn>
+          </v-row> -->
+          <v-row justify="center" no-gutters>
             <v-btn
               text
               color="primary"

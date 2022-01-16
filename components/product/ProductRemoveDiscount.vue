@@ -6,7 +6,7 @@
 
     <v-card-actions class="px-8 pb-5">
       <v-col offset="6" cols="6">
-        <v-row justify="space-around">
+        <v-row justify="space-around" no-gutters>
           <v-btn
             text
             class="py-5"

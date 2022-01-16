@@ -51,6 +51,7 @@
                 class="fill-height ma-0"
                 align="center"
                 justify="center"
+                no-gutters
               >
                 <v-progress-circular
                   indeterminate

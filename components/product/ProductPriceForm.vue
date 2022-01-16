@@ -29,7 +29,7 @@
 
       <v-card-actions class="px-8 pb-5">
         <v-col cols="12">
-          <v-row justify="center">
+          <v-row justify="center" no-gutters>
             <v-btn
               block
               class="primary font-weight-bold py-5"
