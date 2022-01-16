@@ -81,7 +81,13 @@
         </v-row>
       </v-row>
       <v-row class="ma-0 pa-0 mt-5" dir="ltr" no-gutters>
-        <v-col v-for="p in getCurrentShopPosts" :key="p.id" cols="4" class="ma-0 pa-0">
+        <v-col
+          v-for="p in getCurrentShopPosts"
+          :key="p.id"
+          cols="4"
+          class="ma-0 pa-0"
+          style="border-style: solid; border-width: 1px; border-color: white;"
+        >
           <PostPreview :post="p" />
         </v-col>
       </v-row>
