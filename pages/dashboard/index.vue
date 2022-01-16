@@ -32,10 +32,21 @@
     <v-col v-else cols="12" class="ma-0 px-0 pt-0 pb-10">
       <v-snackbar
         v-model="showSnackbar"
-        color="grey darken-3"
+        :color="snackbarColor"
       >
         {{ snackbarMessage }}
       </v-snackbar>
+      <v-dialog
+        v-model="showDialog"
+        max-width="600px"
+      >
+        <InflationForm
+          v-if="dialog === 'inflation'"
+          :is-submitting-form="isSubmittingForm"
+          @submit="submitInflationForm"
+          @close="showDialog = false"
+        />
+      </v-dialog>
       <v-row class="pa-5" no-gutters>
         <v-row no-gutters>
           <v-col>
@@ -97,12 +108,15 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+
 import PostPreview from '~/components/PostPreview.vue'
+import InflationForm from '~/components/InflationForm.vue'
 
 export default {
   name: 'DashboardPage',
   components: {
-    PostPreview
+    PostPreview,
+    InflationForm
   },
   layout: 'panel',
   data () {
@@ -111,12 +125,16 @@ export default {
       shopOptions: [
         { title: 'لینک فروشگاه', icon: 'mdi-content-copy', onClick: this.copyShopLink },
         { title: 'پست جدید', icon: 'mdi-image-multiple-outline', onClick: this.routeToGetNewPosts },
-        { title: 'تخفیف سراسری', icon: 'mdi-percent', onClick: this.doNothing },
-        { title: 'افزایش قیمت کلی', icon: 'mdi-trending-up', onClick: this.doNothing }
+        { title: 'افزایش قیمت سراسری', icon: 'mdi-trending-up', onClick: this.openInflationForm },
+        { title: 'تخفیف سراسری', icon: 'mdi-percent', onClick: this.doNothing }
       ],
       isLoadingPage: false,
       showSnackbar: false,
-      snackbarMessage: ''
+      snackbarColor: 'grey darken-3',
+      snackbarMessage: '',
+      showDialog: false,
+      dialog: '',
+      isSubmittingForm: false
     }
   },
   computed: {
@@ -138,7 +156,7 @@ export default {
     this.isLoadingPage = false
   },
   methods: {
-    ...mapActions('shop', ['getVendorShops', 'currentShopPosts']),
+    ...mapActions('shop', ['getVendorShops', 'currentShopPosts', 'shopProductsInflation']),
 
     async getUserShops () {
       await this.getVendorShops().catch((response) => {
@@ -151,11 +169,32 @@ export default {
     copyShopLink () {
       navigator.clipboard.writeText(this.getShopLink)
 
+      this.snackbarColor = 'grey darken-3'
       this.snackbarMessage = 'لینک فروشگاه کپی شد.'
       this.showSnackbar = true
     },
     routeToGetNewPosts () {
       this.$router.push('/dashboard/new-posts/')
+    },
+    openInflationForm () {
+      this.dialog = 'inflation'
+      this.showDialog = true
+    },
+    submitInflationForm (percent) {
+      this.isSubmittingForm = true
+      this.shopProductsInflation(percent).then(() => {
+        this.isSubmittingForm = false
+        this.snackbarMessage = 'قیمت تمامی اجناس افزایش یافت.'
+        this.snackbarColor = 'green'
+        this.showSnackbar = true
+        this.showDialog = false
+      }).catch(() => {
+        this.isSubmittingForm = false
+        this.snackbarColor = 'red'
+        this.snackbarMessage = 'خطا در افزایش قیمت اجناس.'
+        this.showSnackbar = true
+        this.showDialog = false
+      })
     },
     doNothing () {
     }
