@@ -48,8 +48,8 @@
         />
       </v-dialog>
       <v-row class="pa-5" no-gutters>
-        <v-row no-gutters>
-          <v-col>
+        <v-col cols="9">
+          <v-row no-gutters>
             <v-menu>
               <template #activator="{ on, attrs }">
                 <v-btn
@@ -64,7 +64,6 @@
                 <v-list-item
                   v-for="option in shopOptions"
                   :key="option.title"
-                  ripple
                   @click.prevent="option.onClick"
                 >
                   <v-list-item-icon>
@@ -77,11 +76,40 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-            <v-row class="pt-2" no-gutters>
-              موجودی: {{ getCurrentShop.remainingAmount }} تومان
-            </v-row>
-          </v-col>
-          <v-spacer />
+            <v-spacer />
+            <v-menu offset-y>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ getCurrentShop.instagramUsername }}
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="shop in getShops"
+                  v-show="shop.instagramUsername !== getCurrentShop.instagramUsername"
+                  :key="shop.instagramUsername"
+                  @click.prevent="changeShop(shop)"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-row justify="center" no-gutters>
+                        {{ shop.instagramUsername }}
+                      </v-row>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-row>
+          <v-row class="pt-2" no-gutters>
+            موجودی: {{ getCurrentShop.remainingAmount }} تومان
+          </v-row>
+        </v-col>
+        <v-col cols="3">
           <v-avatar
             color="primary"
             size="75"
@@ -89,7 +117,7 @@
           >
             <v-img :src="profileImageFullUrl" />
           </v-avatar>
-        </v-row>
+        </v-col>
       </v-row>
       <v-row class="ma-0 pa-0 mt-5" dir="ltr" no-gutters>
         <v-col
@@ -107,7 +135,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import PostPreview from '~/components/PostPreview.vue'
 import InflationForm from '~/components/InflationForm.vue'
@@ -157,6 +185,7 @@ export default {
   },
   methods: {
     ...mapActions('shop', ['getVendorShops', 'currentShopPosts', 'shopProductsInflation']),
+    ...mapMutations('shop', ['setCurrentShop']),
 
     async getUserShops () {
       await this.getVendorShops().catch((response) => {
@@ -164,6 +193,15 @@ export default {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true
         }
+      })
+    },
+    changeShop (shop) {
+      this.setCurrentShop(shop)
+      this.isLoadingPage = true
+      this.currentShopPosts().then(() => {
+        this.isLoadingPage = false
+      }).catch(() => {
+        this.isLoadingPage = false
       })
     },
     copyShopLink () {

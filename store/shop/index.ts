@@ -44,11 +44,7 @@ const mutations = <MutationTree<ShopState>>{
     }
   },
   setShops (state, shops) {
-    shops.forEach((shop: any) => {
-      const s = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province, shop.city,
-        shop.commissionPercent, shop.wallet, shop.profilePic, shop.remainingAmount, shop.lastScrape)
-      state.shops.push(s)
-    })
+    state.shops = shops
   },
   appendShop (state, shop) {
     state.shops.push(shop)
