@@ -307,6 +307,23 @@ const actions = <ActionTree<ShopState, RootState>>{
       vuexContext.dispatch('issue/capture', null, { root: true })
     })
   },
+  changeShopBio (vuexContext, shopBio) {
+    const shopPk = vuexContext.getters.getCurrentShop.id
+    const url = process.env.baseURL + `shop/${shopPk}/bio/`
+
+    const payload = {
+      bio: shopBio
+    }
+
+    return this.$client.put(url, payload).then((response) => {
+      vuexContext.commit('setCurrentShop', response.data)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('changeShopBio', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
+    })
+  },
   withdraw (vuexContext, shebaNumber) {
     if (!vuexContext.getters.getCurrentShop) {
       return
