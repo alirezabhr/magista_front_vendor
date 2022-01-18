@@ -23,7 +23,7 @@
       <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center" no-gutters>
         <v-btn
           class="primary font-weight-bold py-5"
-          @click.prevent="$router.push('/create-shop')"
+          @click.prevent="$router.push('/create-shop/request')"
         >
           ساخت فروشگاه جدید
         </v-btn>
