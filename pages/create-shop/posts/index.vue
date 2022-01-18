@@ -52,6 +52,7 @@ export default {
   },
   data () {
     return {
+      isGettingPosts: false,
       isSubmitting: false,
       showSnackbar: false,
       snackbarMessage: ''
