@@ -34,7 +34,7 @@ export default {
       return process.env.baseURL + src
     },
     productRoute (shortcode: string) {
-      return `product/${shortcode}`
+      return `/product/${shortcode}`
     }
   }
 }
