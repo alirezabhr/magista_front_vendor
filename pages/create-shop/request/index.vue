@@ -36,6 +36,7 @@ export default {
     ShopRequestForm,
     InstagramIdForm
   },
+  middleware: ['auth'],
   data () {
     return {
       creationStep: 'instagram username',
