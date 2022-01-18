@@ -40,85 +40,94 @@
         v-model="showDialog"
         max-width="600px"
       >
+        <BioForm
+          v-if="dialog === 'bio'"
+          :is-submitting-form="isSubmittingForm"
+          :current-bio="getCurrentShop.bio"
+          @submit="submitBioForm"
+          @close="showDialog = false"
+        />
         <InflationForm
-          v-if="dialog === 'inflation'"
+          v-else-if="dialog === 'inflation'"
           :is-submitting-form="isSubmittingForm"
           @submit="submitInflationForm"
           @close="showDialog = false"
         />
       </v-dialog>
-      <v-row class="pa-5" no-gutters>
-        <v-col cols="9">
-          <v-row no-gutters>
-            <v-menu>
-              <template #activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  v-for="option in shopOptions"
-                  :key="option.title"
-                  @click.prevent="option.onClick"
-                >
-                  <v-list-item-icon>
-                    <v-icon>{{ option.icon }}</v-icon>
-                  </v-list-item-icon>
+      <div class="pa-5">
+        <v-row no-gutters>
+          <v-col cols="9">
+            <v-row no-gutters>
+              <v-menu>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item
+                    v-for="option in shopOptions"
+                    :key="option.title"
+                    @click.prevent="option.onClick"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>{{ option.icon }}</v-icon>
+                    </v-list-item-icon>
 
-                  <v-list-item-content>
-                    <v-list-item-title>{{ option.title }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-            <v-spacer />
-            <v-menu offset-y>
-              <template #activator="{ on, attrs }">
-                <v-btn
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ getCurrentShop.instagramUsername }}
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  v-for="shop in getShops"
-                  v-show="shop.instagramUsername !== getCurrentShop.instagramUsername"
-                  :key="shop.instagramUsername"
-                  @click.prevent="changeShop(shop)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <v-row justify="center" no-gutters>
-                        {{ shop.instagramUsername }}
-                      </v-row>
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-row>
-          <v-row class="pt-2" no-gutters>
-            موجودی: {{ getCurrentShop.remainingAmount }} تومان
-          </v-row>
-        </v-col>
-        <v-col cols="3">
-          <v-avatar
-            color="primary"
-            size="75"
-            style="border-style: solid; border-width: 1px;"
-          >
-            <v-img :src="profileImageFullUrl" />
-          </v-avatar>
-        </v-col>
-      </v-row>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ option.title }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+              <v-spacer />
+              <v-menu offset-y>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    text
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    {{ getCurrentShop.instagramUsername }}
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item
+                    v-for="shop in getShops"
+                    v-show="shop.instagramUsername !== getCurrentShop.instagramUsername"
+                    :key="shop.instagramUsername"
+                    @click.prevent="changeShop(shop)"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        <v-row justify="center" no-gutters>
+                          {{ shop.instagramUsername }}
+                        </v-row>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-row>
+          </v-col>
+          <v-col cols="3">
+            <v-avatar
+              color="primary"
+              size="75"
+              style="border-style: solid; border-width: 1px;"
+            >
+              <v-img :src="profileImageFullUrl" />
+            </v-avatar>
+          </v-col>
+        </v-row>
+        <v-row class="px-4 text-body-2" no-gutters>
+          {{ getCurrentShop.bio }}
+        </v-row>
+      </div>
       <v-row class="ma-0 pa-0 mt-5" dir="ltr" no-gutters>
         <v-col
           v-for="p in getCurrentShopPosts"
@@ -139,12 +148,14 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import PostPreview from '~/components/PostPreview.vue'
 import InflationForm from '~/components/InflationForm.vue'
+import BioForm from '~/components/BioForm.vue'
 
 export default {
   name: 'DashboardPage',
   components: {
     PostPreview,
-    InflationForm
+    InflationForm,
+    BioForm
   },
   layout: 'panel',
   data () {
@@ -153,6 +164,7 @@ export default {
       shopOptions: [
         { title: 'لینک فروشگاه', icon: 'mdi-content-copy', onClick: this.copyShopLink },
         { title: 'پست جدید', icon: 'mdi-image-multiple-outline', onClick: this.routeToGetNewPosts },
+        { title: 'تغییر بیو', icon: 'mdi-account-edit-outline', onClick: this.openBioForm },
         { title: 'افزایش قیمت سراسری', icon: 'mdi-trending-up', onClick: this.openInflationForm },
         { title: 'تخفیف سراسری', icon: 'mdi-percent', onClick: this.doNothing }
       ],
@@ -184,7 +196,7 @@ export default {
     this.isLoadingPage = false
   },
   methods: {
-    ...mapActions('shop', ['getVendorShops', 'currentShopPosts', 'shopProductsInflation']),
+    ...mapActions('shop', ['getVendorShops', 'currentShopPosts', 'shopProductsInflation', 'changeShopBio']),
     ...mapMutations('shop', ['setCurrentShop']),
 
     async getUserShops () {
@@ -214,9 +226,22 @@ export default {
     routeToGetNewPosts () {
       this.$router.push('/dashboard/new-posts/')
     },
-    openInflationForm () {
-      this.dialog = 'inflation'
+    openForm (formName) {
+      this.dialog = formName
       this.showDialog = true
+    },
+    openBioForm () {
+      this.openForm('bio')
+    },
+    openInflationForm () {
+      this.openForm('inflation')
+    },
+    submitBioForm (bio) {
+      this.isSubmittingForm = true
+      this.changeShopBio(bio).then(() => {
+        this.isSubmittingForm = false
+        this.showDialog = false
+      })
     },
     submitInflationForm (percent) {
       this.isSubmittingForm = true
