@@ -51,7 +51,7 @@ const mutations = <MutationTree<ShopState>>{
   },
   setCurrentShop (state, shop) {
     state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province,
-      shop.city, shop.commissionPercent, shop.wallet, shop.profilePic, shop.remainingAmount, shop.lastScrape)
+      shop.city, shop.bio, shop.commissionPercent, shop.profilePic, shop.remainingAmount, shop.lastScrape)
     localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
   },
   setCurrentShopPosts (state, posts) {
