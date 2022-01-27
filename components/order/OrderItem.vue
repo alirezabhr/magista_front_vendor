@@ -2,7 +2,7 @@
   <v-col cols="11" class="pa-0">
     <v-card outlined class="mb-2">
       <v-row class="pa-2" no-gutters>
-        <v-col cols="3">
+        <v-col cols="3" md="2">
           <v-card outlined>
             <v-img
               :aspect-ratio="1"
@@ -16,19 +16,22 @@
             </v-img>
           </v-card>
         </v-col>
-        <v-col cols="1" class="" align-self="center">
+        <v-col cols="1" align-self="center">
           <v-row class="font-weight-bold" justify="center" no-gutters>
             ×{{ orderItem.count }}
           </v-row>
         </v-col>
-        <v-col cols="7">
+        <v-col cols="8" class="pr-2">
           <v-row no-gutters>
             <div class="text-truncate">
-              {{ orderItem.product.title }}
+              {{ orderItem.productTitle }}
             </div>
           </v-row>
+          <v-row v-show="orderItem.productDiscountPercent" class="text-decoration-line-through text-caption" no-gutters>
+            {{ orderItem.productOriginalPrice }} تومان
+          </v-row>
           <v-row class="font-weight-bold" no-gutters>
-            {{ orderItem.price }} تومان
+            {{ orderItem.productFinalPrice }} تومان
           </v-row>
         </v-col>
       </v-row>
