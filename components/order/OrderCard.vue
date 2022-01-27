@@ -40,11 +40,23 @@
               <OrderItem :order-item="orderItem" />
             </v-row>
           </div>
-          <v-row class=" py-2 px-3 text-subtitle1" no-gutters>
-            قیمت کل:
-            {{ order.totalPrice }}
-            تومان
-          </v-row>
+          <v-col>
+            <v-row class="text-subtitle-2" no-gutters>
+              قیمت کالاها:
+              {{ order.totalOriginalPrice }}
+              تومان
+            </v-row>
+            <v-row class="text-subtitle-2" no-gutters>
+              تخفیف‌ها:
+              {{ order.totalDiscountAmount }}
+              تومان
+            </v-row>
+            <v-row class="text-subtitle-2 font-weight-bold" no-gutters>
+              جمع:
+              {{ order.finalPrice }}
+              تومان
+            </v-row>
+          </v-col>
 
           <!-- if order status is paid -->
           <v-row v-if="order.status === orderStatus.PAID" justify="space-around" no-gutters>
