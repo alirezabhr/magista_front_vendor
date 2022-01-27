@@ -102,7 +102,7 @@ export default {
     validateAndSubmitForm () {
       if (this.$refs.form.validate()) {
         const payload = { ...this.shopDiscountData }
-        if (this.shopDiscountData.count) {
+        if (this.shopDiscountData.count && this.countLimit) {
           payload.count = Number.parseInt(this.shopDiscountData.count)
         } else {
           payload.count = null
