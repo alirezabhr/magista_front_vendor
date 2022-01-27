@@ -166,7 +166,7 @@ export default {
         { title: 'پست جدید', icon: 'mdi-image-multiple-outline', onClick: this.routeToGetNewPosts },
         { title: 'تغییر بیو', icon: 'mdi-account-edit-outline', onClick: this.openBioForm },
         { title: 'افزایش قیمت سراسری', icon: 'mdi-trending-up', onClick: this.openInflationForm },
-        { title: 'تخفیف سراسری', icon: 'mdi-percent', onClick: this.doNothing }
+        { title: 'بُن تخفیف', icon: 'mdi-percent', onClick: this.routeToShopDiscountPage }
       ],
       isLoadingPage: false,
       showSnackbar: false,
@@ -225,6 +225,9 @@ export default {
     },
     routeToGetNewPosts () {
       this.$router.push('/dashboard/new-posts/')
+    },
+    routeToShopDiscountPage () {
+      this.$router.push('/dashboard/discount/')
     },
     openForm (formName) {
       this.dialog = formName
