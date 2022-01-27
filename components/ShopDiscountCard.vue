@@ -12,7 +12,7 @@
       color="pink lighten-4"
     >
       <v-card-title class="font-weight-bold">
-        {{ shopDiscount.code }}
+        بُن: {{ shopDiscount.code }}
         <v-icon class="mx-2" @click.prevent="copyShopLink">mdi-content-copy</v-icon>
       </v-card-title>
 
