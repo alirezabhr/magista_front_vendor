@@ -70,11 +70,13 @@
         :product-images="getPostProductImages"
         :carousel-index="carouselIndex"
       />
-      <v-col class="px-3 py-0" no-gutters>
-        <v-row v-if="getPost.description" class="font-weight-light" no-gutters>
-          <div class="font-weight-bold text-body-2" no-gutters>توضیح پُست</div>
-          {{ getPost.description }}
-        </v-row>
+      <v-col class="px-3 py-0">
+        <v-col v-if="getPost.description" class="font-weight-light">
+          <div class="font-weight-bold text-body-2">توضیح پُست</div>
+          <div class="description">
+            {{ getPost.description }}
+          </div>
+        </v-col>
       </v-col>
     </v-card>
   </v-col>
@@ -182,5 +184,8 @@ export default {
   left: 2%;
   bottom: 2%;
   position: absolute;
+}
+.description {
+  white-space: pre-line;
 }
 </style>
