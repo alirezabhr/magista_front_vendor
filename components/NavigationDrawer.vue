@@ -52,17 +52,25 @@ export default {
           icon: 'mdi-view-dashboard-outline',
           navigation: '/dashboard'
         },
-        { title: 'سفارشات', icon: 'mdi-cart-variant', navigation: '/orders' },
-        { title: 'آمار', icon: 'mdi-chart-bar', navigation: '/stats' },
+        {
+          title: 'سفارشات',
+          icon: 'mdi-cart-variant mdi-flip-h',
+          navigation: '/orders'
+        },
+        {
+          title: 'آمار',
+          icon: 'mdi-chart-bar',
+          navigation: '/stats'
+        },
         {
           title: 'پیام‌ها',
-          icon: 'mdi-message-outline',
+          icon: 'mdi-message-outline mdi-flip-h',
           navigation: '/chats'
         },
         {
-          title: 'تنظیمات',
+          title: 'پروفایل',
           icon: 'mdi-store-cog-outline',
-          navigation: '/settings'
+          navigation: '/profile'
         }
       ]
     }
