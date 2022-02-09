@@ -1,5 +1,21 @@
 <template>
-  <v-card height="100%" class="pa-0 ma-0" flat rounded="0">
+  <v-card v-if="deactivatedService" height="100%">
+    <v-card-title class="py-10">
+      این سرویس به طور موقت غیرفعال است.
+    </v-card-title>
+    <v-card-subtitle class="pt-6 px-6">
+      در صورت نیاز به این سرویس از طریق واتساپ یا ایمیل با پشتیبانی در ارتباط باشید.
+    </v-card-subtitle>
+    <v-card-actions class="justify-center">
+      <span>09217248134</span>
+      <v-icon color="green" class="px-2">mdi-whatsapp</v-icon>
+    </v-card-actions>
+    <v-card-actions class="justify-center">
+      <span>info@magista.ir</span>
+      <v-icon color="red" class="px-2">mdi-email-outline</v-icon>
+    </v-card-actions>
+  </v-card>
+  <v-card v-else height="100%" class="pa-0 ma-0" flat rounded="0">
     <v-snackbar v-model="showSnackbar" color="grey darken-3">
       {{ snackbarMsg }}
       <v-icon>mdi-emoticon-sad</v-icon>
@@ -55,6 +71,7 @@ export default {
   layout: 'panel',
   data () {
     return {
+      deactivatedService: true,
       isLoading: false,
       showDialog: false,
       selectedParentPost: null,
@@ -119,6 +136,9 @@ export default {
     }
   },
   async mounted () {
+    if (this.deactivatedService) {
+      return
+    }
     let catched = false
     if (this.canScrape) {
       this.isLoading = true
