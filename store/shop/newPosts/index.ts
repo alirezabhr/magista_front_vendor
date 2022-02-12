@@ -55,15 +55,13 @@ const actions = <ActionTree<ShopState, RootState>>{
     }
 
     return this.$client.post(url, null, { params: queryParams }).catch((e) => {
-      if (e.response.status !== 500) { // 500 means media is not ready
-        vuexContext.commit('issue/createNewIssues', null, { root: true })
-        const issue = new Issue('saveNewMediaQueryFile', JSON.stringify(e.response))
-        if (e.response.status === 500 || e.response.status === 503) {
-          issue.setCritical()
-        }
-        vuexContext.commit('issue/addIssue', issue, { root: true })
-        vuexContext.dispatch('issue/capture', null, { root: true })
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('saveNewMediaQueryFile', JSON.stringify(e.response))
+      if (e.response.status === 500 || e.response.status === 503) {
+        issue.setCritical()
       }
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
   },
