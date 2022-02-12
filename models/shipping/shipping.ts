@@ -10,20 +10,20 @@ enum FreeDelivery {
 class Shipping {
   shop: number
   sendEverywhere: Boolean
-  cityFreeCost: FreeDelivery
-  countryFreeCost: FreeDelivery
+  cityCost: FreeDelivery
+  countryCost: FreeDelivery
   nationalPost: DeliveryPrice
   onlinePost: DeliveryPrice
   cityFreeCostFrom: OccasionallyFreeDelivery
   countryFreeCostFrom: OccasionallyFreeDelivery
 
-  constructor (shop:number, sendEverywhere: Boolean, cityFreeCost: number, countryFreeCost: number,
+  constructor (shop:number, sendEverywhere: Boolean, cityCost: number, countryCost: number,
     nationalPost: DeliveryPrice, onlinePost: DeliveryPrice, cityFreeCostFrom: OccasionallyFreeDelivery,
     countryFreeCostFrom: OccasionallyFreeDelivery) {
     this.shop = shop
     this.sendEverywhere = sendEverywhere
-    this.cityFreeCost = cityFreeCost
-    this.countryFreeCost = countryFreeCost
+    this.cityCost = cityCost
+    this.countryCost = countryCost
     this.nationalPost = nationalPost
     this.onlinePost = onlinePost
     this.cityFreeCostFrom = cityFreeCostFrom
