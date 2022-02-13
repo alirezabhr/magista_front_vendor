@@ -10,6 +10,8 @@ enum FreeDelivery {
 class Shipping {
   shop: number
   sendEverywhere: Boolean
+  hasNationalPost: Boolean
+  hasOnlineDelivery: Boolean
   cityCost: FreeDelivery
   countryCost: FreeDelivery
   nationalPost: DeliveryPrice
@@ -17,11 +19,13 @@ class Shipping {
   cityFreeCostFrom: OccasionallyFreeDelivery
   countryFreeCostFrom: OccasionallyFreeDelivery
 
-  constructor (shop:number, sendEverywhere: Boolean, cityCost: number, countryCost: number,
-    nationalPost: DeliveryPrice, onlinePost: DeliveryPrice, cityFreeCostFrom: OccasionallyFreeDelivery,
-    countryFreeCostFrom: OccasionallyFreeDelivery) {
+  constructor (shop:number, sendEverywhere: Boolean, hasNationalPost: Boolean, hasOnlineDelivery: Boolean,
+    cityCost: number, countryCost: number, nationalPost: DeliveryPrice, onlinePost: DeliveryPrice,
+    cityFreeCostFrom: OccasionallyFreeDelivery, countryFreeCostFrom: OccasionallyFreeDelivery) {
     this.shop = shop
     this.sendEverywhere = sendEverywhere
+    this.hasNationalPost = hasNationalPost
+    this.hasOnlineDelivery = hasOnlineDelivery
     this.cityCost = cityCost
     this.countryCost = countryCost
     this.nationalPost = nationalPost
