@@ -255,6 +255,8 @@ export default {
       },
       shippingData: {
         sendEverywhere: true,
+        hasNationalPost: false,
+        hasOnlineDelivery: false,
         cityCost: null,
         countryCost: null,
         cityFreeCostFrom: null,
@@ -305,6 +307,7 @@ export default {
       }
     },
     nationalPostCheckbox (newVal) {
+      this.shippingData.hasNationalPost = newVal
       if (newVal === true) {
         this.shippingData.nationalPost = this.nationalPostTemplate
       } else {
@@ -313,6 +316,7 @@ export default {
       }
     },
     onlineDeliveryCheckbox (newVal) {
+      this.shippingData.hasOnlineDelivery = newVal
       if (newVal === true) {
         this.shippingData.onlineDelivery = this.onlineDeliveryTemplate
       } else {
@@ -351,27 +355,35 @@ export default {
         if (this.shippingData.nationalPost.base < 5000) {
           throw new Error('هزینه پایه پست پیشتاز باید حداقل پنج هزار تومان باشد.')
         }
-        if (!Number.isInteger(this.shippingData.nationalPost.base)) {
-          throw new TypeError('هزینه پایه پست پیشتاز نامعتبر است.')
-        }
+        // if (!Number.isInteger(this.shippingData.nationalPost.base)) {
+        //   throw new TypeError('هزینه پایه پست پیشتاز نامعتبر است.')
+        // }
       }
       if (this.shippingData.nationalPost) {
-        if (this.shippingData.nationalPost.perKilo < 0 || !Number.isInteger(this.shippingData.nationalPost.perKilo)) {
+        if (this.shippingData.nationalPost.perKilo < 0) {
           throw new Error('هزینه اضافی پست پیشتاز نامعتبر است.')
         }
+        // copy of previous
+        // if (this.shippingData.nationalPost.perKilo < 0 || !Number.isInteger(this.shippingData.nationalPost.perKilo)) {
+        //   throw new Error('هزینه اضافی پست پیشتاز نامعتبر است.')
+        // }
       }
       if (this.shippingData.onlineDelivery) {
         if (this.shippingData.onlineDelivery.base < 5000) {
           throw new Error('هزینه پایه پیک آنلاین باید حداقل پنج هزار تومان باشد.')
         }
-        if (!Number.isInteger(this.shippingData.onlineDelivery.base)) {
-          throw new TypeError('هزینه پایه پیک آنلاین نامعتبر است.')
-        }
+        // if (!Number.isInteger(this.shippingData.onlineDelivery.base)) {
+        //   throw new TypeError('هزینه پایه پیک آنلاین نامعتبر است.')
+        // }
       }
       if (this.shippingData.onlineDelivery) {
-        if (this.shippingData.onlineDelivery.perKilo < 0 || !Number.isInteger(this.shippingData.onlineDelivery.perKilo)) {
+        if (this.shippingData.onlineDelivery.perKilo < 0) {
           throw new Error('هزینه اضافی پیک آنلاین نامعتبر است.')
         }
+        // copy of previous
+        // if (this.shippingData.onlineDelivery.perKilo < 0 || !Number.isInteger(this.shippingData.onlineDelivery.perKilo)) {
+        //   throw new Error('هزینه اضافی پیک آنلاین نامعتبر است.')
+        // }
       }
     },
     submit () {
