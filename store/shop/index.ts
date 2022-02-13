@@ -44,6 +44,9 @@ const mutations = <MutationTree<ShopState>>{
     const strCurrentShop = localStorage.getItem('CurrentShop')
     if (strCurrentShop) {
       state.currentShop = JSON.parse(strCurrentShop)
+      if (state.currentShop && state.currentShop.delivery) {
+        state.currentShopDelivery = state.currentShop.delivery
+      }
     }
   },
   setShops (state, shops) {
