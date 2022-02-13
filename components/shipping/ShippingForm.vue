@@ -41,7 +41,7 @@
           <v-col>
             <v-select
               v-model="cityCostField"
-              :items="freeCostOptions"
+              :items="costOptions"
               outlined
               hide-details
               dense
@@ -74,7 +74,7 @@
             <v-col>
               <v-select
                 v-model="countryCostField"
-                :items="freeCostOptions"
+                :items="costOptions"
                 outlined
                 hide-details
                 dense
@@ -215,8 +215,8 @@ import DeliveryCostsDialog from '@/components/shipping/DeliveryCostsDialog.vue'
 import DeliveryMethodsDialog from '@/components/shipping/DeliveryMethodsDialog.vue'
 
 const fcfList = [80, 90, 100, 120, 150, 180, 200, 250, 300, 350, 400]
-const fcoList = ['هزینه دارد', 'رایگان نسبی', 'کاملا رایگان']
-// Change fcoList very carefully. used its values very bad
+const costOptionsList = ['هزینه دارد', 'رایگان نسبی', 'کاملا رایگان']
+// Change costOptionsList very carefully. used its values very bad
 
 export default {
   name: 'ShippingForm',
@@ -225,6 +225,11 @@ export default {
     DeliveryMethodsDialog
   },
   props: {
+    shopDeliveryData: {
+      type: Object,
+      required: false,
+      default: null
+    },
     isSubmitting: {
       type: Boolean,
       required: true
@@ -236,9 +241,9 @@ export default {
   },
   data () {
     return {
+      freeCostFromOptions: fcfList, // constant
+      costOptions: costOptionsList, // constant
       sendEverywhereSelectedItem: true,
-      freeCostFromOptions: fcfList,
-      freeCostOptions: fcoList,
       cityCostField: null,
       countryCostField: null,
       nationalPostCheckbox: false,
@@ -290,7 +295,7 @@ export default {
     },
     cityCostField (newValue) {
       this.cityCostWarning = false
-      this.shippingData.cityCost = fcoList.indexOf(newValue)
+      this.shippingData.cityCost = costOptionsList.indexOf(newValue)
       if (this.shippingData.cityCost === 1) {
         this.shippingData.cityFreeCostFrom = fcfList[0]
       } else {
@@ -299,7 +304,7 @@ export default {
     },
     countryCostField (newValue) {
       this.countryCostWarning = false
-      this.shippingData.countryCost = fcoList.indexOf(newValue)
+      this.shippingData.countryCost = costOptionsList.indexOf(newValue)
       if (this.shippingData.countryCost === 1) {
         this.shippingData.countryFreeCostFrom = fcfList[0]
       } else {
@@ -325,7 +330,29 @@ export default {
       }
     }
   },
+  mounted () {
+    if (this.shopDeliveryData) {
+      this.setShopDeliveryPropData()
+    }
+  },
   methods: {
+    setShopDeliveryPropData () {
+      this.sendEverywhereSelectedItem = this.shopDeliveryData.sendEverywhere
+      this.cityCostField = costOptionsList[this.shopDeliveryData.cityCost]
+      if (this.shopDeliveryData.countryCost !== null) {
+        this.countryCostField = costOptionsList[this.shopDeliveryData.countryCost]
+      }
+      if (this.shopDeliveryData.nationalPost !== null) {
+        this.nationalPostTemplate = this.shopDeliveryData.nationalPost
+      }
+      if (this.shopDeliveryData.onlineDelivery !== null) {
+        this.onlineDeliveryTemplate = this.shopDeliveryData.onlineDelivery
+      }
+      this.nationalPostCheckbox = this.shopDeliveryData.hasNationalPost
+      this.onlineDeliveryCheckbox = this.shopDeliveryData.hasOnlineDelivery
+      this.shippingData.cityFreeCostFrom = this.shopDeliveryData.cityFreeCostFrom
+      this.shippingData.countryFreeCostFrom = this.shopDeliveryData.countryFreeCostFrom
+    },
     showDeliveryCostsHelp () {
       this.dialog = 'delivery costs'
       this.showDialog = true
