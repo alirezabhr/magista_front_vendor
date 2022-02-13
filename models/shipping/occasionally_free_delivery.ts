@@ -1,7 +1,4 @@
-enum AreaType {
-  city = 0,
-  country = 1
-}
+import AreaType from './area_type'
 
 class OccasionallyFreeDelivery {
   shipment: number
