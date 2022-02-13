@@ -75,7 +75,7 @@ export default {
         this.$router.push('/create-shop/posts')
       }).catch(() => {
         this.isSubmitting = false
-        this.snackbarMessage = 'خطا در فرآیند ساخت فروشگاه. در صورت امکان به پشتیبانی اطلاع دهید.'
+        this.snackbarMessage = 'خطا در فرآیند ساخت فروشگاه.'
         this.showSnackbar = true
       })
     }
