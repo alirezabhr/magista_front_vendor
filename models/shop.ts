@@ -1,3 +1,5 @@
+import Shipping from '@/models/shipping/shipping'
+
 class Shop {
     id: number
     instagramUsername: string
@@ -10,9 +12,10 @@ class Shop {
     profileImageUrl: string
     remainingAmount: number
     lastScrape: Date
+    delivery: Shipping
 
     constructor (id:number, igUsername: string, email: string, address: string, province: string, city: string,
-      bio: string, commissionPercent: number, profileUrl: string, remainingAmount: number, lastScrape: Date) {
+      bio: string, commissionPercent: number, profileUrl: string, remainingAmount: number, lastScrape: Date, delivery: Shipping) {
       this.id = id
       this.instagramUsername = igUsername
       this.email = email
@@ -24,6 +27,7 @@ class Shop {
       this.profileImageUrl = profileUrl
       this.remainingAmount = remainingAmount
       this.lastScrape = lastScrape
+      this.delivery = delivery
     }
 
     toJSON () {
