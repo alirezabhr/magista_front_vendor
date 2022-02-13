@@ -31,6 +31,7 @@
         <div class="font-weight-bold text-body-1">هزینه ارسال</div>
         <v-row align="center" no-gutters>
           <v-col>
+            <span v-show="cityCostWarning" class="font-wight-bold text-h6 red--text text--darken-1">!</span>
             <span>ارسال به {{ shopCity }}</span>
           </v-col>
           <v-col>
@@ -56,14 +57,15 @@
               />
             </v-col>
             <v-col cols="8" class="px-3">
-              <div class="text-subtitle-2 font-weight-bold">{{ cityFreeCostFromText }} هزار تومن</div>
+              <div class="text-subtitle-2 font-weight-bold">{{ cityFreeCostFromText }} هزار تومان</div>
             </v-col>
           </v-row>
         </v-col>
         <div v-if="shippingData.sendEverywhere">
           <v-row class="pt-2" align="center" no-gutters>
             <v-col>
-              <span>ارسال سراسر ایران </span>
+              <span v-show="countryCostWarning" class="font-wight-bold text-h6 red--text text--darken-1">!</span>
+              <span>ارسال سراسر ایران</span>
             </v-col>
             <v-col>
               <v-select
@@ -88,7 +90,7 @@
                 />
               </v-col>
               <v-col cols="8" class="px-3">
-                <div class="text-subtitle-2 font-weight-bold">{{ countryFreeCostFromText }} هزار تومن</div>
+                <div class="text-subtitle-2 font-weight-bold">{{ countryFreeCostFromText }} هزار تومان</div>
               </v-col>
             </v-row>
           </v-col>
@@ -233,6 +235,8 @@ export default {
         nationalPost: null,
         onlineDelivery: null
       },
+      cityCostWarning: false,
+      countryCostWarning: false,
       showDialog: false,
       showSnackbar: false,
       snackbarMessage: ''
@@ -255,6 +259,7 @@ export default {
       }
     },
     cityCostField (newValue) {
+      this.cityCostWarning = false
       this.shippingData.cityCost = fcoList.indexOf(newValue)
       if (this.shippingData.cityCost === 1) {
         this.shippingData.cityFreeCostFrom = fcfList[0]
@@ -263,6 +268,7 @@ export default {
       }
     },
     countryCostField (newValue) {
+      this.countryCostWarning = false
       this.shippingData.countryCost = fcoList.indexOf(newValue)
       if (this.shippingData.countryCost === 1) {
         this.shippingData.countryFreeCostFrom = fcfList[0]
@@ -288,14 +294,64 @@ export default {
     }
   },
   methods: {
+    checkFormValidation () {
+      if (this.shippingData.cityCost === null) {
+        this.cityCostWarning = true
+        throw new Error(`هزینه ارسال به ${this.shopCity} را وارد کنید.`)
+      }
+      if (this.shippingData.sendEverywhere === true) {
+        if (this.shippingData.countryCost === null) {
+          this.countryCostWarning = true
+          throw new Error('هزینه ارسال به سراسر ایران را وارد کنید.')
+        }
+        if (!this.nationalPostCheckbox) {
+          throw new Error('برای ارسال به سراسر ایران باید پست پیشتاز را فعال کنید.')
+        }
+      }
+      if (!this.nationalPostCheckbox && !this.onlineDeliveryCheckbox) {
+        throw new Error('حداقل یک روش ارسال را انتخاب کنید.')
+      }
+      if (this.shippingData.nationalPost) {
+        if (this.shippingData.nationalPost.base < 5000) {
+          throw new Error('هزینه پایه پست پیشتاز باید حداقل پنج هزار تومان باشد.')
+        }
+        if (!Number.isInteger(this.shippingData.nationalPost.base)) {
+          throw new TypeError('هزینه پایه پست پیشتاز نامعتبر است.')
+        }
+      }
+      if (this.shippingData.nationalPost) {
+        if (this.shippingData.nationalPost.perKilo < 0 || !Number.isInteger(this.shippingData.nationalPost.perKilo)) {
+          throw new Error('هزینه اضافی پست پیشتاز نامعتبر است.')
+        }
+      }
+      if (this.shippingData.onlineDelivery) {
+        if (this.shippingData.onlineDelivery.base < 5000) {
+          throw new Error('هزینه پایه پیک آنلاین باید حداقل پنج هزار تومان باشد.')
+        }
+        if (!Number.isInteger(this.shippingData.onlineDelivery.base)) {
+          throw new TypeError('هزینه پایه پیک آنلاین نامعتبر است.')
+        }
+      }
+      if (this.shippingData.onlineDelivery) {
+        if (this.shippingData.onlineDelivery.perKilo < 0 || !Number.isInteger(this.shippingData.onlineDelivery.perKilo)) {
+          throw new Error('هزینه اضافی پیک آنلاین نامعتبر است.')
+        }
+      }
+    },
     submit () {
       try {
-        this.checkFormValidation()
         const payload = { ...this.shippingData }
+        if (payload.countryFreeCostFrom) {
+          payload.countryFreeCostFrom *= 1000
+        }
+        if (payload.cityFreeCostFrom) {
+          payload.cityFreeCostFrom *= 1000
+        }
         console.log(payload)
+        this.checkFormValidation()
         this.$emit('submit', payload)
-      } catch (errorMessage) {
-        this.snackbarMessage = errorMessage
+      } catch (errorData) {
+        this.snackbarMessage = errorData.message
         this.showSnackbar = true
       }
     }
