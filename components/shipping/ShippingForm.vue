@@ -192,7 +192,16 @@
         </div>
       </v-col>
       <v-card-actions class="justify-center">
-        <v-btn color="primary" class="my-3" rounded width="80%" @click.prevent="submit">ثبت</v-btn>
+        <v-btn
+          color="primary"
+          class="my-3"
+          rounded
+          width="80%"
+          :loading="isSubmitting"
+          @click.prevent="submit"
+        >
+          ثبت
+        </v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -216,6 +225,10 @@ export default {
     DeliveryMethodsDialog
   },
   props: {
+    isSubmitting: {
+      type: Boolean,
+      required: true
+    },
     shopCity: {
       type: String,
       required: true
