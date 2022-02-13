@@ -22,16 +22,6 @@
           dense
         />
         <div class="pt-2 pb-4 text-body-2">
-          تا کجا هزینه ارسال را می‌پردازید؟
-        </div>
-        <v-select
-          v-model="shopData.delivery"
-          :items="freeDeliveryItems"
-          label="محدوده ارسال رایگان"
-          dense
-          outlined
-        />
-        <div class="pt-2 pb-4 text-body-2">
           زمان آماده‌سازی محصول شما چقدر است؟
         </div>
         <v-select
@@ -72,23 +62,18 @@ export default {
     return {
       shopData: {
         bio: '',
-        preparation: '',
-        delivery: ''
+        preparation: ''
       },
       bioRules: [
         value => value.length < 350 || 'بیو طولانی است.'
       ],
-      freeDeliveryItems: ['ارسال رایگان ندارم', 'ارسال درون‌شهری رایگان', 'ارسال به کل کشور رایگان'],
       preparationTimeItems: ['تا 2 ساعت', 'تا 12 ساعت', 'تا 1 روز', 'تا 3 روز', 'تا یک هفته']
     }
-  },
-  computed: {
   },
   methods: {
     validateAndSubmitForm () {
       if (this.$refs.form.validate()) {
         const payload = { ...this.shopData }
-        payload.delivery = this.freeDeliveryItems.indexOf(this.shopData.delivery)
         payload.preparation = this.preparationTimeItems.indexOf(this.shopData.preparation)
         this.$emit('submit', payload)
       }
