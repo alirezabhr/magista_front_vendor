@@ -132,7 +132,7 @@
               <v-text-field
                 v-model="shippingData.nationalPost.perKilo"
                 type="number"
-                label="هزینه هر کیلو"
+                label="هزینه هر کیلوگرم"
                 suffix="تومان"
                 hide-details
                 outlined
@@ -174,7 +174,7 @@
               <v-text-field
                 v-model="shippingData.onlineDelivery.perKilo"
                 type="number"
-                label="هزینه هر کیلو"
+                label="هزینه هر کیلوگرم"
                 suffix="تومان"
                 hide-details
                 outlined
@@ -194,6 +194,7 @@
 <script>
 import Num2persian from 'num2persian'
 import DeliveryType from '@/models/shipping/delivery_type'
+import AreaType from '@/models/shipping/area_type'
 
 const fcfList = [80, 90, 100, 120, 150, 180, 200, 250, 300, 350, 400]
 const fcoList = ['هزینه دارد', 'رایگان نسبی', 'کاملا رایگان']
@@ -342,12 +343,17 @@ export default {
       try {
         const payload = { ...this.shippingData }
         if (payload.countryFreeCostFrom) {
-          payload.countryFreeCostFrom *= 1000
+          payload.countryFreeCostFrom = {
+            type: AreaType.country,
+            freeFrom: payload.countryFreeCostFrom * 1000
+          }
         }
         if (payload.cityFreeCostFrom) {
-          payload.cityFreeCostFrom *= 1000
+          payload.cityFreeCostFrom = {
+            type: AreaType.city,
+            freeFrom: payload.cityFreeCostFrom * 1000
+          }
         }
-        console.log(payload)
         this.checkFormValidation()
         this.$emit('submit', payload)
       } catch (errorData) {
