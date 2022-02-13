@@ -31,7 +31,7 @@
       <v-col class="px-8 py-0">
         <div class="font-weight-bold text-body-1">
           هزینه ارسال
-          <v-btn icon @click.prevent="showDeliveryCostsHelp"><v-icon color="red">mdi-help-circle-outline</v-icon></v-btn>
+          <!-- <v-btn icon @click.prevent="showDeliveryCostsHelp"><v-icon color="red">mdi-help-circle-outline</v-icon></v-btn> -->
         </div>
         <v-row align="center" no-gutters>
           <v-col>
@@ -103,7 +103,7 @@
       <v-col class="px-8 pt-8">
         <div class="font-weight-bold text-body-1">
           روش‌ ارسال
-          <v-btn icon @click.prevent="showDeliveryMethodsHelp"><v-icon color="red">mdi-help-circle-outline</v-icon></v-btn>
+          <!-- <v-btn icon @click.prevent="showDeliveryMethodsHelp"><v-icon color="red">mdi-help-circle-outline</v-icon></v-btn> -->
         </div>
         <div class="grey--text text--darken-2 text-subtitle-2 pb-3">با چه روش‌هایی ارسال می‌کنید؟</div>
         <div class="py-2">
