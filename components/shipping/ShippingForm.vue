@@ -4,7 +4,8 @@
       v-model="showDialog"
       max-width="600px"
     >
-      DIALOG MESSAGE
+      <DeliveryCostsDialog v-if="dialog === 'delivery costs'" />
+      <DeliveryMethodsDialog v-else-if="dialog === 'delivery methods'" />
     </v-dialog>
     <v-snackbar
       v-model="showSnackbar"
@@ -28,7 +29,10 @@
         </v-radio-group>
       </v-col>
       <v-col class="px-8 py-0">
-        <div class="font-weight-bold text-body-1">هزینه ارسال</div>
+        <div class="font-weight-bold text-body-1">
+          هزینه ارسال
+          <v-btn icon @click.prevent="showDeliveryCostsHelp"><v-icon color="red">mdi-help-circle-outline</v-icon></v-btn>
+        </div>
         <v-row align="center" no-gutters>
           <v-col>
             <span v-show="cityCostWarning" class="font-wight-bold text-h6 red--text text--darken-1">!</span>
@@ -97,7 +101,10 @@
         </div>
       </v-col>
       <v-col class="px-8 pt-8">
-        <div class="font-weight-bold text-body-1">روش‌ ارسال</div>
+        <div class="font-weight-bold text-body-1">
+          روش‌ ارسال
+          <v-btn icon @click.prevent="showDeliveryMethodsHelp"><v-icon color="red">mdi-help-circle-outline</v-icon></v-btn>
+        </div>
         <div class="grey--text text--darken-2 text-subtitle-2 pb-3">با چه روش‌هایی ارسال می‌کنید؟</div>
         <div class="py-2">
           <v-col cols="6" sm="5" md="4" lg="3" class="py-0">
@@ -195,6 +202,8 @@
 import Num2persian from 'num2persian'
 import DeliveryType from '@/models/shipping/delivery_type'
 import AreaType from '@/models/shipping/area_type'
+import DeliveryCostsDialog from '@/components/shipping/DeliveryCostsDialog.vue'
+import DeliveryMethodsDialog from '@/components/shipping/DeliveryMethodsDialog.vue'
 
 const fcfList = [80, 90, 100, 120, 150, 180, 200, 250, 300, 350, 400]
 const fcoList = ['هزینه دارد', 'رایگان نسبی', 'کاملا رایگان']
@@ -202,6 +211,10 @@ const fcoList = ['هزینه دارد', 'رایگان نسبی', 'کاملا ر�
 
 export default {
   name: 'ShippingForm',
+  components: {
+    DeliveryCostsDialog,
+    DeliveryMethodsDialog
+  },
   props: {
     shopCity: {
       type: String,
@@ -239,6 +252,7 @@ export default {
       cityCostWarning: false,
       countryCostWarning: false,
       showDialog: false,
+      dialog: '',
       showSnackbar: false,
       snackbarMessage: ''
     }
@@ -295,6 +309,14 @@ export default {
     }
   },
   methods: {
+    showDeliveryCostsHelp () {
+      this.dialog = 'delivery costs'
+      this.showDialog = true
+    },
+    showDeliveryMethodsHelp () {
+      this.dialog = 'delivery methods'
+      this.showDialog = true
+    },
     checkFormValidation () {
       if (this.shippingData.cityCost === null) {
         this.cityCostWarning = true
