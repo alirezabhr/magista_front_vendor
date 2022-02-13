@@ -6,12 +6,14 @@ import PostPreview from '~/models/post_preview'
 import Issue from '~/models/issue_tracker/issue'
 import BankCredits from '~/models/bank_credit'
 import Post from '~/models/post'
+import Shipping from '~/models/shipping/shipping'
 
 const namespace = 'shop'
 
 interface ShopState {
   shops: Shop[]
   currentShop: Shop | null
+  currentShopDelivery: Shipping | null
   currentShopPosts: Post[]
   currentShopBankCredits: BankCredits[]
   instagramUsername: string | null
@@ -23,6 +25,7 @@ interface ShopState {
 const state = (): ShopState => ({
   shops: [],
   currentShop: null,
+  currentShopDelivery: null,
   currentShopPosts: [],
   currentShopBankCredits: [],
   instagramUsername: null,
@@ -51,8 +54,18 @@ const mutations = <MutationTree<ShopState>>{
   },
   setCurrentShop (state, shop) {
     state.currentShop = new Shop(shop.id, shop.instagramUsername, shop.email, shop.address, shop.province,
-      shop.city, shop.bio, shop.commissionPercent, shop.profilePic, shop.remainingAmount, shop.lastScrape)
+      shop.city, shop.bio, shop.commissionPercent, shop.profilePic, shop.remainingAmount, shop.lastScrape,
+      shop.delivery)
+    const delivery = shop.delivery
+    state.currentShopDelivery = new Shipping(delivery.shop, delivery.sendEverywhere, delivery.hasNationalPost,
+      delivery.hasOnlineDelivery, delivery.cityCost, delivery.countryCost, delivery.nationalPost, delivery.onlinePost,
+      delivery.cityFreeCostFrom, delivery.countryFreeCostFrom)
     localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
+  },
+  setCurrentShopDelivery (state, delivery) {
+    state.currentShopDelivery = new Shipping(delivery.shop, delivery.sendEverywhere, delivery.hasNationalPost,
+      delivery.hasOnlineDelivery, delivery.cityCost, delivery.countryCost, delivery.nationalPost, delivery.onlinePost,
+      delivery.cityFreeCostFrom, delivery.countryFreeCostFrom)
   },
   setCurrentShopPosts (state, posts) {
     state.currentShopPosts = posts
@@ -346,6 +359,25 @@ const actions = <ActionTree<ShopState, RootState>>{
       vuexContext.dispatch('issue/capture', null, { root: true })
       throw e.response
     })
+  },
+  updateShopShipping (vuexContext, payload) {
+    if (!vuexContext.getters.getCurrentShop) {
+      return
+    }
+    const shopPk = vuexContext.getters.getCurrentShop.id
+    const url = process.env.baseURL + `shop/${shopPk}/shipment/`
+
+    payload.shop = shopPk
+
+    return this.$client.put(url, payload).then((response) => {
+      vuexContext.commit('setCurrentShopDelivery', response.data)
+    }).catch((e) => {
+      vuexContext.commit('issue/createNewIssues', null, { root: true })
+      const issue = new Issue('updateShopShipping', JSON.stringify(e.response))
+      vuexContext.commit('issue/addIssue', issue, { root: true })
+      vuexContext.dispatch('issue/capture', null, { root: true })
+      throw e.response
+    })
   }
 }
 
@@ -370,6 +402,9 @@ const getters = <GetterTree<ShopState, RootState>>{
   },
   getCurrentShopBankCredits: (state) : BankCredits[] => {
     return state.currentShopBankCredits
+  },
+  getCurrentShopDelivery: (state) : Shipping | null => {
+    return state.currentShopDelivery
   },
   getPostsPreviewList: (state) => {
     return state.postsPreviewList
