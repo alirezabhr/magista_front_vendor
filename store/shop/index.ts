@@ -61,13 +61,13 @@ const mutations = <MutationTree<ShopState>>{
       shop.delivery)
     const delivery = shop.delivery
     state.currentShopDelivery = new Shipping(delivery.shop, delivery.sendEverywhere, delivery.hasNationalPost,
-      delivery.hasOnlineDelivery, delivery.cityCost, delivery.countryCost, delivery.nationalPost, delivery.onlinePost,
+      delivery.hasOnlineDelivery, delivery.cityCost, delivery.countryCost, delivery.nationalPost, delivery.onlineDelivery,
       delivery.cityFreeCostFrom, delivery.countryFreeCostFrom)
     localStorage.setItem('CurrentShop', JSON.stringify(state.currentShop))
   },
   setCurrentShopDelivery (state, delivery) {
     state.currentShopDelivery = new Shipping(delivery.shop, delivery.sendEverywhere, delivery.hasNationalPost,
-      delivery.hasOnlineDelivery, delivery.cityCost, delivery.countryCost, delivery.nationalPost, delivery.onlinePost,
+      delivery.hasOnlineDelivery, delivery.cityCost, delivery.countryCost, delivery.nationalPost, delivery.onlineDelivery,
       delivery.cityFreeCostFrom, delivery.countryFreeCostFrom)
   },
   setCurrentShopPosts (state, posts) {

@@ -15,12 +15,12 @@ class Shipping {
   cityCost: FreeDelivery
   countryCost: FreeDelivery
   nationalPost: DeliveryPrice
-  onlinePost: DeliveryPrice
+  onlineDelivery: DeliveryPrice
   cityFreeCostFrom: OccasionallyFreeDelivery
   countryFreeCostFrom: OccasionallyFreeDelivery
 
   constructor (shop:number, sendEverywhere: Boolean, hasNationalPost: Boolean, hasOnlineDelivery: Boolean,
-    cityCost: number, countryCost: number, nationalPost: DeliveryPrice, onlinePost: DeliveryPrice,
+    cityCost: number, countryCost: number, nationalPost: DeliveryPrice, onlineDelivery: DeliveryPrice,
     cityFreeCostFrom: OccasionallyFreeDelivery, countryFreeCostFrom: OccasionallyFreeDelivery) {
     this.shop = shop
     this.sendEverywhere = sendEverywhere
@@ -29,7 +29,7 @@ class Shipping {
     this.cityCost = cityCost
     this.countryCost = countryCost
     this.nationalPost = nationalPost
-    this.onlinePost = onlinePost
+    this.onlineDelivery = onlineDelivery
     this.cityFreeCostFrom = cityFreeCostFrom
     this.countryFreeCostFrom = countryFreeCostFrom
   }
