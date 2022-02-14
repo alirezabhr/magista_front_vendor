@@ -17,7 +17,7 @@
     <v-card color="lighten-3 my-3">
       <v-col class="px-8 pt-8">
         <div class="font-weight-bold text-body-1">محدوده ارسال</div>
-        <v-radio-group v-model="sendEverywhereSelectedItem" class="my-2">
+        <v-radio-group v-model="shippingData.sendEverywhere" class="my-2">
           <v-radio
             label="همه ایران"
             :value="true"
@@ -40,7 +40,7 @@
           </v-col>
           <v-col>
             <v-select
-              v-model="cityCostField"
+              v-model="shippingData.cityCost"
               :items="costOptions"
               outlined
               hide-details
@@ -48,7 +48,7 @@
             />
           </v-col>
         </v-row>
-        <v-col v-if="shippingData.cityCost == 1">
+        <v-col v-if="shippingData.cityCost === costOptions[1]">
           <div class="grey--text text--darken-2 text-subtitle-2">ارسال رایگان به <strong>{{ shopCity }}</strong> برای خریدهای بالاتر از: </div>
           <v-row align="center" no-gutters>
             <v-col cols="4">
@@ -73,7 +73,7 @@
             </v-col>
             <v-col>
               <v-select
-                v-model="countryCostField"
+                v-model="shippingData.countryCost"
                 :items="costOptions"
                 outlined
                 hide-details
@@ -81,7 +81,7 @@
               />
             </v-col>
           </v-row>
-          <v-col v-if="shippingData.countryCost == 1">
+          <v-col v-if="shippingData.countryCost === costOptions[1]">
             <div class="grey--text text--darken-2 text-subtitle-2">ارسال رایگان به <strong>سراسر ایران</strong> برای خریدهای بالاتر از: </div>
             <v-row align="center" no-gutters>
               <v-col cols="4">
@@ -109,13 +109,13 @@
         <div class="py-2">
           <v-col cols="6" sm="5" md="4" lg="3" class="py-0">
             <v-checkbox
-              v-model="nationalPostCheckbox"
+              v-model="shippingData.hasNationalPost"
               label="پست پیشتاز"
               class="my-0"
               hide-details
             />
           </v-col>
-          <v-row v-if="nationalPostCheckbox" class="py-2" align="center" no-gutters>
+          <v-row v-if="shippingData.hasNationalPost" class="py-2" align="center" no-gutters>
             <v-col cols="7">
               <div class="text-caption">هزینه پایه</div>
             </v-col>
@@ -131,7 +131,7 @@
               />
             </v-col>
           </v-row>
-          <v-row v-if="nationalPostCheckbox" class="py-2" align="center" no-gutters>
+          <v-row v-if="shippingData.hasNationalPost" class="py-2" align="center" no-gutters>
             <v-col cols="7">
               <div class="text-caption">هزینه هر کیلوگرم وزن بیشتر</div>
             </v-col>
@@ -151,13 +151,13 @@
         <div class="py-3">
           <v-col cols="6" sm="5" md="4" lg="3" class="py-0">
             <v-checkbox
-              v-model="onlineDeliveryCheckbox"
+              v-model="shippingData.hasOnlineDelivery"
               label="پیک آنلاین"
               class="my-0"
               hide-details
             />
           </v-col>
-          <v-row v-if="onlineDeliveryCheckbox" class="py-2" align="center" no-gutters>
+          <v-row v-if="shippingData.hasOnlineDelivery" class="py-2" align="center" no-gutters>
             <v-col cols="7">
               <div class="text-caption">هزینه پایه</div>
             </v-col>
@@ -173,7 +173,7 @@
               />
             </v-col>
           </v-row>
-          <v-row v-if="onlineDeliveryCheckbox" class="py-2" align="center" no-gutters>
+          <v-row v-if="shippingData.hasOnlineDelivery" class="py-2" align="center" no-gutters>
             <v-col cols="7">
               <div class="text-caption">هزینه هر کیلوگرم وزن بیشتر</div>
             </v-col>
@@ -216,7 +216,7 @@ import DeliveryMethodsDialog from '@/components/shipping/DeliveryMethodsDialog.v
 
 const fcfList = [80, 90, 100, 120, 150, 180, 200, 250, 300, 350, 400]
 const costOptionsList = ['هزینه دارد', 'رایگان نسبی', 'کاملا رایگان']
-// Change costOptionsList very carefully. used its values very bad
+// Change costOptionsList very carefully.
 
 export default {
   name: 'ShippingForm',
@@ -243,31 +243,24 @@ export default {
     return {
       freeCostFromOptions: fcfList, // constant
       costOptions: costOptionsList, // constant
-      sendEverywhereSelectedItem: true,
-      cityCostField: null,
-      countryCostField: null,
-      nationalPostCheckbox: false,
-      onlineDeliveryCheckbox: false,
-      nationalPostTemplate: {
-        type: DeliveryType.NATIONAL_POST,
-        base: 13000,
-        perKilo: 2700
-      },
-      onlineDeliveryTemplate: {
-        type: DeliveryType.ONLINE_DELIVERY,
-        base: 15000,
-        perKilo: 2000
-      },
       shippingData: {
         sendEverywhere: true,
         hasNationalPost: false,
         hasOnlineDelivery: false,
         cityCost: null,
         countryCost: null,
-        cityFreeCostFrom: null,
-        countryFreeCostFrom: null,
-        nationalPost: null,
-        onlineDelivery: null
+        cityFreeCostFrom: fcfList[0],
+        countryFreeCostFrom: fcfList[0],
+        nationalPost: {
+          type: DeliveryType.NATIONAL_POST,
+          base: 13000,
+          perKilo: 2700
+        },
+        onlineDelivery: {
+          type: DeliveryType.ONLINE_DELIVERY,
+          base: 15000,
+          perKilo: 2000
+        }
       },
       cityCostWarning: false,
       countryCostWarning: false,
@@ -286,48 +279,11 @@ export default {
     }
   },
   watch: {
-    sendEverywhereSelectedItem (newValue) {
-      this.shippingData.sendEverywhere = newValue
-      if (newValue === false) {
-        this.shippingData.countryCost = null
-        this.shippingData.countryFreeCostFrom = null
-      }
-    },
-    cityCostField (newValue) {
+    'shippingData.cityCost' () {
       this.cityCostWarning = false
-      this.shippingData.cityCost = costOptionsList.indexOf(newValue)
-      if (this.shippingData.cityCost === 1) {
-        this.shippingData.cityFreeCostFrom = fcfList[0]
-      } else {
-        this.shippingData.cityFreeCostFrom = null
-      }
     },
-    countryCostField (newValue) {
+    'shippingData.countryCost' () {
       this.countryCostWarning = false
-      this.shippingData.countryCost = costOptionsList.indexOf(newValue)
-      if (this.shippingData.countryCost === 1) {
-        this.shippingData.countryFreeCostFrom = fcfList[0]
-      } else {
-        this.shippingData.countryFreeCostFrom = null
-      }
-    },
-    nationalPostCheckbox (newVal) {
-      this.shippingData.hasNationalPost = newVal
-      if (newVal === true) {
-        this.shippingData.nationalPost = this.nationalPostTemplate
-      } else {
-        this.nationalPostTemplate = this.shippingData.nationalPost
-        this.shippingData.nationalPost = null
-      }
-    },
-    onlineDeliveryCheckbox (newVal) {
-      this.shippingData.hasOnlineDelivery = newVal
-      if (newVal === true) {
-        this.shippingData.onlineDelivery = this.onlineDeliveryTemplate
-      } else {
-        this.onlineDeliveryTemplate = this.shippingData.onlineDelivery
-        this.shippingData.onlineDelivery = null
-      }
     }
   },
   mounted () {
@@ -337,21 +293,29 @@ export default {
   },
   methods: {
     setShopDeliveryPropData () {
-      this.sendEverywhereSelectedItem = this.shopDeliveryData.sendEverywhere
-      this.cityCostField = costOptionsList[this.shopDeliveryData.cityCost]
-      if (this.shopDeliveryData.countryCost !== null) {
-        this.countryCostField = costOptionsList[this.shopDeliveryData.countryCost]
+      this.shippingData.sendEverywhere = this.shopDeliveryData.sendEverywhere
+
+      this.shippingData.cityCost = costOptionsList[this.shopDeliveryData.cityCost]
+      this.shippingData.countryCost = costOptionsList[this.shopDeliveryData.countryCost]
+      if (this.shopDeliveryData.cityFreeCostFrom) {
+        const freeFrom = this.shopDeliveryData.cityFreeCostFrom.freeFrom / 1000
+        this.shippingData.cityFreeCostFrom = freeFrom
       }
+      if (this.shopDeliveryData.countryFreeCostFrom) {
+        const freeFrom = this.shopDeliveryData.countryFreeCostFrom.freeFrom / 1000
+        this.shippingData.countryFreeCostFrom = freeFrom
+      }
+      this.shippingData.hasNationalPost = this.shopDeliveryData.hasNationalPost
+      this.shippingData.hasOnlineDelivery = this.shopDeliveryData.hasOnlineDelivery
+
       if (this.shopDeliveryData.nationalPost !== null) {
-        this.nationalPostTemplate = this.shopDeliveryData.nationalPost
+        this.shippingData.nationalPost.base = this.shopDeliveryData.nationalPost.base
+        this.shippingData.nationalPost.perKilo = this.shopDeliveryData.nationalPost.perKilo
       }
       if (this.shopDeliveryData.onlineDelivery !== null) {
-        this.onlineDeliveryTemplate = this.shopDeliveryData.onlineDelivery
+        this.shippingData.onlineDelivery.base = this.shopDeliveryData.onlineDelivery.base
+        this.shippingData.onlineDelivery.perKilo = this.shopDeliveryData.onlineDelivery.perKilo
       }
-      this.nationalPostCheckbox = this.shopDeliveryData.hasNationalPost
-      this.onlineDeliveryCheckbox = this.shopDeliveryData.hasOnlineDelivery
-      this.shippingData.cityFreeCostFrom = this.shopDeliveryData.cityFreeCostFrom
-      this.shippingData.countryFreeCostFrom = this.shopDeliveryData.countryFreeCostFrom
     },
     showDeliveryCostsHelp () {
       this.dialog = 'delivery costs'
@@ -371,11 +335,11 @@ export default {
           this.countryCostWarning = true
           throw new Error('هزینه ارسال به سراسر ایران را وارد کنید.')
         }
-        if (!this.nationalPostCheckbox) {
+        if (!this.shippingData.hasNationalPost) {
           throw new Error('برای ارسال به سراسر ایران باید پست پیشتاز را فعال کنید.')
         }
       }
-      if (!this.nationalPostCheckbox && !this.onlineDeliveryCheckbox) {
+      if (!this.shippingData.hasNationalPost && !this.shippingData.hasOnlineDelivery) {
         throw new Error('حداقل یک روش ارسال را انتخاب کنید.')
       }
       if (this.shippingData.nationalPost) {
@@ -413,21 +377,50 @@ export default {
         // }
       }
     },
+    makePayloadCorrect () {
+      const payload = { ...this.shippingData }
+
+      if (!payload.sendEverywhere) {
+        payload.countryCost = null
+        payload.countryFreeCostFrom = null
+      }
+
+      // country cost and free cost from
+      if (payload.countryCost === costOptionsList[1]) {
+        payload.countryFreeCostFrom = {
+          type: AreaType.country,
+          freeFrom: payload.countryFreeCostFrom * 1000
+        }
+      } else {
+        payload.countryFreeCostFrom = null
+      }
+      if (payload.sendEverywhere) {
+        payload.countryCost = costOptionsList.indexOf(payload.countryCost)
+      }
+
+      // city cost and free cost from
+      if (payload.cityCost === costOptionsList[1]) {
+        payload.cityFreeCostFrom = {
+          type: AreaType.city,
+          freeFrom: payload.cityFreeCostFrom * 1000
+        }
+      } else {
+        payload.cityFreeCostFrom = null
+      }
+      payload.cityCost = costOptionsList.indexOf(payload.cityCost)
+
+      if (!payload.hasNationalPost) {
+        payload.nationalPost = null
+      }
+      if (!payload.hasOnlineDelivery) {
+        payload.onlineDelivery = null
+      }
+
+      return payload
+    },
     submit () {
       try {
-        const payload = { ...this.shippingData }
-        if (payload.countryFreeCostFrom) {
-          payload.countryFreeCostFrom = {
-            type: AreaType.country,
-            freeFrom: payload.countryFreeCostFrom * 1000
-          }
-        }
-        if (payload.cityFreeCostFrom) {
-          payload.cityFreeCostFrom = {
-            type: AreaType.city,
-            freeFrom: payload.cityFreeCostFrom * 1000
-          }
-        }
+        const payload = this.makePayloadCorrect()
         this.checkFormValidation()
         this.$emit('submit', payload)
       } catch (errorData) {
