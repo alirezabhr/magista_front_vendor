@@ -51,12 +51,22 @@
               {{ order.totalDiscountAmount }}
               تومان
             </v-row>
+            <v-row class="text-subtitle-2" no-gutters>
+              ارسال:
+              {{ order.deliveryCost }}
+              تومان
+            </v-row>
             <v-row class="text-subtitle-2 font-weight-bold" no-gutters>
               جمع:
               {{ order.finalPrice }}
               تومان
             </v-row>
           </v-col>
+
+          <v-row class="px-4 blue--text text--darken-2" no-gutters>
+            روش ارسال:
+            <strong class="px-2">{{ orderDeliveryType }}</strong>
+          </v-row>
 
           <!-- if order status is paid -->
           <v-row v-if="order.status === orderStatus.PAID" justify="space-around" no-gutters>
@@ -83,6 +93,8 @@ import OrderItem from '~/components/order/OrderItem.vue'
 import ChooseShippingOption from '~/components/order/ChooseShippingOption.vue'
 import OrderStatus from '@/models/order_status'
 
+const deliveryTypeText = ['پست پیشتاز', 'پیک آنلاین']
+
 export default {
   name: 'OrderCard',
   components: {
@@ -100,6 +112,14 @@ export default {
       orderStatus: OrderStatus,
       isSubmitting: false,
       showDialog: false
+    }
+  },
+  computed: {
+    orderDeliveryType () {
+      if (this.order.delivery) {
+        return deliveryTypeText[this.order.delivery.type]
+      }
+      return ''
     }
   },
   methods: {
