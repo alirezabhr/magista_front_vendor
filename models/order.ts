@@ -1,6 +1,7 @@
 import OrderItem from './order_item'
 import Shop from './shop'
 import Customer from './customer'
+import OrderDeliveryPrice from './order_delivery_price'
 
 class Order {
   id: number
@@ -9,6 +10,8 @@ class Order {
   shop: Shop
   customer: Customer
   orderItems: OrderItem[]
+  delivery: OrderDeliveryPrice
+  deliveryCost: number
   totalOriginalPrice: number
   totalDiscountAmount: number
   finalPrice: number
@@ -21,14 +24,17 @@ class Order {
   createdAt: Date
 
   constructor (id: number, status: number, statusText: string, shop: Shop, customer: Customer, orderItems: OrderItem[],
-    totalOriginalPrice: number, totalDiscountAmount: number, finalPrice: number, hasDiscountCode: boolean, shippedBy: number,
-    paidAt: Date, verifiedAt: Date, shippedAt: Date, canceledAt: Date, createdAt: Date) {
+    delivery: OrderDeliveryPrice, deliveryCost: number, totalOriginalPrice: number, totalDiscountAmount: number,
+    finalPrice: number, hasDiscountCode: boolean, shippedBy: number, paidAt: Date, verifiedAt: Date, shippedAt: Date,
+    canceledAt: Date, createdAt: Date) {
     this.id = id
     this.status = status
     this.statusText = statusText
     this.shop = shop
     this.customer = customer
     this.orderItems = orderItems
+    this.delivery = delivery
+    this.deliveryCost = deliveryCost
     this.totalOriginalPrice = totalOriginalPrice
     this.totalDiscountAmount = totalDiscountAmount
     this.finalPrice = finalPrice

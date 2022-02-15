@@ -16,8 +16,9 @@ const state = (): OrderState => ({
 const mutations = <MutationTree<OrderState>>{
   appendToOrderList (state, order: any) {
     const item = new Order(order.id, order.status, order.statusText, order.shop, order.customer, order.orderItems,
-      order.totalOriginalPrice, order.totalDiscountAmount, order.finalPrice, order.hasDiscountCode, order.shippedBy,
-      order.paidAt, order.verifiedAt, order.shippedAt, order.canceledAt, order.createdAt)
+      order.delivery, order.deliveryCost, order.totalOriginalPrice, order.totalDiscountAmount, order.finalPrice,
+      order.hasDiscountCode, order.shippedBy, order.paidAt, order.verifiedAt, order.shippedAt, order.canceledAt,
+      order.createdAt)
     state.orderList.splice(0, 0, item) // insert order at index 0
   },
   clearOrderList (state) {
