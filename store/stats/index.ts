@@ -38,7 +38,7 @@ const mutations = <MutationTree<StatState>>{
       const obj = state.stats.find(el => el.date === s.date)
       if (obj) {
         obj.count += s.count
-        obj.price += (s.price * s.count)
+        obj.price += (s.productFinalPrice * s.count)
       }
     })
   }
