@@ -3,13 +3,17 @@
     <v-dialog
       v-model="showDialog"
       max-width="600px"
+      persistent
     >
-      <ChooseShippingOption
-        :order="order"
-        :is-submitting="isSubmitting"
-        @submit="orderHadSent"
-        @close="showDialog = false"
-      />
+      <v-card>
+        <v-card-title>
+          آیا سفارش را ارسال کرده‌اید؟
+        </v-card-title>
+        <v-card-actions class="justify-end">
+          <v-btn text color="red" @click.prevent="showDialog=false">خیر</v-btn>
+          <v-btn text color="green darken-1" class="mx-0 font-weight-bold" @click.prevent="orderHadSent()">ارسال کردم</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
     <v-col v-if="order.status >= orderStatus.PAID" class="pa-0">
       <v-card elevation="6" color="grey lighten-3">
@@ -40,6 +44,10 @@
               <OrderItem :order-item="orderItem" />
             </v-row>
           </div>
+          <v-row class="px-4 blue--text text--darken-2" no-gutters>
+            روش ارسال انتخاب شده:
+            <strong class="px-2">{{ orderDeliveryType }}</strong>
+          </v-row>
           <v-col>
             <v-row class="text-subtitle-2" no-gutters>
               قیمت کالاها:
@@ -63,20 +71,15 @@
             </v-row>
           </v-col>
 
-          <v-row class="px-4 blue--text text--darken-2" no-gutters>
-            روش ارسال:
-            <strong class="px-2">{{ orderDeliveryType }}</strong>
-          </v-row>
-
           <!-- if order status is paid -->
           <v-row v-if="order.status === orderStatus.PAID" justify="space-around" no-gutters>
-            <v-btn color="red lighten-1" class="white--text" @click.prevent="cancelOrder(order)">لغو</v-btn>
-            <v-btn color="green" class="white--text font-weight-bold" @click.prevent="verifyOrder(order)">تایید سفارش</v-btn>
+            <v-btn color="red lighten-1" class="white--text" @click.prevent="cancelOrder()">لغو</v-btn>
+            <v-btn color="green" class="white--text font-weight-bold" @click.prevent="verifyOrder()">تایید سفارش</v-btn>
           </v-row>
           <!-- if order status is verified -->
           <v-col v-else-if="order.status === orderStatus.VERIFIED" class="px-0 py-2">
-            <div class="text-body-2 px-4 py-1">مهلت ارسال: {{ deliveryDeadline(order) }}</div>
-            <v-row justify="center" no-gutters>
+            <div class="text-body-2 px-4 py-1">مهلت ارسال: {{ deliveryRemaining }}</div>
+            <v-row v-if="deliveryRemainingHourMinuteObject.minutes >= 0" justify="center" no-gutters>
               <v-btn color="green" class="white--text font-weight-bold" @click.prevent="showDialog = true">ارسال کردم</v-btn>
             </v-row>
           </v-col>
@@ -90,7 +93,6 @@
 import moment from 'moment'
 import { mapActions } from 'vuex'
 import OrderItem from '~/components/order/OrderItem.vue'
-import ChooseShippingOption from '~/components/order/ChooseShippingOption.vue'
 import OrderStatus from '@/models/order_status'
 
 const deliveryTypeText = ['پست پیشتاز', 'پیک آنلاین']
@@ -98,7 +100,6 @@ const deliveryTypeText = ['پست پیشتاز', 'پیک آنلاین']
 export default {
   name: 'OrderCard',
   components: {
-    ChooseShippingOption,
     OrderItem
   },
   props: {
@@ -120,38 +121,46 @@ export default {
         return deliveryTypeText[this.order.delivery.type]
       }
       return ''
+    },
+    deliveryRemainingHourMinuteObject () {
+      const now = moment()
+      const deadline = moment(this.order.verifiedAt).add(1, 'days')
+      const hours = deadline.diff(now, 'hours')
+      const minutes = deadline.diff(now, 'minutes') - hours * 60
+      return { hours, minutes }
+    },
+    deliveryRemaining () {
+      const hourMinuteObject = this.deliveryRemainingHourMinuteObject
+      const hours = hourMinuteObject.hours
+      const minutes = hourMinuteObject.minutes
+      if (hours < 0) {
+        return 'تمام شده'
+      }
+      return `${hours} ساعت و ${minutes} دقیقه`
     }
   },
   methods: {
     ...mapActions('order', ['editOrder']),
 
-    async verifyOrder (order) {
-      const o = { ...order }
+    async verifyOrder () {
+      const o = { ...this.order }
       o.status = OrderStatus.VERIFIED
       await this.editOrder(o)
     },
-    async cancelOrder (order) {
-      const o = { ...order }
+    async cancelOrder () {
+      const o = { ...this.order }
       o.status = OrderStatus.CANCELED
       await this.editOrder(o)
     },
-    orderHadSent (order, shippingOpt) {
-      const o = { ...order }
+    orderHadSent () {
+      const o = { ...this.order }
       o.status = OrderStatus.SHIPPED
-      o.shippedBy = shippingOpt
       this.isSubmitting = true
 
       this.editOrder(o).then(() => {
         this.isSubmitting = false
         this.showDialog = false
       })
-    },
-    deliveryDeadline (order) {
-      const now = moment()
-      const deadline = moment(order.verifiedAt).add(1, 'days')
-      const hours = deadline.diff(now, 'hours')
-      const minutes = deadline.diff(now, 'minutes') - hours * 60
-      return `${hours} ساعت و ${minutes} دقیقه`
     }
   }
 }
