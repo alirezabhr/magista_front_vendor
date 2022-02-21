@@ -14,7 +14,7 @@
       </v-card-title>
 
       <v-card-text>
-        برای فروشگاهتان بُن تخفیف صادر کنید و به دوستان و مشتریان خود بدهید
+        برای فروشگاهتان بن تخفیف صادر کنید و برای دوستان و مشتریان خود ارسال کنید.
       </v-card-text>
 
       <v-col class="py-0 px-8">
@@ -29,7 +29,7 @@
         />
         <v-text-field
           v-model="shopDiscountData.description"
-          label="توضیح تخفیف"
+          label="مناسبت"
           :rules="discountDescriptionRules"
           outlined
           dense
@@ -37,7 +37,7 @@
         <v-switch
           v-model="countLimit"
           color="orange"
-          :label="countLimit ? 'با محدودیت تعداد' : 'بدون محدودیت تعداد'"
+          label="محدودیت تعداد"
         />
         <v-text-field
           v-if="countLimit"
@@ -58,7 +58,7 @@
               :loading="isSubmittingForm"
               type="submit"
             >
-              صدور بُن
+              ساخت بن
             </v-btn>
           </v-row>
         </v-col>
@@ -74,7 +74,7 @@ export default {
   name: 'ShopDiscountForm',
   data () {
     return {
-      countLimit: false,
+      countLimit: true,
       shopDiscountData: {
         percent: '',
         description: '',
