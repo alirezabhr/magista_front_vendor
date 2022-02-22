@@ -118,6 +118,7 @@ const actions = <ActionTree<AuthState, RootState>>{
       const issue = new Issue('userSignup', JSON.stringify(e.response.data))
       vuexContext.commit('issue/addIssue', issue, { root: true })
       vuexContext.dispatch('issue/capture', null, { root: true })
+      throw e.response
     })
   },
   userLogin (vuexContext, payload) {
