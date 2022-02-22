@@ -24,6 +24,7 @@
       <v-btn
         text
         :loading="isSubmitting"
+        :disabled="isSubmitting"
         @click.prevent="submit"
       >
         ثبت محصولات و ادامه

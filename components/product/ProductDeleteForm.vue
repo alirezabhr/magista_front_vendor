@@ -22,6 +22,7 @@
             text
             class="red--text font-weight-bold py-5"
             :loading="isSubmittingForm"
+            :disabled="isSubmittingForm"
             @click.prevent="$emit('submit')"
           >
             حذف

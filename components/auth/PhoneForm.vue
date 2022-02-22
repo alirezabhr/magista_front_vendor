@@ -35,6 +35,7 @@
           rounded
           class="primary font-weight-bold py-5"
           :loading="isSubmittingPhone"
+          :disabled="isSubmittingPhone"
           type="submit"
         >
           تایید

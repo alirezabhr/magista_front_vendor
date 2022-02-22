@@ -39,6 +39,7 @@
             block
             class="primary font-weight-bold py-5"
             :loading="isSubmittingForm"
+            :disabled="isSubmittingForm"
             type="submit"
           >
             ثبت و ادامه

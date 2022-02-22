@@ -32,6 +32,7 @@
             rounded
             class="primary font-weight-bold py-5"
             :loading="isSubmittingOtp"
+            :disabled="isSubmittingOtp"
             type="submit"
           >
             تایید

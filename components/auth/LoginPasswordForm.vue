@@ -37,6 +37,7 @@
               class="primary font-weight-bold py-5"
               type="submit"
               :loading="isSubmittingPassword"
+              :disabled="isSubmittingPassword"
             >
               ورود
             </v-btn>

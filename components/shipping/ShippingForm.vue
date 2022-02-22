@@ -198,6 +198,7 @@
           rounded
           width="80%"
           :loading="isSubmitting"
+          :disabled="isSubmitting"
           @click.prevent="submit"
         >
           ثبت

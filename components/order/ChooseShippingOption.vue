@@ -30,7 +30,7 @@
             color="primary"
             class="font-weight-bold py-5"
             :loading="isSubmitting"
-            :disabled="selectedOption === ''"
+            :disabled="selectedOption === '' || isSubmitting"
             @click.prevent="submit"
           >
             تایید

@@ -67,6 +67,7 @@
             width="100%"
             class="yellow darken-1 white--text font-weight-bold"
             :loading="isSubmitting"
+            :disabled="isSubmitting"
             @click.prevent="requestWithdraw"
           >
             برداشت
