@@ -56,9 +56,9 @@ export default {
       const instagramUsername = igUsername.toLowerCase()
 
       this.saveInstagramMediaQueryFile(instagramUsername).then(() => {
-        this.isSubmitting = false
         this.retrieveInstagramMedia()
         this.$router.push('/create-shop/info')
+        this.isSubmitting = false
       }).catch((response) => {
         this.isSubmitting = false
         if (response.status === 404) {

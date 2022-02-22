@@ -131,8 +131,12 @@ export default {
         phone: this.phoneNumber,
         password: inputPassword
       }).then(() => {
-        this.isLoading = false
         this.redirect()
+        this.isLoading = false
+      }).catch(() => {
+        this.isLoading = false
+        this.snackbarMessage = 'خطا در ثبت'
+        this.showSnackbar = true
       })
     },
     login (inputPassword) {
@@ -141,8 +145,8 @@ export default {
         phone: this.phoneNumber,
         password: inputPassword
       }).then(() => {
-        this.isLoading = false
         this.redirect()
+        this.isLoading = false
       }).catch(() => {
         this.isLoading = false
         this.snackbarMessage = 'شماره موبایل یا رمزعبور نادرست است'
@@ -159,8 +163,8 @@ export default {
         phone: this.phoneNumber,
         password: inputPassowrd
       }).then(() => {
-        this.isLoading = false
         this.redirect()
+        this.isLoading = false
       }).catch((response) => {
         this.isLoading = false
         if (response.data.error) {

@@ -71,8 +71,8 @@ export default {
       this.shopData.delivery = data.delivery
 
       this.createShop(this.shopData).then(() => {
-        this.isSubmitting = false
         this.$router.push('/create-shop/posts')
+        this.isSubmitting = false
       }).catch(() => {
         this.isSubmitting = false
         this.snackbarMessage = 'خطا در فرآیند ساخت فروشگاه.'

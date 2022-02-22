@@ -87,8 +87,8 @@ export default {
     },
     createShopPosts () {
       this.createAllPosts().then(() => {
-        this.isSubmitting = false
         this.$router.push('/dashboard')
+        this.isSubmitting = false
       }).catch(() => {
         this.isSubmitting = false
         this.snackbarMessage = 'خطا در ذخیره اطلاعات. لطفا کمی بعد تلاش کنید.'
