@@ -71,7 +71,7 @@ export default {
   layout: 'panel',
   data () {
     return {
-      deactivatedService: true,
+      deactivatedService: false,
       isLoading: false,
       showDialog: false,
       selectedParentPost: null,
