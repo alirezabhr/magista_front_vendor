@@ -1,5 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
+const _IS_DEV_MODE = false
+
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -61,7 +63,7 @@ export default {
   ],
 
   sentry: {
-    dsn: 'https://2b0bd5123e944295880ee6b9e09bdb72@sentry.hamravesh.com/255',
+    dsn: _IS_DEV_MODE ? 'https://e75f3e0403da4947bac45e09b20c7c0e@sentry.hamravesh.com/286' : 'https://2b0bd5123e944295880ee6b9e09bdb72@sentry.hamravesh.com/255',
     // Additional Module Options go here
     // https://sentry.nuxtjs.org/sentry/options
     config: {
@@ -120,8 +122,7 @@ export default {
   // },
 
   env: {
-    baseURL: 'https://api.magista.ir/'
-    // baseURL: 'http://127.0.0.1:8000/'
+    baseURL: _IS_DEV_MODE ? 'http://127.0.0.1:8000/' : 'https://api.magista.ir/'
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
