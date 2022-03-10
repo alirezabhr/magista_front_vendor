@@ -9,10 +9,7 @@
   </div>
   <div v-else>
     <v-col v-if="getOrderList.length === 0" cols="12">
-      <v-row class="pa-10 text-h5 font-weight-bold grey--text" justify="center" no-gutters>
-        هیچ سفارشی ندارید!
-      </v-row>
-      <v-row justify="center" no-gutters>
+      <v-row class="my-12" justify="center" no-gutters>
         <v-img
           contain
           max-height="250"
@@ -49,7 +46,7 @@ export default {
     ...mapGetters('shop', ['getCurrentShop']),
 
     getEmptyStateImage () {
-      return require('~/assets/images/empty_state.png')
+      return require('~/assets/images/no_payment_vendor.png')
     }
   },
   async mounted () {
