@@ -12,7 +12,7 @@ class Order {
   orderItems: OrderItem[]
   delivery: OrderDeliveryPrice
   deliveryCost: number
-  totalOriginalPrice: number
+  totalOrderItemsOriginalPrices: number
   totalDiscountAmount: number
   finalPrice: number
   hasDiscountCode: boolean
@@ -24,7 +24,7 @@ class Order {
   createdAt: Date
 
   constructor (id: number, status: number, statusText: string, shop: Shop, customer: Customer, orderItems: OrderItem[],
-    delivery: OrderDeliveryPrice, deliveryCost: number, totalOriginalPrice: number, totalDiscountAmount: number,
+    delivery: OrderDeliveryPrice, deliveryCost: number, totalOrderItemsOriginalPrices: number, totalDiscountAmount: number,
     finalPrice: number, hasDiscountCode: boolean, shippedBy: number, paidAt: Date, verifiedAt: Date, shippedAt: Date,
     canceledAt: Date, createdAt: Date) {
     this.id = id
@@ -35,7 +35,7 @@ class Order {
     this.orderItems = orderItems
     this.delivery = delivery
     this.deliveryCost = deliveryCost
-    this.totalOriginalPrice = totalOriginalPrice
+    this.totalOrderItemsOriginalPrices = totalOrderItemsOriginalPrices
     this.totalDiscountAmount = totalDiscountAmount
     this.finalPrice = finalPrice
     this.hasDiscountCode = hasDiscountCode

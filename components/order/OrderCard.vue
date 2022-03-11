@@ -51,7 +51,7 @@
           <v-col>
             <v-row class="text-subtitle-2" no-gutters>
               قیمت کالاها:
-              {{ order.totalOriginalPrice }}
+              {{ order.totalOrderItemsOriginalPrices }}
               تومان
             </v-row>
             <v-row class="text-subtitle-2" no-gutters>
