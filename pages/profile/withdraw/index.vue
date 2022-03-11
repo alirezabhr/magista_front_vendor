@@ -82,7 +82,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import BankCreditForm from '@/components/BankCreditForm.vue'
 
-const MINIMUM_WITHDRAWAL_AMOUNT = 80000
+const MINIMUM_WITHDRAWAL_AMOUNT = 20000
 
 export default {
   name: 'WithdrawPage',
@@ -145,7 +145,7 @@ export default {
           })
         } else {
           this.snakcbarColor = 'red'
-          this.snackbarMessage = 'حداقل مبلغ قابل برداشت 80،000 تومان است.'
+          this.snackbarMessage = 'حداقل مبلغ قابل برداشت 20،000 تومان است.'
           this.showSnackbar = true
         }
       } else {
