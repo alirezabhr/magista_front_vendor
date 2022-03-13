@@ -48,7 +48,12 @@
             روش ارسال انتخاب شده:
             <strong class="px-2">{{ orderDeliveryType }}</strong>
           </v-row>
-          <v-col>
+          <v-btn color="blue" plain @click.prevent="showDetails=!showDetails">
+            <v-icon v-if="!showDetails">mdi-chevron-down</v-icon>
+            <v-icon v-else>mdi-chevron-up</v-icon>
+            جزئیات
+          </v-btn>
+          <v-col v-show="showDetails">
             <v-row class="text-subtitle-2" no-gutters>
               قیمت کالاها:
               {{ order.totalOrderItemsOriginalPrices }}
@@ -112,7 +117,8 @@ export default {
     return {
       orderStatus: OrderStatus,
       isSubmitting: false,
-      showDialog: false
+      showDialog: false,
+      showDetails: false
     }
   },
   computed: {
