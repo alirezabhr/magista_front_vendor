@@ -1,0 +1,8 @@
+enum Step {
+  REQUESTED = 'REQUESTED',
+  VERIFIED = 'VERIFIED',
+  FORM_SUBMITTED = 'SUBMITTED',
+  CREATED = 'CREATED'
+}
+
+export default Step
