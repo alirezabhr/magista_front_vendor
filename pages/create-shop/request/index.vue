@@ -9,12 +9,12 @@
     <v-row justify="center" no-gutters>
       <v-col col="10" sm="6" md="5" lg="4">
         <InstagramIdForm
-          v-if="creationStep === 'instagram username'"
+          v-if="step === 'instagram username'"
           :is-submitting-ig-id="isSubmitting"
-          @submitForm="saveMediaQuery"
+          @submitForm="creationStep"
         />
         <ShopRequestForm
-          v-else-if="creationStep === 'shop request'"
+          v-else-if="step === 'shop request'"
           :is-submitting-form="isSubmitting"
           :request-sent="requestSent"
           @submit="requestForShop"
@@ -25,10 +25,12 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 
 import ShopRequestForm from '@/components/create_shop/ShopRequestForm.vue'
 import InstagramIdForm from '@/components/create_shop/InstagramIdForm.vue'
+
+import Step from '@/models/shop_creation/creation_step'
 
 export default {
   name: 'CreateShopRequestPage',
@@ -39,7 +41,7 @@ export default {
   middleware: ['auth'],
   data () {
     return {
-      creationStep: 'instagram username',
+      step: 'instagram username',
       requestSent: false,
       isSubmitting: false,
       showSnackbar: false,
@@ -47,8 +49,38 @@ export default {
     }
   },
   methods: {
-    ...mapActions('shop', ['saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile', 'shopRequest']),
+    ...mapMutations('shop', ['setInstagramUsername']),
+    ...mapActions('shop', ['shopCreationStep', 'saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile', 'shopRequest']),
 
+    creationStep (igUsername) {
+      this.shopCreationStep(igUsername).then((stepData) => {
+        this.setInstagramUsername(igUsername)
+        switch (stepData.step) {
+          case Step.REQUESTED:
+            this.snackbarMessage = 'در حال بررسی پیج شما هستیم'
+            this.showSnackbar = true
+            break
+          case Step.VERIFIED:
+            this.saveMediaQuery(igUsername)
+            break
+          case Step.FORM_SUBMITTED:
+            this.retrieveInstagramMedia()
+            this.$router.push('/create-shop/posts')
+            break
+          case Step.CREATED:
+            this.snackbarMessage = 'این فروشگاه قبلا ساخته شده است.'
+            this.showSnackbar = true
+            break
+        }
+      }).catch((e) => {
+        if (e.response.status === 404) {
+          this.setInstagramUsername(igUsername)
+          this.step = 'shop request'
+        } else {
+          throw e
+        }
+      })
+    },
     saveMediaQuery (igUsername) {
       this.isSubmitting = true
 
@@ -71,7 +103,8 @@ export default {
           this.snackbarMessage = response.data.error[0]
           this.showSnackbar = true
         } else if (response.status === 500) { // if media is not ready
-          this.creationStep = 'shop request'
+          this.snackbarMessage = 'محتوای فروشگاه شما در حال آماده‌سازی است.'
+          this.showSnackbar = true
         }
       })
     },
@@ -93,6 +126,10 @@ export default {
         this.snackbarMessage = 'درخواست شما با موفقیت ثبت شد.'
         this.showSnackbar = true
         this.requestSent = true
+      }).catch(() => {
+        this.isSubmitting = false
+        this.snackbarMessage = 'خطا در ثبت!'
+        this.showSnackbar = true
       })
     }
   }

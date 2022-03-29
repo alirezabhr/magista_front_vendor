@@ -85,6 +85,9 @@ const mutations = <MutationTree<ShopState>>{
   setUserIgProfileInfo (state, profileInfo) {
     state.userIgProfileInfo = profileInfo
   },
+  emptyPostPreviewList (state) {
+    state.postsPreviewList = []
+  },
   concatToPostPreviewList (state, postsList) {
     state.postsPreviewList = state.postsPreviewList.concat(postsList)
   },
@@ -122,10 +125,10 @@ const mutations = <MutationTree<ShopState>>{
 }
 
 const actions = <ActionTree<ShopState, RootState>>{
-  getVendorShops (vuexContext) {
+  vendorShops (vuexContext) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
 
-    const url = process.env.baseURL + `shop/${userPk}/`
+    const url = process.env.baseURL + `shop/vendor/${userPk}/`
 
     return this.$client.get(url).then((response) => {
       vuexContext.commit('setShops', response.data)
@@ -134,6 +137,12 @@ const actions = <ActionTree<ShopState, RootState>>{
       }
     }).catch((e) => {
       throw e.response
+    })
+  },
+  shopCreationStep (vuexContext, igUsername) {
+    const url = process.env.baseURL + `shop/creation-step/${igUsername}/`
+    return this.$client.get(url).then((response) => {
+      return response.data
     })
   },
   saveInstagramMediaQueryFile (vuexContext, igUsername) {
@@ -162,6 +171,7 @@ const actions = <ActionTree<ShopState, RootState>>{
   async getInstagramMediaQueryFile (vuexContext) {
     const url = process.env.baseURL + 'shop/media-query/'
 
+    vuexContext.commit('emptyPostPreviewList', true)
     vuexContext.commit('setIsGettingMediaQuery', true)
 
     let hasNext = true
@@ -213,7 +223,7 @@ const actions = <ActionTree<ShopState, RootState>>{
   createShop (vuexContext, payload) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
 
-    const url = process.env.baseURL + `shop/${userPk}/`
+    const url = process.env.baseURL + `shop/vendor/${userPk}/`
 
     payload.vendor = userPk
     payload.instagramUsername = vuexContext.getters.getInstagramUsername
@@ -294,11 +304,14 @@ const actions = <ActionTree<ShopState, RootState>>{
     })
   },
   shopRequest (vuexContext, userEmail) {
-    const url = process.env.baseURL + 'shop/request/'
+    const userPk = vuexContext.rootGetters['auth/getUserId']
+    const igUsername = vuexContext.getters.getInstagramUsername
+    const url = process.env.baseURL + `shop/creation-step/${igUsername}/`
 
     const payload = {
+      vendor: userPk,
       email: userEmail,
-      instagram_username: vuexContext.getters.getInstagramUsername
+      instagramUsername: igUsername
     }
 
     return this.$client.post(url, payload).catch((e) => {
