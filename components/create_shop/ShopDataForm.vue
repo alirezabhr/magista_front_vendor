@@ -14,7 +14,7 @@
       <v-col class="py-0 px-8">
         <v-text-field
           v-model="shopData.email"
-          label="ایمیل"
+          label="ایمیل(اختیاری)"
           :rules="emailRules"
           outlined
           dense
@@ -105,8 +105,7 @@ export default {
         address: ''
       },
       emailRules: [
-        value => !!value || '.ایمیل الزامی می‌باشد',
-        value => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || '.ایمیل نامعتبر است'
+        value => (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || value === '') || '.ایمیل نامعتبر است'
       ],
       provinceRules: [
         value => !!value || 'استان الزامی است.',

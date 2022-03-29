@@ -13,9 +13,6 @@
       </v-card-title>
 
       <v-col class="py-0 px-8">
-        <div class="text-subtitle-2 grey--text">
-          مثال: linkish.ir
-        </div>
         <v-text-field
           v-model="instagramId"
           label="آیدی اینستاگرام"

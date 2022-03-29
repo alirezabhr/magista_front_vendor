@@ -29,7 +29,7 @@
       <v-col v-if="!requestSent" class="py-0 px-8">
         <v-text-field
           v-model="email"
-          label="ایمیل"
+          label="ایمیل(اختیاری)"
           :rules="emailRules"
           outlined
           dense
@@ -81,8 +81,7 @@ export default {
     return {
       email: '',
       emailRules: [
-        value => !!value || '.ایمیل الزامی می‌باشد',
-        value => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || '.ایمیل نامعتبر است'
+        value => (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || value === '' )|| '.ایمیل نامعتبر است'
       ]
     }
   },
