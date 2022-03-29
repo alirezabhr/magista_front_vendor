@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     ...mapMutations('shop', ['setInstagramUsername']),
-    ...mapActions('shop', ['shopCreationStep', 'saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile', 'shopRequest']),
+    ...mapActions('shop', ['shopCreationStep', 'saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile', 'shopRequest', 'shopData']),
 
     creationStep (igUsername) {
       this.shopCreationStep(igUsername).then((stepData) => {
@@ -64,8 +64,10 @@ export default {
             this.saveMediaQuery(igUsername)
             break
           case Step.FORM_SUBMITTED:
-            this.retrieveInstagramMedia()
-            this.$router.push('/create-shop/posts')
+            this.shopData(igUsername).then(() => {
+              this.retrieveInstagramMedia()
+              this.$router.push('/create-shop/posts')
+            })
             break
           case Step.CREATED:
             this.snackbarMessage = 'این فروشگاه قبلا ساخته شده است.'

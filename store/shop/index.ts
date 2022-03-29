@@ -139,6 +139,20 @@ const actions = <ActionTree<ShopState, RootState>>{
       throw e.response
     })
   },
+  shopData (vuexContext, igUsername) {
+    const url = process.env.baseURL + `shop/${igUsername}/`
+    
+    return this.$client.get(url).then((response) => {
+      const shops = vuexContext.getters.getShops
+      if (shops.findIndex((el: Shop) => el.instagramUsername === response.data.instagramUsername) === -1) {
+        // shop doesn't exist in user shop list so we need to add it in list
+        vuexContext.commit('appendShop', response.data)
+        vuexContext.commit('setCurrentShop', response.data)
+      }
+    }).catch((e) => {
+      throw e.response
+    })
+  },
   shopCreationStep (vuexContext, igUsername) {
     const url = process.env.baseURL + `shop/creation-step/${igUsername}/`
     return this.$client.get(url).then((response) => {
@@ -404,7 +418,7 @@ const getters = <GetterTree<ShopState, RootState>>{
   getUserIgProfileInfo: (state) => {
     return state.userIgProfileInfo
   },
-  getShops: (state) => {
+  getShops: (state) : Shop[] => {
     return state.shops
   },
   getCurrentShop: (state) => {

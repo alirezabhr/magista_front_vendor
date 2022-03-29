@@ -68,7 +68,7 @@ export default {
     async removeExtraPostsAndCreateProducts (removedPostList) {
       this.isSubmitting = true
 
-      if (this.isGettingQueryMedia) {
+      if (this.getIsGettingMediaQuery) {
         this.isSubmitting = false
         this.snackbarMessage = 'در حال دریافت محتوای ایسنتاگرام. لطفا کمی صبر کنید.'
         this.showSnackbar = true
