@@ -196,11 +196,11 @@ export default {
     this.isLoadingPage = false
   },
   methods: {
-    ...mapActions('shop', ['getVendorShops', 'currentShopPosts', 'shopProductsInflation', 'changeShopBio']),
     ...mapMutations('shop', ['setCurrentShop']),
+    ...mapActions('shop', ['vendorShops', 'currentShopPosts', 'shopProductsInflation', 'changeShopBio']),
 
     async getUserShops () {
-      await this.getVendorShops().catch((response) => {
+      await this.vendorShops().catch((response) => {
         for (const key in response.data) {
           this.snackbarMessage = response.data[key][0]
           this.showSnackbar = true
