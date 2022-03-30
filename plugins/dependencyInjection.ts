@@ -4,29 +4,29 @@ import applyCaseMiddleware from 'axios-case-converter'
 import { AxiosInstance } from 'axios'
 
 declare module 'vue/types/vue' {
-    // this.$myInjectedFunction inside Vue components
-    interface Vue {
-        $client: AxiosInstance
-    }
+  // this.$myInjectedFunction inside Vue components
+  interface Vue {
+    $client: AxiosInstance
+  }
 }
 
 declare module '@nuxt/types' {
-    // nuxtContext.app.$myInjectedFunction inside asyncData, fetch, plugins, middleware, nuxtServerInit
-    interface NuxtAppOptions {
-        $client: AxiosInstance
-    }
+  // nuxtContext.app.$myInjectedFunction inside asyncData, fetch, plugins, middleware, nuxtServerInit
+  interface NuxtAppOptions {
+    $client: AxiosInstance
+  }
 
-    // nuxtContext.$myInjectedFunction
-    interface Context {
-        $client: AxiosInstance
-    }
+  // nuxtContext.$myInjectedFunction
+  interface Context {
+    $client: AxiosInstance
+  }
 }
 
 declare module 'vuex/types/index' {
-    // this.$myInjectedFunction inside Vuex stores
-    interface Store<S> {
-        $client: AxiosInstance
-    }
+  // this.$myInjectedFunction inside Vuex stores
+  interface Store<S> {
+    $client: AxiosInstance
+  }
 }
 
 const setupAxiosClient = (context: Context) : AxiosInstance => {
@@ -34,7 +34,7 @@ const setupAxiosClient = (context: Context) : AxiosInstance => {
 
   // set authentication header
   axiosInstance.onRequest((config) => {
-    const accessToken = context.store.getters['auth/getUserToken']
+    const accessToken = context.store.getters['auth/getUserAccessToken']
     if (!!accessToken) {
       config.headers.common['Authorization'] = accessToken
     }
@@ -44,19 +44,21 @@ const setupAxiosClient = (context: Context) : AxiosInstance => {
     if (!!error.response) {
       // if authentication error, try refreshing the token
       if (error.response.status === 401) {
-        console.log("refreshing token")
-        console.log("should refresh token")
-        localStorage.clear()
-        // try {
-        //     const newAccessToken = await context.store.dispatch(StoreNamespaceEnum.AUTH + '/' + AuthActionType.REFRESH_TOKEN);
-        //     return new Promise((resolve) => {
-        //         error.config.headers
-        //             .common['Authorization'] = `Bearer ${newAccessToken}`
-        //         resolve(axiosInstance(error.config))
-        //     })
-        // } catch (err) {
-        //     Promise.reject(err)
-        // }
+        try {
+          const newAccessToken = await context.store.dispatch('auth/refreshToken')
+          
+          return new Promise((resolve) => {
+            error.config.headers.Authorization = `Bearer ${newAccessToken}`
+            resolve(axiosInstance(error.config))
+          })
+        } catch (err: any) {
+          if (!!err.response && err.response.status === 401) {
+            // refresh token expired
+            context.store.dispatch('auth/userLogout')
+          } else {
+            Promise.reject(err)
+          }
+        }
       }
     }
     return Promise.reject(error)

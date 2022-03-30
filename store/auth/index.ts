@@ -7,13 +7,15 @@ const namespace = 'auth'
 
 interface AuthState {
   userPhone: string
-  userToken: string | null
+  userAccessToken: string | null
+  userRefreshToken: string | null
   userId: number
 }
 
 const state = () : AuthState => ({
   userPhone: '',
-  userToken: null,
+  userAccessToken: null,
+  userRefreshToken: null,
   userId: 0
 })
 
@@ -23,8 +25,9 @@ const mutations = <MutationTree<AuthState>>{
       return
     }
 
-    // initial user token
-    state.userToken = localStorage.getItem('MagistaToken')
+    // initial user tokens
+    state.userAccessToken = localStorage.getItem('MagistaAccessToken')
+    state.userRefreshToken = localStorage.getItem('MagistaRefreshToken')
 
     // initial user id
     const userIdStr = localStorage.getItem('MagistaId')
@@ -35,20 +38,23 @@ const mutations = <MutationTree<AuthState>>{
   setUserPhone (state, phone) {
     state.userPhone = phone
   },
-  setUserToken (state, token) {
-    localStorage.setItem('MagistaToken', 'JWT ' + token)
-    axios.defaults.headers.common.Authorization = 'JWT ' + token
-    state.userToken = 'JWT ' + token
+  setUserAccessToken (state, token) {
+    localStorage.setItem('MagistaAccessToken', 'Bearer ' + token)
+    state.userAccessToken = 'Bearer ' + token
+  },
+  setUserRefreshToken (state, token) {
+    localStorage.setItem('MagistaRefreshToken', token)
+    state.userRefreshToken = token
   },
   setUserId (state, id) {
     state.userId = id
     localStorage.setItem('MagistaId', id)
   },
-  removeUserToken (state) {
+  removeUserData (state) {
     localStorage.clear()
-    localStorage.removeItem('MagistaToken')
-    axios.defaults.headers.common.Authorization = ''
-    state.userToken = null
+    state.userId = 0
+    state.userAccessToken = null
+    state.userRefreshToken = null
   }
 }
 
@@ -73,7 +79,7 @@ const actions = <ActionTree<AuthState, RootState>>{
   requestOtpCode (vuexContext, payload) {
     const url = process.env.baseURL + 'user/send-otp/'
 
-    return axios.post(
+    return this.$client.post(
       url,
       payload
     ).then(() => {
@@ -88,7 +94,7 @@ const actions = <ActionTree<AuthState, RootState>>{
   checkOtpCode (vuexContext, payload) {
     const url = process.env.baseURL + 'user/check-otp/'
 
-    return axios.post(
+    return this.$client.post(
       url,
       payload
     ).catch((e) => {
@@ -102,16 +108,18 @@ const actions = <ActionTree<AuthState, RootState>>{
   userSignup (vuexContext, payload) {
     const url = process.env.baseURL + 'user/signup/'
 
-    return axios.post(
+    return this.$client.post(
       url,
       payload
     ).then((response) => {
       const data = response.data
 
-      const token = data.token
+      const accessToken = data.token
+      const refreshToken = data.refreshToken
       const id = data.id
 
-      vuexContext.commit('setUserToken', token)
+      vuexContext.commit('setUserAccessToken', accessToken)
+      vuexContext.commit('setUserRefreshToken', refreshToken)
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
@@ -130,10 +138,12 @@ const actions = <ActionTree<AuthState, RootState>>{
     ).then((response) => {
       const data = response.data
 
-      const token = data.token
+      const accessToken = data.token
+      const refreshToken = data.refresh_token
       const id = data.id
 
-      vuexContext.commit('setUserToken', token)
+      vuexContext.commit('setUserAccessToken', accessToken)
+      vuexContext.commit('setUserRefreshToken', refreshToken)
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
@@ -146,16 +156,18 @@ const actions = <ActionTree<AuthState, RootState>>{
   changeUserPassword (vuexContext, payload) {
     const url = process.env.baseURL + 'user/'
 
-    return axios.put(
+    return this.$client.put(
       url,
       payload
     ).then((response) => {
       const data = response.data
 
-      const token = data.token
+      const accessToken = data.token
+      const refreshToken = data.refreshToken
       const id = data.id
 
-      vuexContext.commit('setUserToken', token)
+      vuexContext.commit('setUserAccessToken', accessToken)
+      vuexContext.commit('setUserRefreshToken', refreshToken)
       vuexContext.commit('setUserId', id)
     }).catch((e) => {
       vuexContext.commit('issue/createNewIssues', null, { root: true })
@@ -165,8 +177,26 @@ const actions = <ActionTree<AuthState, RootState>>{
       throw e.response
     })
   },
+  refreshToken (vuexContext) {
+    const url = process.env.baseURL + 'user/token/refresh/'
+    const refreshToken = vuexContext.getters.getUserRefreshToken
+
+    if (!refreshToken) {
+      throw new Error('refresh token not found')
+    }
+    
+    return axios.post(
+      url,
+      {refresh: refreshToken}
+    ).then((response) => {
+      const data = response.data
+      const accessToken = data.access
+      vuexContext.commit('setUserAccessToken', accessToken)
+      return accessToken
+    })
+  },
   userLogout (vuexContext) {
-    vuexContext.commit('removeUserToken')
+    vuexContext.commit('removeUserData')
     this.$router.push('/auth')
   }
 }
@@ -178,11 +208,14 @@ const getters = <GetterTree<AuthState, RootState>>{
   getUserId: (state) => {
     return state.userId
   },
-  getUserToken: (state) => {
-    return state.userToken
+  getUserAccessToken: (state) => {
+    return state.userAccessToken
+  },
+  getUserRefreshToken: (state) : string | null => {
+    return state.userRefreshToken
   },
   isAuthenticated: (state) => {
-    return !!state.userToken
+    return !!state.userAccessToken
   }
 }
 
