@@ -140,7 +140,7 @@ const actions = <ActionTree<ShopState, RootState>>{
     })
   },
   shopData (vuexContext, igUsername) {
-    const url = process.env.baseURL + `shop/${igUsername}/`
+    const url = process.env.baseURL + `shop/instagram-username/${igUsername}/`
     
     return this.$client.get(url).then((response) => {
       const shops = vuexContext.getters.getShops
