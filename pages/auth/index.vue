@@ -53,6 +53,7 @@ import ForgetPasswordForm from '@/components/auth/ForgetPasswordForm.vue'
 
 export default {
   name: 'AuthPage',
+  layout: 'auth',
   components: {
     PhoneForm,
     OtpForm,

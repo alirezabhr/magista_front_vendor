@@ -7,8 +7,8 @@
 </template>
 
 <script>
+// Created to have a layout which doesn't have authentication middleware
 export default {
-  name: 'DefaultLayout',
-  middleware: ['auth']
+  name: 'AuthLayout'
 }
 </script>
