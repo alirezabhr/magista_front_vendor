@@ -1,5 +1,6 @@
 import { GetterTree, MutationTree, ActionTree } from 'vuex'
 import { RootState } from '../index'
+import Category from '~/models/category'
 import Shop from '~/models/shop'
 import InstagramProfileInfo from '~/models/instagram_profile_info'
 import PostPreview from '~/models/post_preview'
@@ -11,6 +12,7 @@ import Shipping from '~/models/shipping/shipping'
 const namespace = 'shop'
 
 interface ShopState {
+  categories: Category[]
   shops: Shop[]
   currentShop: Shop | null
   currentShopDelivery: Shipping | null
@@ -23,6 +25,7 @@ interface ShopState {
 }
 
 const state = (): ShopState => ({
+  categories: [],
   shops: [],
   currentShop: null,
   currentShopDelivery: null,
@@ -48,6 +51,9 @@ const mutations = <MutationTree<ShopState>>{
         state.currentShopDelivery = state.currentShop.delivery
       }
     }
+  },
+  setAllCategories (state, catList) {
+    state.categories = catList
   },
   setShops (state, shops) {
     state.shops = shops
@@ -125,6 +131,15 @@ const mutations = <MutationTree<ShopState>>{
 }
 
 const actions = <ActionTree<ShopState, RootState>>{
+  allCategories (vuexContext) {
+    const url = process.env.baseURL + `shop/category/`
+  
+    return this.$client.get(url).then((response) => {
+      vuexContext.commit('setAllCategories', response.data)
+    }).catch((e) => {
+      throw e.response
+    })
+  },
   vendorShops (vuexContext) {
     const userPk = vuexContext.rootGetters['auth/getUserId']
 
@@ -412,6 +427,9 @@ const actions = <ActionTree<ShopState, RootState>>{
 }
 
 const getters = <GetterTree<ShopState, RootState>>{
+  getAllCategories: (state) : Category[] => {
+    return state.categories
+  },
   getInstagramUsername: (state) => {
     return state.instagramUsername
   },
