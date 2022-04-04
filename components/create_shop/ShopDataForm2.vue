@@ -21,13 +21,27 @@
           outlined
           dense
         />
+
+        <div class="pt-2 pb-4 text-body-2">
+          محصولات شما در کدام دسته قرار می‌گیرد؟
+        </div>
+        <v-select
+          v-model="categoryName"
+          :items="categoriesName"
+          :rules="categoryRules"
+          label="دسته‌بندی"
+          outlined
+          dense
+        />
+
         <div class="pt-2 pb-4 text-body-2">
           زمان آماده‌سازی محصول شما چقدر است؟
         </div>
         <v-select
           v-model="shopData.preparation"
           :items="preparationTimeItems"
-          label="زمان آماده‌سازی‏‌"
+          :rules="preparationRules"
+          label="زمان آماده‌سازی"
           dense
           outlined
         />
@@ -51,6 +65,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'ShopDataForm2',
   props: {
@@ -61,17 +77,49 @@ export default {
   },
   data () {
     return {
+      isLoadingCategories: false,
+      categoryName: '',
       shopData: {
         bio: '',
+        category: 0,
         preparation: ''
       },
       bioRules: [
         value => value.length < 350 || 'بیو طولانی است.'
       ],
+      categoryRules: [
+        value => !!value || 'دسته‌بندی انتخاب نشده است'
+      ],
+      preparationRules: [
+        value => !!value || 'زمان آماده‌سازی مشخص نشده است'
+      ],
       preparationTimeItems: ['تا 2 ساعت', 'تا 12 ساعت', 'تا 1 روز', 'تا 3 روز', 'تا یک هفته']
     }
   },
+  computed: {
+    ...mapGetters('shop', ['getAllCategories']),
+
+    categoriesName () {
+      return this.getAllCategories.map((e) => e.name)
+    }
+  },
+  watch: {
+    categoryName (newCategoryName) {
+      const cat = this.getAllCategories.find((e) => e.name === newCategoryName)
+      this.shopData.category = cat.id
+    }
+  },
+  mounted (){ 
+    this.isLoadingCategories = true
+    this.allCategories().then(() => {
+      this.isLoadingCategories = false
+    }).catch(() => {
+      this.isLoadingCategories = false
+    })
+  },
   methods: {
+    ...mapActions('shop', ['allCategories']),
+
     validateAndSubmitForm () {
       if (this.$refs.form.validate()) {
         const payload = { ...this.shopData }
