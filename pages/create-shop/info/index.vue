@@ -48,7 +48,7 @@ export default {
         address: '',
         bio: '',
         preparation: '',
-        delivery: ''
+        category: 0
       }
     }
   },
@@ -67,8 +67,8 @@ export default {
       this.isSubmitting = true
 
       this.shopData.bio = data.bio
+      this.shopData.category = data.category
       this.shopData.preparation = data.preparation
-      this.shopData.delivery = data.delivery
 
       this.createShop(this.shopData).then(() => {
         this.$router.push('/create-shop/posts')
