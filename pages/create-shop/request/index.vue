@@ -53,18 +53,21 @@ export default {
     ...mapActions('shop', ['shopCreationStep', 'saveInstagramMediaQueryFile', 'getInstagramMediaQueryFile', 'shopRequest', 'shopData']),
 
     creationStep (igUsername) {
-      this.shopCreationStep(igUsername).then((stepData) => {
-        this.setInstagramUsername(igUsername)
+      // make it lower to find correct media directory in backend
+      const instagramUsername = igUsername.toLowerCase()
+
+      this.shopCreationStep(instagramUsername).then((stepData) => {
+        this.setInstagramUsername(instagramUsername)
         switch (stepData.step) {
           case Step.REQUESTED:
             this.snackbarMessage = 'در حال بررسی پیج شما هستیم'
             this.showSnackbar = true
             break
           case Step.VERIFIED:
-            this.saveMediaQuery(igUsername)
+            this.saveMediaQuery(instagramUsername)
             break
           case Step.FORM_SUBMITTED:
-            this.shopData(igUsername).then(() => {
+            this.shopData(instagramUsername).then(() => {
               this.retrieveInstagramMedia()
               this.$router.push('/create-shop/posts')
             })
@@ -76,7 +79,7 @@ export default {
         }
       }).catch((e) => {
         if (e.response.status === 404) {
-          this.setInstagramUsername(igUsername)
+          this.setInstagramUsername(instagramUsername)
           this.step = 'shop request'
         } else {
           throw e
